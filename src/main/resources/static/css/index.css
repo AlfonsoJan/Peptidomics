@@ -1,0 +1,35 @@
+html,body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    background: #F0F2F4;
+}
+
+.hero-body {
+    height: 300px;
+    background-image: linear-gradient(to right top, #0f0c29, #131433, #19193e, #1f1e49, #262454, #282656, #2a2858, #2c2a5a, #2a2953, #28274c, #262645, #24243e);
+}
+
+.main-body {
+    margin-top: -150px;
+}
+
+@media only screen and (max-width: 768px) {
+    .main-body {
+        margin-top: -80px;
+    }
+}
+
+.media-content {
+    margin-top: 2rem;
+}
+
+.article-title {
+    font-size: 2rem;
+    font-weight: lighter;
+    line-height: 2;
+}
+
+.article-body {
+    line-height: 1.4;
+    margin: 0 2rem;
+}
