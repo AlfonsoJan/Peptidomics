@@ -5,57 +5,42 @@
     <title>Peptodomics</title>
     <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
     <link rel="stylesheet" th:href="@{css/index.css}" href="../static/css/index.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-<!-- <nav class="navbar has-background-light is-flex" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item is-size-3" href="/" th:text="${brand}">_OFFLINE_BRAND_</a>
-        </div>
-    </nav> -->
-<section class="hero is-info is-small is-bold">
+<div class="navbar is-inline-flex is-transparent">
+    <div class="navbar-brand">
+        <a class="navbar-item is-size-2" href="/">Peptodomics</a>
+    </div>
+    <div class="navbar-item is-flex-touch">
+        <a class="navbar-item is-size-4">
+            About
+        </a>
+        <a class="navbar-item is-size-4">
+            Upload
+        </a>
+    </div>
+</div>
+<section class="hero is-info is-medium is-bold">
     <div class="hero-body">
         <div class="container has-text-centered">
-            <h1 class="title is-uppercase">The machinery of life consists for the largest part of proteins, <br>which are long chains of amino acids linked together</h1>
+            <h1 class="title">
+                The machinery of life consists for the largest part of proteins, <br>which are long chains of amino acids linked together
+            </h1>
         </div>
     </div>
 </section>
-
-<div class="container main-body">
-    <div class="columns pb-4">
-        <div class="column is-half is-offset-one-quarter">
-            <div class="card">
-                <div class="card-content">
-                    <div class="media">
-                        <div class="media-content has-text-centered">
-                            <p class="title article-title">Peptodomics</p>
-                        </div>
-                    </div>
-                    <div class="content article-body">
-                        <p>
-                            In principle, the structure, dynamics, and function of such proteins follows from the
-                            individual building blocks, but this relationship is very hard to assess. It is often more favorable to
-                            consider building blocks spanning several amino acids, i.e., an oligopeptide. Many such oligopeptides
-                            7 are also known to have important functions by themselves, including signaling, process modulation
-                            and antibacterial actions.
-                        </p>
-                    </div>
+<section class="container">
+    <div class="columns features">
+        <div class="column is-4">
+            <div class="card is-shady">
+                <div class="card-image has-text-centered">
+                    <i class="fa fa-paw"></i>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="columns">
-        <div class="column"></div>
-        <div class="column is-four-fifths">
-            <div class="card">
                 <div class="card-content">
-                    <div class="media">
-                        <div class="media-content has-text-centered">
-                            <p class="title article-title">Introducing a new way to see protein structure</p>
-                        </div>
-                    </div>
-                    <div class="content article-body">
-                        <p>
-                            Relatively little is known about the broader scope of such peptides, which
+                    <div class="content">
+                        <h4>Tristique senectus et netus et. </h4>
+                        <p>Relatively little is known about the broader scope of such peptides, which
                             may be dubbed the 'peptidome'. Mapping the peptidome consists of two parts: First there are the
                             sequences to be mapped with metadata about occurrences as native oligopeptides, as part of
                             proteins, and with experimental data. Second, there are the configurational properties; the three-
@@ -65,14 +50,51 @@
                             means of PCA is very hard to apply and 2. the data are hard to cluster because of the amount and
                             the complexity. A solution to the latter problem was recently developed that consists in essence of a
                             combination of multidimensional scaling and multilinear regression to obtain a mapping between
-                            the actual configurations and a low-dimensional abstract data space.
-                        </p>
+                            the actual configurations and a low-dimensional abstract data space.</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="column"></div>
+        <div class="column is-4">
+            <div class="card is-shady">
+                <div class="card-image has-text-centered">
+                    <i class="fa fa-empire"></i>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <h4>Tempor orci dapibus ultrices in.</h4>
+                        <p>Ut venenatis tellus in metus vulputate. Amet consectetur adipiscing elit pellentesque. Sed arcu non odio euismod lacinia at quis risus. Faucibus turpis in eu mi bibendum neque egestas cmonsu songue. Phasellus vestibulum lorem
+                            sed risus.</p>
+                        <p><a href="#">Learn more</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-4">
+            <div class="card is-shady">
+                <div class="card-image has-text-centered">
+                    <i class="fa fa-apple"></i>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <h4> Leo integer malesuada nunc vel risus. </h4>
+                        <p>In principle, the structure, dynamics, and function of such proteins follows from the individual building blocks, but this relationship is very hard to assess. It is often more favorable to consider building blocks spanning several amino acids, i.e., an oligopeptide. Many such oligopeptides 7 are also known to have important functions by themselves, including signaling, process modulation and antibacterial actions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</section>
+
+<sec
+
+<div class="footer">
+    <p>
+        <strong class="white">Bulma</strong> by <a href="http://jgthms.com">Jeremy Thomas</a>.
+        The source code is licensed
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content is licensed
+        <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+    </p>
 </div>
 </body>
 </html>
