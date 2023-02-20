@@ -28,7 +28,8 @@ html,body {
 }
 
 .hero-body {
-    background-image: linear-gradient(to right top, #0f0c29, #131433, #19193e, #1f1e49, #262454, #282656, #2a2858, #2c2a5a, #2a2953, #28274c, #262645, #24243e);
+    box-shadow: inset 0 0 0 1000px rgba(0,0,150,.4);
+    background: url("https://img.freepik.com/premium-vector/winter-landscape-background_54887-69.jpg") fixed;
 }
 
 .features {
@@ -69,6 +70,17 @@ html,body {
 }
 .is-shady:hover {
     box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
+}
+
+.info {
+    position: center;
+    max-width: 80vw;
+    margin: auto;
+    margin-bottom: 5vw;
+}
+
+.info-card {
+    width: 80vw;
 }
 
 .footer {

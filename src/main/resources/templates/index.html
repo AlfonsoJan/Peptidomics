@@ -13,19 +13,15 @@
         <a class="navbar-item is-size-2" href="/">Peptodomics</a>
     </div>
     <div class="navbar-item is-flex-touch">
-        <a class="navbar-item is-size-4">
-            About
-        </a>
-        <a class="navbar-item is-size-4">
-            Upload
-        </a>
+        <a class="navbar-item is-size-4" href="/">Home</a>
+        <a class="navbar-item is-size-4" href="upload">Upload</a>
     </div>
 </div>
 <section class="hero is-info is-medium is-bold">
     <div class="hero-body">
         <div class="container has-text-centered">
             <h1 class="title">
-                The machinery of life consists for the largest part of proteins, <br>which are long chains of amino acids linked together
+                An application that reads PDB files <br>And analyses them
             </h1>
         </div>
     </div>
@@ -33,24 +29,27 @@
 <section class="container">
     <div class="columns features">
         <div class="column is-4">
-            <div class="card is-shady">
+            <div class="card is-shady" onclick="click_information()">
                 <div class="card-image has-text-centered">
-                    <i class="fa fa-paw"></i>
+                    <i class="fa fa-info-circle"></i>
                 </div>
                 <div class="card-content">
                     <div class="content">
-                        <h4>Tristique senectus et netus et. </h4>
-                        <p>Relatively little is known about the broader scope of such peptides, which
-                            may be dubbed the 'peptidome'. Mapping the peptidome consists of two parts: First there are the
-                            sequences to be mapped with metadata about occurrences as native oligopeptides, as part of
-                            proteins, and with experimental data. Second, there are the configurational properties; the three-
-                            dimensional shapes the oligopeptide can adopt, the corresponding secondary structure annotations
-                            and the conformational flexibility (how and how much does it move). The latter aspect was difficult
-                            to characterize, because 1. for flexible molecules analysis of the data space and data reduction by
-                            means of PCA is very hard to apply and 2. the data are hard to cluster because of the amount and
-                            the complexity. A solution to the latter problem was recently developed that consists in essence of a
-                            combination of multidimensional scaling and multilinear regression to obtain a mapping between
-                            the actual configurations and a low-dimensional abstract data space.</p>
+                        <h3>Information</h3>
+                        <p>Info about project... more adding soon like really i mean adding more soon this is placeholder text!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-4">
+            <div class="card is-shady" onclick="location.href = '/upload';">
+                <div class="card-image has-text-centered">
+                    <i class="fa fa-upload"></i>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <h3>Upload Protein</h3>
+                        <p>Click here to <a href="upload">upload</a> a file and start the process. The page will tell you more about what to do exactly!</p>
                     </div>
                 </div>
             </div>
@@ -58,27 +57,12 @@
         <div class="column is-4">
             <div class="card is-shady">
                 <div class="card-image has-text-centered">
-                    <i class="fa fa-empire"></i>
+                    <i class="fa fa-code"></i>
                 </div>
                 <div class="card-content">
                     <div class="content">
-                        <h4>Tempor orci dapibus ultrices in.</h4>
-                        <p>Ut venenatis tellus in metus vulputate. Amet consectetur adipiscing elit pellentesque. Sed arcu non odio euismod lacinia at quis risus. Faucibus turpis in eu mi bibendum neque egestas cmonsu songue. Phasellus vestibulum lorem
-                            sed risus.</p>
-                        <p><a href="#">Learn more</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="column is-4">
-            <div class="card is-shady">
-                <div class="card-image has-text-centered">
-                    <i class="fa fa-apple"></i>
-                </div>
-                <div class="card-content">
-                    <div class="content">
-                        <h4> Leo integer malesuada nunc vel risus. </h4>
-                        <p>In principle, the structure, dynamics, and function of such proteins follows from the individual building blocks, but this relationship is very hard to assess. It is often more favorable to consider building blocks spanning several amino acids, i.e., an oligopeptide. Many such oligopeptides 7 are also known to have important functions by themselves, including signaling, process modulation and antibacterial actions.</p>
+                        <h3>Code and Papers</h3>
+                        <p>The code of this project is located within the <a href="https://github.com/AlfonsoJan/Peptidomics">github</a>. Papers linked to this project are <a href="https://somepaper.com">paper1</a> and <a href="https://otherpaper.com"> paper2</a>!</p>
                     </div>
                 </div>
             </div>
@@ -86,15 +70,33 @@
     </div>
 </section>
 
-<sec
+<section class="information">
+    <div class="info column is-4">
+        <div class="info-card card is-shady">
+            <div class="card-content">
+                <div class="content">
+                    <h2 class="has-text-centered" th:id="more_info">The project</h2>
+                    <p class="is-size-5">Relatively little is known about the broader scope of such peptides, which may be dubbed the 'peptidome'. Mapping the peptidome consists of two parts: First there are the sequences to be mapped with metadata about occurrences as native oligopeptides, as part of proteins, and with experimental data. Second, there are the configurational properties; the three- dimensional shapes the oligopeptide can adopt, the corresponding secondary structure annotations and the conformational flexibility (how and how much does it move). The latter aspect was difficult to characterize, because 1. for flexible molecules analysis of the data space and data reduction by means of PCA is very hard to apply and 2. the data are hard to cluster because of the amount and the complexity. A solution to the latter problem was recently developed that consists in essence of a combination of multidimensional scaling and multilinear regression to obtain a mapping between the actual configurations and a low-dimensional abstract data space.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>>
 
 <div class="footer">
     <p>
-        <strong class="white">Bulma</strong> by <a href="http://jgthms.com">Jeremy Thomas</a>.
+        by <a href="https://nl.linkedin.com/in/tsjerkwassenaar">Tsjerk Wassenaar</a>.
         The source code is licensed
-        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content is licensed
-        <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
     </p>
 </div>
 </body>
+
+<script>
+    function click_information() {
+        let el = document.getElementById('more_info');
+        el.scrollIntoView({behavior: "smooth"});
+    }
+</script>
+
 </html>
