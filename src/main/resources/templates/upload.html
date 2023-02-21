@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class='hero is-fullheight'>
-    <div class="navbar is-inline-flex is-transparent">
+    <div class="navbar is-inline-flex has-background-white">
         <div class="navbar-brand">
             <a class="navbar-item is-size-2" href="/">Peptodomics</a>
         </div>
@@ -17,17 +17,33 @@
             <a class="navbar-item is-size-4" href="upload">Upload</a>
         </div>
     </div>
-    <div class="container main-body">
-        <div class="columns">
-            <div class="column">
-                <div class="card">
-                    <div class="card-content">
-                        <div class="media">
-                            <div class="media-content has-text-centered">
-                                <p class="title article-title">Introducing a new way to see protein structure</p>
-                            </div>
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="column is-half is-offset-one-quarter">
+                <h3 class="title has-text-black">Upload</h3>
+                <hr class="upload-hr">
+                <p class="subtitle has-text-black">Please upload a file to proceed.</p>
+                <div class="box">
+                    <form>
+                        <div class="field is-fullwidth" id="upload-file">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="pdb_file" accept=".pdb" multiple id="file-input" required>
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                                            <path d="M7 9l5 -5l5 5"></path>
+                                            <path d="M12 4l0 12"></path>
+                                        </svg>
+                                    </span>
+                                    <span class="file-label">Choose a file…</span>
+                                </span>
+                                <span class="file-name" id="file-name">SR3498598435.pdb</span>
+                            </label>
                         </div>
-                    </div>
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">Proceed</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -38,5 +54,6 @@
         </p>
     </div>
 </div>
+<script type="text/javascript" src="../static/js/upload.js" th:src="@{js/upload.js}"></script>
 </body>
 </html>

@@ -6,9 +6,6 @@ html,body {
 }
 
 .navbar {
-    /*position: fixed;*/
-    /*left: 0;*/
-    /*top: 0;*/
     z-index: 2;
     background-color: white;
     justify-content: space-between;
@@ -27,10 +24,41 @@ html,body {
 .navbar-menu .navbar-item .control {
     width: 50%;
 }
-.main-body {
+
+.box {
+    margin-top: 5rem;
+}
+
+input {
+    font-weight: 300;
+}
+
+#upload-file {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#file-name {
+    width: 100%;
+}
+p {
+    font-weight: 700;
+}
+p.subtitle {
+    padding-top: 1rem;
+}
+
+.upload-hr{
+    border-bottom: 1px solid black;
+}
+
+.has-text-black{
+    color: black;
+}
+
+.field{
+    padding-bottom: 10px;
 }
 
 .footer {
