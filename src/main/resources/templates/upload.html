@@ -2,8 +2,41 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>th:text="#{title}"</title>
+    <title>Upload</title>
+    <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
+    <link rel="stylesheet" th:href="@{css/upload.css}" href="../static/css/upload.css"/>
 </head>
 <body>
+<div class='hero is-fullheight'>
+    <div class="navbar is-inline-flex is-transparent">
+        <div class="navbar-brand">
+            <a class="navbar-item is-size-2" href="/">Peptodomics</a>
+        </div>
+        <div class="navbar-item is-flex-touch">
+            <a class="navbar-item is-size-4" href="/">Home</a>
+            <a class="navbar-item is-size-4" href="upload">Upload</a>
+        </div>
+    </div>
+    <div class="container main-body">
+        <div class="columns">
+            <div class="column">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content has-text-centered">
+                                <p class="title article-title">Introducing a new way to see protein structure</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>
+            Project of <a href="https://nl.linkedin.com/in/tsjerkwassenaar">Tsjerk Wassenaar</a>
+        </p>
+    </div>
+</div>
 </body>
 </html>

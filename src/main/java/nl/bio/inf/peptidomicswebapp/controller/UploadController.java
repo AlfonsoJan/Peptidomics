@@ -1,12 +1,12 @@
 package nl.bio.inf.peptidomicswebapp.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 
 @Controller
 public class UploadController {
-    @RequestMapping(value ="/upload")
+    @GetMapping(value ="/upload")
     public String landingPage(){
         return "upload";
     }
