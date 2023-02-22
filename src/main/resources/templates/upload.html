@@ -19,15 +19,28 @@
     </div>
     <div class="hero-body">
         <div class="container has-text-centered">
-            <div class="column is-half is-offset-one-quarter">
+            <div class="column is-half is-offset-one-quarter card">
                 <h3 class="title has-text-black">Upload</h3>
                 <hr class="upload-hr">
-                <p class="subtitle has-text-black">Please upload a file to proceed.</p>
+                <p class="subtitle has-text-black">Please upload a file to collects oligopeptides from sequences and from (PDB) structures and stores these with metadata concerning occurrence. A 3D histogram of the XYZ coordinates of the oligopeptides. And a 3D interactive plot of the protein structure.</p>
+                <button role="switch" aria-checked="true" id="speakerPower" class="switch">
+                    <span>Upload file</span>
+                    <span>PDB code</span>
+                </button>
                 <div class="box">
-                    <form>
+                    <form th:action="@{result_from_code}" method="POST">
+                        <div class="field">
+                            <label class="label">Label</label>
+                            <div class="control">
+                                <input class="input" type="text" name="pdb_code" placeholder="Text input">
+                            </div>
+                        </div>
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">Proceed</button>
+                    </form>
+                    <form th:action="@{result_from_files}" method="POST" enctype="multipart/form-data">
                         <div class="field is-fullwidth" id="upload-file">
                             <label class="file-label">
-                                <input class="file-input" type="file" name="pdb_file" accept=".pdb" multiple id="file-input" required>
+                                <input class="file-input" type="file" name="pdb_file" accept=".pdb" id="file-input">
                                 <span class="file-cta">
                                     <span class="file-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
