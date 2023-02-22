@@ -8,15 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-<div class="navbar is-inline-flex is-transparent">
-    <div class="navbar-brand">
-        <a class="navbar-item is-size-2" href="/">Peptodomics</a>
-    </div>
-    <div class="navbar-item is-flex-touch">
-        <a class="navbar-item is-size-4" href="/">Home</a>
-        <a class="navbar-item is-size-4" href="upload">Upload</a>
-    </div>
-</div>
+<div th:replace="fragments :: navbar"></div>
 <section class="hero is-info is-medium is-bold">
     <div class="hero-body">
         <div class="container has-text-centered">
@@ -36,7 +28,7 @@
                 <div class="card-content">
                     <div class="content">
                         <h3>Information</h3>
-                        <p>Info about project... more adding soon like really i mean adding more soon this is placeholder text!</p>
+                        <p>In order to get more information about Oligopeptides, this application was made. It reads PDB files and analyses and visualizes the Oligopeptides!</p>
                     </div>
                 </div>
             </div>
@@ -49,7 +41,7 @@
                 <div class="card-content">
                     <div class="content">
                         <h3>Upload Protein</h3>
-                        <p>Click here to <a href="upload">upload</a> a file and start the process. The page will tell you more about what to do exactly!</p>
+                        <p>Click here to <a href="upload">upload</a> a protein file (PDB) and start the process. The page will tell you more about what to do exactly!</p>
                     </div>
                 </div>
             </div>
@@ -62,39 +54,36 @@
                 <div class="card-content">
                     <div class="content">
                         <h3>Code and Papers</h3>
-                        <p>The code of this project is located within the <a href="https://github.com/AlfonsoJan/Peptidomics">github</a>. Papers linked to this project are <a href="https://somepaper.com">paper1</a> and <a href="https://otherpaper.com"> paper2</a>!</p>
+                        <p>The code of this project is located within the <a href="https://github.com/AlfonsoJan/Peptidomics">github</a>. Papers linked to this project are <a href="https://somepaper.com">paper1</a>, <a href="https://otherpaper.com"> paper2</a> and <a href="https://morepaper.com"> paper3</a>!</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-<section class="information">
-    <div class="info column is-4">
-        <div class="info-card card is-shady">
-            <div class="card-content">
-                <div class="content">
-                    <h2 class="has-text-centered" th:id="more_info">The project</h2>
-                    <p class="is-size-5">Relatively little is known about the broader scope of such peptides, which may be dubbed the 'peptidome'. Mapping the peptidome consists of two parts: First there are the sequences to be mapped with metadata about occurrences as native oligopeptides, as part of proteins, and with experimental data. Second, there are the configurational properties; the three- dimensional shapes the oligopeptide can adopt, the corresponding secondary structure annotations and the conformational flexibility (how and how much does it move). The latter aspect was difficult to characterize, because 1. for flexible molecules analysis of the data space and data reduction by means of PCA is very hard to apply and 2. the data are hard to cluster because of the amount and the complexity. A solution to the latter problem was recently developed that consists in essence of a combination of multidimensional scaling and multilinear regression to obtain a mapping between the actual configurations and a low-dimensional abstract data space.</p>
-                </div>
-            </div>
+<section class="container info">
+    <div class="tile is-ancestor">
+        <div class="tile is-parent is-shady">
+            <article class="tile is-child notification is-white">
+                <p class="title">Workflow</p>
+                <p class="subtitle">The workflow will be explained in this tab.. first some things needed to be done in order to create a good description</p>
+            </article>
+        </div>
+        <div class="tile is-parent is-shady">
+            <article class="tile is-child notification is-white">
+                <p class="title" id="more_info">The Project</p>
+                <p class="subtitle">Relatively little is known about the broader scope of such peptides, which may be dubbed the 'peptidome'. Mapping the peptidome consists of two parts: First there are the sequences to be mapped with metadata about occurrences as native oligopeptides, as part of proteins, and with experimental data. Second, there are the configurational properties; the three- dimensional shapes the oligopeptide can adopt, the corresponding secondary structure annotations and the conformational flexibility (how and how much does it move). The latter aspect was difficult to characterize, because 1. for flexible molecules analysis of the data space and data reduction by means of PCA is very hard to apply and 2. the data are hard to cluster because of the amount and the complexity. A solution to the latter problem was recently developed that consists in essence of a combination of multidimensional scaling and multilinear regression to obtain a mapping between the actual configurations and a low-dimensional abstract data space.</p>
+            </article>
         </div>
     </div>
-</section>>
+</section>
 
 <div class="footer">
     <p>
         Project of <a href="https://nl.linkedin.com/in/tsjerkwassenaar">Tsjerk Wassenaar</a>
     </p>
 </div>
+
+<script type="text/javascript" src="../static/js/index.js" th:src="@{js/index.js}"></script>
 </body>
-
-<script>
-    function click_information() {
-        let el = document.getElementById('more_info');
-        el.scrollIntoView({behavior: "smooth"});
-    }
-</script>
-
 </html>
