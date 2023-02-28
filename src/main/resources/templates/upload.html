@@ -8,51 +8,51 @@
 </head>
 <body>
 <div class='hero is-fullheight'>
-    <div class="navbar is-inline-flex has-background-white">
-        <div class="navbar-brand">
-            <a class="navbar-item is-size-2" href="/">Peptodomics</a>
-        </div>
-        <div class="navbar-item is-flex-touch">
-            <a class="navbar-item is-size-4" href="/">Home</a>
-            <a class="navbar-item is-size-4" href="upload">Upload</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments :: navbar}"></div>
     <div class="hero-body">
         <div class="container has-text-centered">
             <div class="column is-half is-offset-one-quarter card">
                 <h3 class="title has-text-black">Upload</h3>
                 <hr class="upload-hr">
                 <p class="subtitle has-text-black">Please upload a file to collects oligopeptides from sequences and from (PDB) structures and stores these with metadata concerning occurrence. A 3D histogram of the XYZ coordinates of the oligopeptides. And a 3D interactive plot of the protein structure.</p>
-                <button role="switch" aria-checked="true" id="speakerPower" class="switch">
-                    <span>Upload file</span>
-                    <span>PDB code</span>
-                </button>
-                <div class="box">
-                    <form th:action="@{result_from_code}" method="POST">
+                <p>Select your PDB file input option</p>
+                <div class="buttons-container" id="buttons-container">
+                    <label class="form-control">
+                        <input type="radio" name="radio" id="upload-input" onchange="getInputType(this)" value="1"/>
+                        Upload file
+                    </label>
+                    <label class="form-control">
+                        <input type="radio" name="radio" id="pdb-input" onchange="getInputType(this)" value="2"/>
+                        PDB code
+                    </label>
+                </div>
+                <div class="form-box">
+                    <form th:action="@{result_from_code}" method="POST" id="pdb-input-form">
                         <div class="field">
-                            <label class="label">Label</label>
+                            <label class="label">PDB Code</label>
                             <div class="control">
-                                <input class="input" type="text" name="pdb_code" placeholder="Text input">
+                                <input id="input-pdb" class="input" type="text" name="pdb_code" placeholder="Type your PDB code" maxlength="4">
                             </div>
                         </div>
                         <button type="submit" class="button is-block is-info is-large is-fullwidth">Proceed</button>
                     </form>
-                    <form th:action="@{result_from_files}" method="POST" enctype="multipart/form-data">
+
+                    <form th:action="@{result_from_files}" method="POST" enctype="multipart/form-data" id="file-upload-form">
                         <div class="field is-fullwidth" id="upload-file">
                             <label class="file-label">
-                                <input class="file-input" type="file" name="pdb_file" accept=".pdb" id="file-input">
+                                <input id="file-upload" class="file-input" type="file" name="pdb_file" accept=".pdb" onchange="getFileName(this)">
                                 <span class="file-cta">
-                                    <span class="file-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-                                            <path d="M7 9l5 -5l5 5"></path>
-                                            <path d="M12 4l0 12"></path>
-                                        </svg>
+                                        <span class="file-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                                                <path d="M7 9l5 -5l5 5"></path>
+                                                <path d="M12 4l0 12"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="file-label">Choose a file…</span>
                                     </span>
-                                    <span class="file-label">Choose a file…</span>
-                                </span>
-                                <span class="file-name" id="file-name">SR3498598435.pdb</span>
+                                <span class="file-name" id="file-name"></span>
                             </label>
                         </div>
                         <button type="submit" class="button is-block is-info is-large is-fullwidth">Proceed</button>
@@ -61,11 +61,7 @@
             </div>
         </div>
     </div>
-    <div class="footer">
-        <p>
-            Project of <a href="https://nl.linkedin.com/in/tsjerkwassenaar">Tsjerk Wassenaar</a>
-        </p>
-    </div>
+    <div th:replace="~{fragments :: footer}"></div>
 </div>
 <script type="text/javascript" src="../static/js/upload.js" th:src="@{js/upload.js}"></script>
 </body>
