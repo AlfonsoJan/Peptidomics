@@ -2,6 +2,7 @@ package nl.bio.inf.peptidomicswebapp.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.UploadedFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,24 +25,31 @@ public class UploadController {
     }
 
     @PostMapping(value = "/result_from_code")
-    public String resultFromCode(@RequestParam("pdb_code") String text) {
-        System.out.println(text);
+    public String resultFromCode(@RequestParam("pdb_code") String pdbCode, Model model) throws IOException {
+        model.asMap().put("uploadedFile", "");
+        PDB pdb = new PDB(pdbCode);
+        String filename = pdb.getStructureId() + ".pdb";
+        model.asMap().put("uploadedFile", new UploadedFile(filename, pdb.getBytes()));
         return "redirect:/result";
     }
+
     @PostMapping(value = "/result_from_files")
-    public String resultFromFiles(HttpSession session,
-                                  @RequestParam("pdb_file") MultipartFile file,
+    public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file,
                                   Model model) throws IOException {
         model.asMap().put("uploadedFile", new UploadedFile(file.getOriginalFilename(), file.getBytes()));
         return "redirect:/result";
     }
 
     @RequestMapping(value = "/result")
-    public String resultFromFiles(Model model) {
+    public String resultPage(Model model) {
         try {
             UploadedFile uploadedFile = (UploadedFile) model.getAttribute("uploadedFile");
-            System.out.println(uploadedFile.originalFilename());
-            return "index";
+            if (uploadedFile != null) {
+                System.out.println(uploadedFile.getBytes());
+                return "index";
+            }
+            return "redirect:/";
+
         }
         catch (ClassCastException ex) {
             return "redirect:/";

@@ -1,10 +1,11 @@
 package nl.bio.inf.peptidomicswebapp.models;
 
 public record UploadedFile(String originalFilename, byte[] data) {
-    @Override
-    public byte[] data() {
+
+    public byte[] getBytes() {
         return data.clone();
     }
+
 }
 
 //public class UploadedFile {
