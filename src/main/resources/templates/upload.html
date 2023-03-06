@@ -37,7 +37,7 @@
                                 <input id="input-pdb" class="input" type="text" name="pdb_code" placeholder="Type your PDB code" maxlength="4" minlength="4">
                             </div>
                         </div>
-                        <button type="submit" class="button is-block is-info is-large is-fullwidth">Proceed</button>
+                        <button type="button" class="button is-block is-info is-large is-fullwidth" id="pdb_code_button">Proceed</button>
                     </form>
 
                     <form th:action="@{result_from_files}" method="POST" enctype="multipart/form-data" id="file-upload-form">
@@ -58,7 +58,7 @@
                                 <span class="file-name" id="file-name"></span>
                             </label>
                         </div>
-                        <button type="submit" class="button is-block is-info is-large is-fullwidth">Proceed</button>
+                        <button type="button" class="button is-block is-info is-large is-fullwidth" id="pdb_file_button">Proceed</button>
                     </form>
                 </div>
             </div>
