@@ -44,26 +44,25 @@ function getFileName(el) {
     document.getElementById("file-upload").required = true;
 })()
 document.addEventListener('DOMContentLoaded', (event) => {
-    (function () {
-        document.getElementById('pdb-input-form').addEventListener('submit', function(event){
-            event.preventDefault();
-            document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
-            let value = document.getElementById("input-pdb").value;
-            const url = `https://data.rcsb.org/rest/v1/core/entry/${value}`;
-            fetch(url)
-                .then((res) => {
-                    if (res.ok) {
-                        return res.json();
-                    }
+    document.getElementById('pdb_code_button').addEventListener('click', function(event){
+        document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
+        let value = document.getElementById("input-pdb").value;
+        const url = `https://data.rcsb.org/rest/v1/core/entry/${value}`;
+        fetch(url, { method: 'GET' })
+            .then((response) => {
+                if (!response.ok) {
                     document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
                     toastr.error(`${value} is not a valid PDB code!`);
-                    return Promise.reject(res);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        }, false);
-    })();
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then((result) => {
+                document.getElementById("input-pdb").value = result["entry"].id;
+                document.getElementById("pdb-input-form").submit()
+            })
+            .catch((error) => console.log(error));
+    });
     (function () {
         document.getElementById('file-upload-form').addEventListener('submit', function(event){
             console.log("FILE")

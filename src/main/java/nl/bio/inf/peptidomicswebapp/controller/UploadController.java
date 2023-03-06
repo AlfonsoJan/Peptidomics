@@ -1,14 +1,12 @@
 package nl.bio.inf.peptidomicswebapp.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 
 
@@ -24,10 +22,10 @@ public class UploadController {
         System.out.println(text);
         return "upload";
     }
-
     @PostMapping(value = "/result_from_files")
-    public String resultFromFiles(@RequestParam("pdb_file") MultipartFile[] files) {
-        Arrays.asList(files).stream().forEach(file -> System.out.println(file.getOriginalFilename()));
+    public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file) {
+
+//        Arrays.asList(files).stream().forEach(file -> System.out.println(file.getOriginalFilename()));
 //        try {
 //            BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 //            String strCurrentLine;
