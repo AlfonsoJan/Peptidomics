@@ -59,14 +59,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
             })
             .then((result) => {
                 document.getElementById("input-pdb").value = result["entry"].id;
-                document.getElementById("pdb-input-form").submit()
+                document.getElementById("pdb-input-form").submit();
             })
             .catch((error) => console.log(error));
     });
-    (function () {
-        document.getElementById('file-upload-form').addEventListener('submit', function(event){
-            console.log("FILE")
-            event.preventDefault();
-        });
-    })();
+    document.getElementById('pdb_file_button').addEventListener('click', function(event){
+        let value = document.getElementById("file-upload").value;
+        if (value.length > 0) {
+            document.getElementById("file-upload-form").lastElementChild.classList.add("is-loading");
+            document.getElementById("file-upload-form").submit();
+        }
+    });
 }, false);

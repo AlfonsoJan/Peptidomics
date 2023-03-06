@@ -17,14 +17,15 @@ public class UploadController {
         return "upload";
     }
 
-    @PostMapping(value = "/result_from_code")
+    @PostMapping(value = "/result")
     public String resultFromCode(@RequestParam("pdb_code") String text) {
         System.out.println(text);
         return "upload";
     }
     @PostMapping(value = "/result_from_files")
     public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file) {
-
+        System.out.println(file);
+        return "upload";
 //        Arrays.asList(files).stream().forEach(file -> System.out.println(file.getOriginalFilename()));
 //        try {
 //            BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
@@ -35,6 +36,5 @@ public class UploadController {
 //        } catch (IOException e) {
 //            throw new RuntimeException(e);
 //        }
-        return "upload";
     }
 }
