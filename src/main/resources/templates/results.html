@@ -9,27 +9,26 @@
 </head>
 <body>
 <div th:replace="~{fragments :: navbar}"></div>
+<p class="is-size-4 results-title" th:utext="${fileName}">__FILENAME__</p>
 
-  <p class="is-size-4 results-title"> <strong class="is-size-2">Results </strong>someprotein.PDB (1 file)</p></p>
+<!--  <section class="container info">-->
+<!--    <div class="tile is-ancestor is-12">-->
+<!--      <div class="tile is-parent is-shady">-->
+<!--        <article class="tile is-child notification is-white">-->
+<!--          <p class="title">3D view of protein(s)</p>-->
+<!--          <p class="subtitle">3d here with expand button</p>-->
+<!--          <i class="fa fa-expand"></i>-->
+<!--        </article>-->
+<!--      </div>-->
+<!--      <div class="tile is-parent is-shady">-->
+<!--        <article class="tile is-child notification is-white">-->
+<!--          <p class="title" id="more_info">More</p>-->
+<!--          <p class="subtitle">The 3d cluster from the algorithm (need to talk about what to view exactly)</p>-->
+<!--        </article>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </section>-->
 
-  <section class="container info">
-    <div class="tile is-ancestor is-12">
-      <div class="tile is-parent is-shady">
-        <article class="tile is-child notification is-white">
-          <p class="title">3D view of protein(s)</p>
-          <p class="subtitle">3d here with expand button</p>
-          <i class="fa fa-expand"></i>
-        </article>
-      </div>
-      <div class="tile is-parent is-shady">
-        <article class="tile is-child notification is-white">
-          <p class="title" id="more_info">More</p>
-          <p class="subtitle">The 3d cluster from the algorithm (need to talk about what to view exactly)</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <div th:replace="fragments :: footer"></div>
+<div th:replace="~{fragments :: footer}"></div>
 </body>
 </html>
