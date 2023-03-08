@@ -23,10 +23,16 @@ public class UploadController {
         return "redirect:/result";
     }
 
+    @PostMapping(value = "/save_temp_file")
+    public void saveTempFile() throws IOException {
+        System.out.println("PoOp");
+    }
+
     @PostMapping(value = "/result_from_files")
     public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file,
                                   Model model) throws IOException {
         model.asMap().put("PDBFiles", new PDB(file.getOriginalFilename(), file.getBytes(), PDB.getStructureFromInputstream(file.getInputStream())));
+
         return "redirect:/result";
     }
 
