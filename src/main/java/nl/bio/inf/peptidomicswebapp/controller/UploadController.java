@@ -46,10 +46,9 @@ public class UploadController {
             UploadedFile uploadedFile = (UploadedFile) model.getAttribute("uploadedFile");
             if (uploadedFile != null) {
                 System.out.println(uploadedFile.getBytes());
-                return "index";
+                return "results";
             }
             return "redirect:/";
-
         }
         catch (ClassCastException ex) {
             return "redirect:/";
