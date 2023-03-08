@@ -35,10 +35,11 @@ public class UploadController {
         try {
             PDB pdbFile = (PDB) model.getAttribute("PDBFiles");
             if (pdbFile != null) {
+                String fileStructure = pdbFile.getStructureId();
                 if (pdbFile.getStructureId() ==  null) {
-                    System.out.println("EMPTY");
+                    fileStructure = "''";
                 }
-                model.addAttribute("fileName", "<strong class=\"is-size-2\">Results of: </strong>" + pdbFile.getStructureId());
+                model.addAttribute("fileName", "<strong class=\"is-size-2\">Results of: </strong>" + fileStructure);
                 return "results";
             }
             return "redirect:/";
