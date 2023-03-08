@@ -6,10 +6,9 @@
     <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
     <link rel="stylesheet" th:href="@{css/index.css}" href="../static/css/index.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
 </head>
 <body>
-<div th:replace="fragments :: navbar"></div>
+<div th:replace="~{fragments :: navbar}"></div>
 <section class="hero is-info is-medium is-bold">
     <div class="hero-body">
         <div class="container has-text-centered">
@@ -78,7 +77,9 @@
         </div>
     </div>
 </section>
-<div th:replace="fragments :: footer"></div>
+
+<div th:replace="~{fragments :: footer}"></div>
+
 <script type="text/javascript" src="../static/js/index.js" th:src="@{js/index.js}"></script>
 </body>
 </html>
