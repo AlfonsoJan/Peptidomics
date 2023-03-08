@@ -1,0 +1,34 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>Peptodomics</title>
+  <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
+  <link rel="stylesheet" th:href="@{css/results.css}" href="../static/css/index.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<p class="is-size-4 results-title" th:utext="${fileName}">__FILENAME__</p>
+
+<!--  <section class="container info">-->
+<!--    <div class="tile is-ancestor is-12">-->
+<!--      <div class="tile is-parent is-shady">-->
+<!--        <article class="tile is-child notification is-white">-->
+<!--          <p class="title">3D view of protein(s)</p>-->
+<!--          <p class="subtitle">3d here with expand button</p>-->
+<!--          <i class="fa fa-expand"></i>-->
+<!--        </article>-->
+<!--      </div>-->
+<!--      <div class="tile is-parent is-shady">-->
+<!--        <article class="tile is-child notification is-white">-->
+<!--          <p class="title" id="more_info">More</p>-->
+<!--          <p class="subtitle">The 3d cluster from the algorithm (need to talk about what to view exactly)</p>-->
+<!--        </article>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </section>-->
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>
