@@ -51,7 +51,7 @@ public class PDB {
         return getInputStream().readAllBytes();
     }
 
-    private byte[] getBytes(){
+    public byte[] getBytes(){
         return bytes;
     }
 
