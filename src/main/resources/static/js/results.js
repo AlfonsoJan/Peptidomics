@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 document.getElementById("pdb-title").textContent = result["struct"]["title"];
                 document.getElementById("pdb-subtitle").textContent = result["struct"]["pdbx_descriptor"];
                 document.getElementById("pdb-link").onclick = function (){window.open(`https://www.rcsb.org/structure/${result["entry"]["id"]}`, '_blank').focus();};
-
+                document.getElementById('skeleton-loader').removeAttribute('id');
             })
             .catch((error) => console.log(error));
     })();
