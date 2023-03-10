@@ -6,10 +6,22 @@
   <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
   <link rel="stylesheet" th:href="@{css/results.css}" href="../static/css/index.css"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script type="text/javascript" th:src="@{js/toastr.min.js}" src="../static/js/toastr.min.js"></script>
+  <link rel="stylesheet" th:href="@{css/toastr.min.css}" href="../static/css/toastr.min.css"/>
 </head>
 <body>
 <div th:replace="~{fragments :: navbar}"></div>
-<p class="is-size-4 results-title" th:utext="${fileName}">__FILENAME__</p>
+
+<div class="section">
+  <p id="pdb-structure" class="is-size-2" th:utext="${fileName}">__FILENAME__</p>
+  <p id="pdb-title" class="is-size-4 has-text-weight-bold"></p>
+  <p id="pdb-subtitle" class="is-size-4"></p>
+</div>
+
+<!--<p id="pdb-structure" class="is-size-4 results-title" th:utext="${fileName}">__FILENAME__</p>-->
+<!--<p>Title:</p>-->
+<!--<p>Description:</p>-->
 
 <!--  <section class="container info">-->
 <!--    <div class="tile is-ancestor is-12">-->

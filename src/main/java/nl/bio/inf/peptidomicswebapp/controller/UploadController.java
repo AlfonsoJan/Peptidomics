@@ -40,7 +40,7 @@ public class UploadController {
             if (pdb == null || pdb.getStructureId() == null) {
                 return "redirect:/";
             }
-            model.addAttribute("fileName", "<strong class=\"is-size-2\">Results of: </strong>" + pdb.getStructureId());
+            model.addAttribute("fileName", "<strong>Results of: </strong>" + pdb.getStructureId());
             return "results";
         } catch (ClassCastException ex) {
             return "redirect:/";
