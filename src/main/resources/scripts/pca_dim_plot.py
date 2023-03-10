@@ -27,8 +27,8 @@ def get_plot(P):
     return base_figure
 
 def main(args):
-    p = np.load('./output.npy')
-    get_plot(p)
+    p = np.load(args[1])
+    print(get_plot(p))
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
