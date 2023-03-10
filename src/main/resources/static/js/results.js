@@ -15,6 +15,7 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+document.getElementById("info-pdb").style.display = 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
     (function () {
         let value = document.getElementById("pdb-structure").textContent;
@@ -29,8 +30,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 return response.json();
             })
             .then((result) => {
+                document.getElementById("info-pdb").style.display = '';
                 document.getElementById("pdb-title").textContent = result["struct"]["title"];
                 document.getElementById("pdb-subtitle").textContent = result["struct"]["pdbx_descriptor"];
+                document.getElementById("pdb-link").onclick = function (){window.open(`https://www.rcsb.org/structure/${result["entry"]["id"]}`, '_blank').focus();};
+
             })
             .catch((error) => console.log(error));
     })();

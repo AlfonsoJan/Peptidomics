@@ -13,10 +13,11 @@
 <body>
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="section">
+<div class="section" id="info-pdb">
   <p id="pdb-structure" class="is-size-2" th:utext="${fileName}">__FILENAME__</p>
   <p id="pdb-title" class="is-size-4 has-text-weight-bold"></p>
   <p id="pdb-subtitle" class="is-size-4"></p>
+  <p id="pdb-link" class="is-size-5 is-underlined">PDB Website</p>
 </div>
 
 <!--<p id="pdb-structure" class="is-size-4 results-title" th:utext="${fileName}">__FILENAME__</p>-->
