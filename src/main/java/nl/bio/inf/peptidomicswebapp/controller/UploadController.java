@@ -1,5 +1,7 @@
 package nl.bio.inf.peptidomicswebapp.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +12,6 @@ import java.io.IOException;
 
 
 @Controller
-@SessionAttributes(value = {"PDBFiles"})
 public class UploadController {
     @GetMapping(value ="/upload")
     public String landingPage(){
@@ -18,33 +19,30 @@ public class UploadController {
     }
 
     @PostMapping(value = "/result_from_code")
-    public String resultFromCode(@RequestParam("pdb_code") String pdbCode, Model model) throws IOException {
-        model.asMap().put("PDBFiles", new PDB(pdbCode));
+    public String resultFromCode(@RequestParam("pdb_code") String pdbCode, HttpSession session) throws IOException {
+        PDB pdb = new PDB(pdbCode);
+        session.setAttribute("PDBFiles", pdb);
         return "redirect:/result";
     }
 
     @PostMapping(value = "/result_from_files")
     public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file,
-                                  Model model) throws IOException {
-        model.asMap().put("PDBFiles", new PDB(file.getOriginalFilename(), file.getBytes(), PDB.getStructureFromInputstream(file.getInputStream())));
+                                  HttpSession session) throws IOException {
+        PDB pdb = new PDB(file.getOriginalFilename(), file.getBytes(), PDB.getStructureFromInputstream(file.getInputStream()));
+        session.setAttribute("PDBFiles", pdb);
         return "redirect:/result";
     }
 
     @RequestMapping(value = "/result")
-    public String resultPage(Model model) {
+    public String resultPage(Model model, HttpServletRequest request) {
         try {
-            PDB pdbFile = (PDB) model.getAttribute("PDBFiles");
-            if (pdbFile != null) {
-                String fileStructure = pdbFile.getStructureId();
-                if (pdbFile.getStructureId() ==  null) {
-                    fileStructure = "''";
-                }
-                model.addAttribute("fileName", "<strong class=\"is-size-2\">Results of: </strong>" + fileStructure);
-                return "results";
+            PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
+            if (pdb == null || pdb.getStructureId() == null) {
+                return "redirect:/";
             }
-            return "redirect:/";
-        }
-        catch (ClassCastException ex) {
+            model.addAttribute("fileName", "<strong>Results of: </strong>" + pdb.getStructureId());
+            return "results";
+        } catch (ClassCastException ex) {
             return "redirect:/";
         }
     }
