@@ -15,8 +15,25 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+function insertAfter(newNode, existingNode) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+}
 document.getElementById("info-pdb").style.display = 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
+    (function () {
+        fetch("/create_temp_file", { method: 'POST' })
+            .then()
+            .then(() => {
+                fetch("/create_pca_plot", { method: 'POST' })
+                    .then(res => res.json())
+                    .then(result => {
+                        const img = document.createElement("img");
+                        img.src = `data:image/png;base64,${result["bytes"]}`;
+                        insertAfter(img, document.getElementById("info-pdb"))
+                    })
+            })
+            .catch((error) => console.log(error));
+    })();
     (function () {
         let value = document.getElementById("pdb-structure").textContent;
         value = value.slice(value.indexOf(":") + 2, value.length);

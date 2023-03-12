@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-
-"""
-Does all the first steps
-"""
-
 import MDAnalysis as mda
 import numpy as np
 import sys
@@ -34,14 +28,9 @@ def read_pdb(file):
     P -= P.mean(axis=1)[:, None, :]
     return P
 
-
 def main(args):
-    if (len(args) < 2):
-        p = read_pdb('./6zdh.pdb')
-        np.save('output.npy', p)
-        return
-    read_pdb(args[1])
+    np.save(f'{args[2]}.npy', read_pdb(args[1]))
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
-
