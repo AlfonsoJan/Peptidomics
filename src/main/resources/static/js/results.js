@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    fetch("/save_temp_file", {method: "POST"})
-    .then()
-})
+    (function () {
+        let value = document.getElementById("input-pdb").value;
+        console.log(value)
+    })();
+});
