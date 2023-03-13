@@ -3,12 +3,15 @@ package nl.bio.inf.peptidomicswebapp.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @Controller
@@ -34,7 +37,8 @@ public class UploadController {
     }
 
     @RequestMapping(value = "/result")
-    public String resultPage(Model model, HttpServletRequest request) {
+    public String resultPage(Model model, HttpServletRequest request) throws IOException {
+        File folderScripts = new ClassPathResource("scripts").getFile();
         try {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             if (pdb == null || pdb.getStructureId() == null) {
