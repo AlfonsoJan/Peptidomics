@@ -33,7 +33,11 @@ function getInputType(el) {
             break;
     }
 }
-
+function getParam(el) {
+    const val = el.value;
+    document.getElementById("param_code").value = val;
+    document.getElementById("param_file").value = val;
+}
 function getFileName(el) {
     document.getElementById("file-name").textContent = el.files[0].name;
 }
