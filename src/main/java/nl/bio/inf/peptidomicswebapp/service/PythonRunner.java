@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class PythonRunner implements CommandConstructor{
+public class PythonRunner implements CommandConstructor {
     private final String program = "python3";
     private final String options = "-u";
     private final String pdbPath;
@@ -15,6 +15,14 @@ public class PythonRunner implements CommandConstructor{
     private final String pythonPath;
     private final String numpyPath;
 
+    private String parameter;
+
+    public PythonRunner(String pythonPath, String numpyPath, String pdbPath, String parameter) {
+        this.pythonPath = pythonPath;
+        this.numpyPath = numpyPath;
+        this.pdbPath = pdbPath;
+        this.parameter = parameter;
+    }
     public PythonRunner(String pythonPath, String numpyPath, String pdbPath) {
         this.pythonPath = pythonPath;
         this.numpyPath = numpyPath;
@@ -37,7 +45,7 @@ public class PythonRunner implements CommandConstructor{
     public String startJobWithOutPut() throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder()
                 .command(program, options, pythonPath, numpyPath);
-        pb.redirectError(new File(numpyPath.split(".")[0] + ".log"));
+        pb.redirectError(new File(numpyPath.substring(0, numpyPath.lastIndexOf('.')) + ".log"));
         Process p = pb.start();
         BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
         StringBuilder buffer = new StringBuilder();
@@ -52,7 +60,7 @@ public class PythonRunner implements CommandConstructor{
 
     public void startJobWithoutOutPut() throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder()
-                .command(program, options, pythonPath, pdbPath, numpyPath);
+                .command(program, options, pythonPath, pdbPath, numpyPath, parameter);
         Process p = pb.start();
         int exitCode = p.waitFor();
     }

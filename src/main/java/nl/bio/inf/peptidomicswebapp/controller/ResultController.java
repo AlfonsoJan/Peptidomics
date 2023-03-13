@@ -37,7 +37,11 @@ public class ResultController {
                 fullPath = f;
             }
         }
-        PythonRunner pythonRunner = new PythonRunner(fullPath.toString(), tempUniqueName, tempFilePath.toString());
+        PythonRunner pythonRunner = new PythonRunner(
+                fullPath.toString(),
+                tempUniqueName,
+                tempFilePath.toString(),
+                request.getSession().getAttribute("parameter").toString());
         pythonRunner.startJobWithoutOutPut();
         Files.delete(tempFilePath);
         session.setAttribute("temp_numpyFile", tempUniqueName + ".npy");
@@ -53,7 +57,10 @@ public class ResultController {
             }
         }
         String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
-        PythonRunner pythonRunner = new PythonRunner(fullPath.toString(), numpyPath, "");
+        PythonRunner pythonRunner = new PythonRunner(
+                fullPath.toString(),
+                numpyPath,
+                "");
         String bytes = pythonRunner.startJobWithOutPut();
         return new Plot(bytes);
     }
