@@ -37,7 +37,7 @@ public class PythonRunner implements CommandConstructor{
     public String startJobWithOutPut() throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder()
                 .command(program, options, pythonPath, numpyPath);
-        pb.redirectError(new File(numpyPath.split(".")[0] + ".log"));
+        pb.redirectError(new File(numpyPath.substring(0, numpyPath.lastIndexOf('.')) + ".log"));
         Process p = pb.start();
         BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
         StringBuilder buffer = new StringBuilder();

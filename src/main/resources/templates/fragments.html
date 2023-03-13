@@ -19,5 +19,14 @@
         Project of <a href="https://nl.linkedin.com/in/tsjerkwassenaar">Tsjerk Wassenaar</a>
     </p>
 </div>
+<div class="field" th:fragment="paramSelector">
+    <div class="select is-info">
+        <select>
+            <th:block th:each="i: ${#numbers.sequence(3, 12)}">
+                <option th:if="${i % 2 != 0}" th:text="${i}" th:value="${i}">_UNEVEN</option>
+            </th:block>
+        </select>
+    </div>
+</div>
 </body>
 </html>
