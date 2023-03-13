@@ -1,6 +1,7 @@
 package nl.bio.inf.peptidomicswebapp.service;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ public class PythonRunner implements CommandConstructor{
     public String startJobWithOutPut() throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder()
                 .command(program, options, pythonPath, numpyPath);
+        pb.redirectError(new File(numpyPath.split(".")[0] + ".log"));
         Process p = pb.start();
         BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
         StringBuilder buffer = new StringBuilder();
