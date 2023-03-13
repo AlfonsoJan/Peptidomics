@@ -21,7 +21,7 @@
 </div>
 <div class="field pt-1" th:fragment="paramSelector (paramID)">
     <div class="select is-info">
-        <select th:id="${paramID}" onchange="getParam(this)">
+        <select th:id="${paramID}" onchange="getParam(this)" th:name="${paramID}">
             <th:block th:each="i: ${#numbers.sequence(3, 12)}">
                 <option th:if="${i % 2 != 0}" th:text="${i}" th:value="${i}">_UNEVEN</option>
             </th:block>
