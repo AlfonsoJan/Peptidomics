@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class PythonRunner implements CommandConstructor{
-    private final String program = "python";
+    private final String program = "python3";
     private final String options = "-u";
     private final String pdbPath;
 
