@@ -16,12 +16,19 @@ def get_plot(P):
 
     vals, vecs = np.linalg.eigh(D.T @ (D / len(D)))
 
-    fig = plt.figure(figsize= (5,5))
+    fig, ax = plt.subplots(figsize=(7,5))
+    plt.box(False)
+    ax.grid(color='#AAAAAA', linestyle=(5, (10, 3)), axis='y')
+    ax.set_axisbelow(True)
+
+    ax.tick_params(axis='x', colors='#999999')
+    ax.tick_params(axis='y', colors='#999999')
+
 
     plt.scatter(np.arange(len(vals)) + 1, 100 * vals[::-1] / sum(vals))
     plt.xlim(0, 10)
     fig_file = BytesIO()
-    fig.savefig(fig_file, format="png")
+    fig.savefig(fig_file, format="png", dpi=75)
     fig_file.seek(0)
     base_figure = base64.b64encode(fig_file.getvalue()).decode("ascii")
     return base_figure
