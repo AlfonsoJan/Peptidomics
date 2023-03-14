@@ -16,7 +16,9 @@ def get_plot(P):
 
     vals, vecs = np.linalg.eigh(D.T @ (D / len(D)))
 
-    fig, ax = plt.subplots(figsize=(12,5))
+    px = 1/plt.rcParams['figure.dpi']
+
+    fig, ax = plt.subplots(figsize=(1200*px, 500*px))
     plt.box(False)
     ax.grid(color='#AAAAAA', linestyle=(5, (10, 3)), axis='y')
     ax.set_axisbelow(True)

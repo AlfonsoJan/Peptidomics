@@ -27,61 +27,40 @@ html,body {
 #skeleton-loader {
     border: 1px solid #e2e2e2;
     border-radius: 0.375rem;
-    animation: loading .5s infinite alternate;
+    animation: loading .3s infinite alternate;
 }
 
 @keyframes loading {
-    from {background-color: #b8b3b3;}
-    to {background-color: hsl(0, 5%, 78%);}
+    from {background-color: white;}
+    to {background-color: lightgray;}
 }
 
-#info-pdb {
-    text-align: center;
-}
 
 #pdb-link:hover {
     cursor: pointer;
     color: darkblue;
 }
 
-.card-content .content {
-    font-size: 14px;
-    padding: 0 8rem 0 1rem;
+#paper-link:hover {
+    cursor: pointer;
+    color: darkblue;
 }
 
-.is-shady {
-    animation: flyintoright .4s backwards;
-    background: #fff;
-    box-shadow: rgba(0, 0, 0, .1) 0 1px 0;
-    border-radius: 4px;
-    display: inline-block;
-    margin:  10px 4rem 10px 4rem;
-    position: relative;
-    transition: all .2s ease-in-out;
+
+img {
+    height: 350px !important;
+    max-height: 350px !important;
 }
 
-.features {
-    padding: 2rem 0;
+.spinner-loader {
+    height: 350px !important;
+    max-height: 350px !important;
+    color: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.content {
-    margin: 0;
-    text-align: left;
-}
-
-.stat #pdb-title {
-    color: #7a7a7a;
-}
-
-.fa {
-    color: dodgerblue;
-    position: center;
-}
-
-.graph {
-    margin: 0 1rem 0 1rem;
-    padding: 0 2rem 0 0;
-}
 
 .footer {
     bottom: 0;

@@ -42,6 +42,7 @@
                     </form>
                     <form th:action="@{result_from_files}" method="POST" enctype="multipart/form-data" id="file-upload-form">
                         <div th:replace="~{fragments :: paramSelector(paramID='param_file')}"></div>
+
                         <div class="field is-fullwidth" id="upload-file">
                             <label class="file-label">
                                 <input id="file-upload" class="file-input" type="file" name="pdb_file" accept=".pdb" onchange="getFileName(this)">

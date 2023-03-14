@@ -20,6 +20,7 @@
     </p>
 </div>
 <div class="field pt-1" th:fragment="paramSelector (paramID)">
+    <label class="label">Oligo Length</label>
     <div class="select is-info">
         <select th:id="${paramID}" onchange="getParam(this)" th:name="${paramID}">
             <th:block th:each="i: ${#numbers.sequence(3, 12)}">
