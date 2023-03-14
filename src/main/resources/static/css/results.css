@@ -27,22 +27,40 @@ html,body {
 #skeleton-loader {
     border: 1px solid #e2e2e2;
     border-radius: 0.375rem;
-    animation: loading .5s infinite alternate;
+    animation: loading .3s infinite alternate;
 }
 
 @keyframes loading {
-    from {background-color: #b8b3b3;}
-    to {background-color: hsl(0, 5%, 78%);}
+    from {background-color: white;}
+    to {background-color: lightgray;}
 }
 
-#pdb-link {
-    color: blue;
-}
 
 #pdb-link:hover {
     cursor: pointer;
     color: darkblue;
 }
+
+#paper-link:hover {
+    cursor: pointer;
+    color: darkblue;
+}
+
+
+img {
+    height: 350px !important;
+    max-height: 350px !important;
+}
+
+.spinner-loader {
+    height: 350px !important;
+    max-height: 350px !important;
+    color: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .footer {
     bottom: 0;

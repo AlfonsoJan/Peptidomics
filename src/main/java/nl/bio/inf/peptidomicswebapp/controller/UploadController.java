@@ -22,7 +22,10 @@ public class UploadController {
     }
 
     @PostMapping(value = "/result_from_code")
-    public String resultFromCode(@RequestParam("pdb_code") String pdbCode, HttpSession session) throws IOException {
+    public String resultFromCode(@RequestParam("pdb_code") String pdbCode,
+                                 String param_code,
+                                 HttpSession session) throws IOException {
+        session.setAttribute("parameter", param_code);
         PDB pdb = new PDB(pdbCode);
         session.setAttribute("PDBFiles", pdb);
         return "redirect:/result";
@@ -30,8 +33,10 @@ public class UploadController {
 
     @PostMapping(value = "/result_from_files")
     public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file,
+                                  String param_file,
                                   HttpSession session) throws IOException {
         PDB pdb = new PDB(file.getOriginalFilename(), file.getBytes(), PDB.getStructureFromInputstream(file.getInputStream()));
+        session.setAttribute("parameter", param_file);
         session.setAttribute("PDBFiles", pdb);
         return "redirect:/result";
     }
