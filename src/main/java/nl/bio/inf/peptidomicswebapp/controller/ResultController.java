@@ -2,6 +2,7 @@ package nl.bio.inf.peptidomicswebapp.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.Plot;
 import nl.bio.inf.peptidomicswebapp.service.PythonRunner;
@@ -16,67 +17,84 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 @RestController
 public class ResultController {
+    private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
 
     @PostMapping(value = "/create_temp_file" , produces = MediaType.APPLICATION_JSON_VALUE)
-    public void createTempFile(HttpServletRequest request, HttpSession session) throws IOException, InterruptedException {
-        PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
-        Path tempFilePath = Files.createTempFile(null, ".pdb");
-        String tempUniqueName = String.valueOf(tempFilePath);
-        tempUniqueName = tempUniqueName.substring(0, tempUniqueName.lastIndexOf(".pdb"));
-        FileOutputStream fos = new FileOutputStream(tempFilePath.toFile());
-        fos.write(pdb.getBytes());
-        fos.close();
-        File folderScripts = new ClassPathResource("scripts").getFile();
-        File fullPath = null;
-        for (File f: folderScripts.listFiles()) {
-            if("read_pdb.py".equals(f.getName())) {
-                fullPath = f;
+    public void createTempFile(HttpServletRequest request, HttpSession session) {
+        try {
+            PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
+            Path tempFilePath = Files.createTempFile(null, ".pdb");
+            String tempUniqueName = String.valueOf(tempFilePath);
+            tempUniqueName = tempUniqueName.substring(0, tempUniqueName.lastIndexOf(".pdb"));
+            FileOutputStream fos = new FileOutputStream(tempFilePath.toFile());
+            fos.write(pdb.getBytes());
+            fos.close();
+            File folderScripts = new ClassPathResource("scripts").getFile();
+            File fullPath = null;
+            for (File f: folderScripts.listFiles()) {
+                if("read_pdb.py".equals(f.getName())) {
+                    fullPath = f;
+                }
             }
+            PythonRunner pythonRunner = new PythonRunner(
+                    fullPath.toString(),
+                    tempUniqueName,
+                    tempFilePath.toString(),
+                    request.getSession().getAttribute("parameter").toString());
+            pythonRunner.startJobWithoutOutPut();
+            Files.delete(tempFilePath);
+            session.setAttribute("temp_numpyFile", tempUniqueName + ".npy");
+        } catch (IOException | InterruptedException ex) {
+            LOGGER.severe("Error while creating a temp file, message=" + ex.getMessage());
+            throw new RuntimeException(ex);
         }
-        PythonRunner pythonRunner = new PythonRunner(
-                fullPath.toString(),
-                tempUniqueName,
-                tempFilePath.toString(),
-                request.getSession().getAttribute("parameter").toString());
-        pythonRunner.startJobWithoutOutPut();
-        Files.delete(tempFilePath);
-        session.setAttribute("temp_numpyFile", tempUniqueName + ".npy");
     }
 
     @PostMapping(value = "/create_pca_plot")
-    public @ResponseBody Plot createPca(HttpServletRequest request) throws IOException, InterruptedException {
-        File folderScripts = new ClassPathResource("scripts").getFile();
-        File fullPath = null;
-        for (File f: folderScripts.listFiles()) {
-            if("pca_dim_plot.py".equals(f.getName())) {
-                fullPath = f;
+    public @ResponseBody Plot createPca(HttpServletRequest request) {
+        try {
+            File folderScripts = new ClassPathResource("scripts").getFile();
+            File fullPath = null;
+            for (File f: folderScripts.listFiles()) {
+                if("pca_dim_plot.py".equals(f.getName())) {
+                    fullPath = f;
+                }
             }
+            String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
+            PythonRunner pythonRunner = new PythonRunner(
+                    fullPath.toString(),
+                    numpyPath,
+                    "");
+            String bytes = pythonRunner.startJobWithOutPut();
+            return new Plot(bytes);
+        } catch (IOException | InterruptedException ex) {
+            LOGGER.warning("Error while reading creating pca plot, message=" + ex.getMessage());
+            throw new RuntimeException(ex);
         }
-        String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
-        PythonRunner pythonRunner = new PythonRunner(
-                fullPath.toString(),
-                numpyPath,
-                "");
-        String bytes = pythonRunner.startJobWithOutPut();
-        return new Plot(bytes);
     }
 
     @PostMapping(value = "/create_scatter_plot")
-    public @ResponseBody Plot createScatter(HttpServletRequest request) throws IOException, InterruptedException {
-        File folderScripts = new ClassPathResource("scripts").getFile();
-        File fullPath = null;
-        for (File f: folderScripts.listFiles()) {
-            if("axis_scatter_plot.py".equals(f.getName())) {
-                fullPath = f;
+    public @ResponseBody Plot createScatter(HttpServletRequest request) {
+        try {
+            File folderScripts = new ClassPathResource("scripts").getFile();
+            File fullPath = null;
+            for (File f: folderScripts.listFiles()) {
+                if("axis_scatter_plot.py".equals(f.getName())) {
+                    fullPath = f;
+                }
             }
+            String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
+            PythonRunner pythonRunner = new PythonRunner(fullPath.toString(), numpyPath, "");
+            String bytes = pythonRunner.startJobWithOutPut();
+            return new Plot(bytes);
+        } catch (IOException | InterruptedException ex) {
+            LOGGER.warning("Error while reading creating scatter plot, message=" + ex.getMessage());
+            throw new RuntimeException(ex);
         }
-        String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
-        PythonRunner pythonRunner = new PythonRunner(fullPath.toString(), numpyPath, "");
-        String bytes = pythonRunner.startJobWithOutPut();
-        return new Plot(bytes);
     }
 }
