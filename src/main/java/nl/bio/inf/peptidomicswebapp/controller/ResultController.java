@@ -5,7 +5,8 @@ import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.Plot;
-import nl.bio.inf.peptidomicswebapp.service.PythonRunner;
+import nl.bio.inf.peptidomicswebapp.service.PythonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,9 @@ import java.util.logging.Logger;
 @RestController
 public class ResultController {
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
+
+    @Autowired
+    private PythonService pythonService;
 
 
     @PostMapping(value = "/create_temp_file" , produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,15 +45,14 @@ public class ResultController {
                     fullPath = f;
                 }
             }
-            PythonRunner pythonRunner = new PythonRunner(
+            pythonService.createTempNumpyFile(
                     fullPath.toString(),
                     tempUniqueName,
                     tempFilePath.toString(),
                     request.getSession().getAttribute("parameter").toString());
-            pythonRunner.startJobWithoutOutPut();
             Files.delete(tempFilePath);
             session.setAttribute("temp_numpyFile", tempUniqueName + ".npy");
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException ex) {
             LOGGER.severe("Error while creating a temp file, message=" + ex.getMessage());
             throw new RuntimeException(ex);
         }
@@ -66,13 +69,9 @@ public class ResultController {
                 }
             }
             String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
-            PythonRunner pythonRunner = new PythonRunner(
-                    fullPath.toString(),
-                    numpyPath,
-                    "");
-            String bytes = pythonRunner.startJobWithOutPut();
+            String bytes = pythonService.createPcaPlot(fullPath.toString(), numpyPath);
             return new Plot(bytes);
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException ex) {
             LOGGER.warning("Error while reading creating pca plot, message=" + ex.getMessage());
             throw new RuntimeException(ex);
         }
@@ -89,10 +88,9 @@ public class ResultController {
                 }
             }
             String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
-            PythonRunner pythonRunner = new PythonRunner(fullPath.toString(), numpyPath, "");
-            String bytes = pythonRunner.startJobWithOutPut();
+            String bytes = pythonService.createScatterPlot(fullPath.toString(), numpyPath);
             return new Plot(bytes);
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException ex) {
             LOGGER.warning("Error while reading creating scatter plot, message=" + ex.getMessage());
             throw new RuntimeException(ex);
         }
