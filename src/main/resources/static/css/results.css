@@ -35,13 +35,52 @@ html,body {
     to {background-color: hsl(0, 5%, 78%);}
 }
 
-#pdb-link {
-    color: blue;
+#info-pdb {
+    text-align: center;
 }
 
 #pdb-link:hover {
     cursor: pointer;
     color: darkblue;
+}
+
+.card-content .content {
+    font-size: 14px;
+    padding: 0 8rem 0 1rem;
+}
+
+.is-shady {
+    animation: flyintoright .4s backwards;
+    background: #fff;
+    box-shadow: rgba(0, 0, 0, .1) 0 1px 0;
+    border-radius: 4px;
+    display: inline-block;
+    margin:  10px 4rem 10px 4rem;
+    position: relative;
+    transition: all .2s ease-in-out;
+}
+
+.features {
+    padding: 2rem 0;
+}
+
+.content {
+    margin: 0;
+    text-align: left;
+}
+
+.stat #pdb-title {
+    color: #7a7a7a;
+}
+
+.fa {
+    color: dodgerblue;
+    position: center;
+}
+
+.graph {
+    margin: 0 1rem 0 1rem;
+    padding: 0 2rem 0 0;
 }
 
 .footer {

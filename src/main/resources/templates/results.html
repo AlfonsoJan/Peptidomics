@@ -16,12 +16,79 @@
 <div class="section" id="info-pdb">
   <p id="pdb-structure" class="is-size-2" th:utext="${fileName}">__FILENAME__</p>
   <div id="skeleton-loader">
-    <p id="pdb-title" class="is-size-4 has-text-weight-bold"></p>
+    <p id="pdb-title" class="is-size-4"></p>
     <p id="pdb-subtitle" class="is-size-4 "></p>
     <p id="pdb-link" class="is-size-5 is-underlined">PDB Website</p>
   </div>
 </div>
 
+<section class="container">
+  <div class="columns features">
+
+    <div class="card is-shady">
+      <div class="card-content">
+        <div class="content">
+          <p class="stat">Stat1</p>
+          <p class="has-text-weight-bold is-size-5">100</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card is-shady">
+      <div class="card-content">
+        <div class="content">
+          <p class="stat">Stat2</p>
+          <p class="has-text-weight-bold is-size-5">130</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card is-shady">
+      <div class="card-content">
+        <div class="content">
+          <p class="stat">Stat3</p>
+          <p class="has-text-weight-bold is-size-5">1030</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card is-shady">
+      <div class="card-content">
+        <div class="content">
+          <p class="stat">Stat4</p>
+          <p class="has-text-weight-bold is-size-5">310</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container first-two-plots">
+  <div class="columns features">
+    <div class="card is-shady graph">
+      <div class="card-content">
+        <p class="is-size-5">PCA dimensions plot</p>
+      </div>
+      <div class="card-image">
+        <figure class="image">
+          <i class="fa fa-spinner fa-pulse is-size-1" id="spinner-pca"></i>
+          <div id="placeholder-pca"></div>
+        </figure>
+      </div>
+    </div>
+    <div class="card is-shady graph">
+      <div class="card-content">
+        <p class="is-size-5">Scatter dimensions plot</p>
+      </div>
+      <div class="card-image">
+        <figure class="image">
+          <i class="fa fa-spinner fa-pulse is-size-1" id="spinner-scatter"></i>
+          <div id="placeholder-scatter"></div>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
 <!--<p id="pdb-structure" class="is-size-4 results-title" th:utext="${fileName}">__FILENAME__</p>-->
 <!--<p>Title:</p>-->
 <!--<p>Description:</p>-->

@@ -26,14 +26,32 @@ document.addEventListener('DOMContentLoaded', (event) => {
             .then(() => {
                 fetch("/create_pca_plot", { method: 'POST' })
                     .then(res => res.json())
-                    .then(result => {
-                        const img = document.createElement("img");
-                        img.src = `data:image/png;base64,${result["bytes"]}`;
-                        insertAfter(img, document.getElementById("info-pdb"))
+                    .then(pca_result => {
+
+                        fetch("/create_scatter_plot", { method: 'POST' })
+                            .then(res => res.json())
+                            .then(scatter_result => {
+
+                                var elem = document.getElementById('spinner-pca');
+                                elem.parentNode.removeChild(elem);
+
+                                var elem = document.getElementById('spinner-scatter');
+                                elem.parentNode.removeChild(elem);
+
+                                const pca = document.createElement("img");
+                                pca.src = `data:image/png;base64,${pca_result["bytes"]}`;
+                                insertAfter(pca, document.getElementById("placeholder-pca"))
+
+                                const scatter = document.createElement("img");
+                                scatter.src = `data:image/png;base64,${scatter_result["bytes"]}`;
+                                insertAfter(scatter, document.getElementById("placeholder-scatter"))
+
+                            })
                     })
             })
             .catch((error) => console.log(error));
     })();
+
     (function () {
         let value = document.getElementById("pdb-structure").textContent;
         value = value.slice(value.indexOf(":") + 2, value.length);

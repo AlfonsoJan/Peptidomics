@@ -64,4 +64,19 @@ public class ResultController {
         String bytes = pythonRunner.startJobWithOutPut();
         return new Plot(bytes);
     }
+
+    @PostMapping(value = "/create_scatter_plot")
+    public @ResponseBody Plot createScatter(HttpServletRequest request) throws IOException, InterruptedException {
+        File folderScripts = new ClassPathResource("scripts").getFile();
+        File fullPath = null;
+        for (File f: folderScripts.listFiles()) {
+            if("axis_scatter_plot.py".equals(f.getName())) {
+                fullPath = f;
+            }
+        }
+        String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
+        PythonRunner pythonRunner = new PythonRunner(fullPath.toString(), numpyPath, "");
+        String bytes = pythonRunner.startJobWithOutPut();
+        return new Plot(bytes);
+    }
 }
