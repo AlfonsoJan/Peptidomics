@@ -75,4 +75,27 @@ public class PythonService implements PythonConstructor{
             throw new RuntimeException(ex);
         }
     }
+
+    @Override
+    public String createPlotlyPcaPlot(String pythonPath, String numpyPath) {
+        ProcessBuilder pb = new ProcessBuilder()
+                .command(program, options, pythonPath, numpyPath);
+        try {
+            Process p = pb.start();
+            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            StringBuilder buffer = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null){
+                buffer.append(line);
+            }
+            if (p.waitFor() != 0) {
+                LOGGER.warning("There was an error while creating PCA plot");
+            }
+            in.close();
+            return buffer.toString();
+        } catch (IOException | InterruptedException ex) {
+            LOGGER.warning("Error while reading creating PCA plot, message=" + ex.getMessage());
+            throw new RuntimeException(ex);
+        }
+    }
 }

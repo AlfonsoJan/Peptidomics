@@ -20,6 +20,7 @@ function insertAfter(newNode, existingNode) {
 }
 document.getElementById("placeholder-pca").style.display= 'none';
 document.getElementById("placeholder-scatter").style.display= 'none';
+document.getElementById("placeholder-scatter-3d").style.display= 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
     (function () {
         fetch("/create_temp_file", { method: 'POST' })
@@ -42,6 +43,56 @@ document.addEventListener('DOMContentLoaded', (event) => {
                                 document.getElementById("placeholder-pca").style.display= '';
                                 document.getElementById("placeholder-scatter").style.display= '';
                             })
+                    })
+                fetch("/pca_plotly_plot", { method: 'POST' })
+                    .then(res => res.json())
+                    .then(result => {
+                        let elem = document.getElementById("spinner-scatter-3d");
+                        elem.parentNode.removeChild(elem);
+                        document.getElementById("placeholder-scatter-3d").style.display= '';
+                        let trace1 = {
+                            type: 'scatter3d',
+                            x: JSON.parse(result["bytes"]).x,
+                            y: JSON.parse(result["bytes"]).y,
+                            z: JSON.parse(result["bytes"]).z,
+                            mode: 'markers',
+                            marker: {
+                                size: 2
+                            }
+                        };
+                        let data = [ trace1 ];
+                        let layout = {
+                            autosize: true,
+                            margin: {
+                                l: 0,
+                                r: 0,
+                                b: 0,
+                                t: 0,
+                                pad: 4
+                            },
+                            scene: {
+                                aspectmode: "data",
+                                xaxis: {
+                                    showspikes: false,
+                                    backgroundcolor: "#edf3fa",
+                                    showbackground: true
+                                },
+                                yaxis: {
+                                    showspikes: false,
+                                    backgroundcolor: "#edf3fa",
+                                    showbackground: true
+                                },
+                                zaxis: {
+                                    showspikes: false,
+                                    backgroundcolor: "#edf3fa",
+                                    showbackground: true
+                                }
+                            },
+                            paper_bgcolor:"white",
+                            plot_bgcolor:"#00FF00"
+                        };
+                        let config = {responsive: true}
+                        Plotly.newPlot('placeholder-scatter-3d',data,layout,config);
                     })
             })
     })();
