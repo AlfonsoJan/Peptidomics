@@ -95,4 +95,23 @@ public class ResultController {
             throw new RuntimeException(ex);
         }
     }
+
+    @PostMapping(value = "/pca_plotly_plot")
+    public @ResponseBody Plot createPlotlyPcaPlot(HttpServletRequest request) {
+        try {
+            File folderScripts = new ClassPathResource("scripts").getFile();
+            File fullPath = null;
+            for (File f: folderScripts.listFiles()) {
+                if("plotly_pca_plot.py".equals(f.getName())) {
+                    fullPath = f;
+                }
+            }
+            String numpyPath = request.getSession().getAttribute("temp_numpyFile").toString();
+            String bytes = pythonService.createPlotlyPcaPlot(fullPath.toString(), numpyPath);
+            return new Plot(bytes);
+        } catch (IOException ex) {
+            LOGGER.warning("Error while reading creating PCA plot, message=" + ex.getMessage());
+            throw new RuntimeException(ex);
+        }
+    }
 }

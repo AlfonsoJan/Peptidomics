@@ -9,6 +9,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{js/toastr.min.js}" src="../static/js/toastr.min.js"></script>
   <link rel="stylesheet" th:href="@{css/toastr.min.css}" href="../static/css/toastr.min.css"/>
+  <script src="https://cdn.plot.ly/plotly-2.18.2.min.js"></script>
 </head>
 <body>
 <div th:replace="~{fragments :: navbar}"></div>
@@ -98,62 +99,30 @@
         </div>
       </div>
     </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <div class="card">
+          <div class="card-content">
+            <p class="is-size-5" style="text-align: left">Scatter 3D plot</p>
+          </div>
+
+          <figure class="image">
+            <div class="spinner-loader" id="spinner-scatter-3d">
+              <i class="fa fa-spinner fa-pulse is-size-1"></i>
+            </div>
+            <div id="placeholder-scatter-3d"></div>
+          </figure>
+
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 
+
 <div th:replace="~{fragments :: footer}"></div>
-
-
-<!--<section class="container first-two-plots">-->
-<!--  <div class="columns features">-->
-<!--    <div class="card is-shady graph">-->
-<!--      <div class="card-content">-->
-<!--        <p class="is-size-5">PCA dimensions plot</p>-->
-<!--      </div>-->
-<!--      <div class="card-image">-->
-<!--        <figure class="image">-->
-<!--          <i class="fa fa-spinner fa-pulse is-size-1" id="spinner-pca"></i>-->
-<!--          <div id="placeholder-pca"></div>-->
-<!--        </figure>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="card is-shady graph">-->
-<!--      <div class="card-content">-->
-<!--        <p class="is-size-5">Scatter dimensions plot</p>-->
-<!--      </div>-->
-<!--      <div class="card-image">-->
-<!--        <figure class="image">-->
-<!--          <i class="fa fa-spinner fa-pulse is-size-1" id="spinner-scatter"></i>-->
-<!--          <div id="placeholder-scatter"></div>-->
-<!--        </figure>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</section>-->
-<!--<p id="pdb-structure" class="is-size-4 results-title" th:utext="${fileName}">__FILENAME__</p>-->
-<!--<p>Title:</p>-->
-<!--<p>Description:</p>-->
-
-<!--  <section class="container info">-->
-<!--    <div class="tile is-ancestor is-12">-->
-<!--      <div class="tile is-parent is-shady">-->
-<!--        <article class="tile is-child notification is-white">-->
-<!--          <p class="title">3D view of protein(s)</p>-->
-<!--          <p class="subtitle">3d here with expand button</p>-->
-<!--          <i class="fa fa-expand"></i>-->
-<!--        </article>-->
-<!--      </div>-->
-<!--      <div class="tile is-parent is-shady">-->
-<!--        <article class="tile is-child notification is-white">-->
-<!--          <p class="title" id="more_info">More</p>-->
-<!--          <p class="subtitle">The 3d cluster from the algorithm (need to talk about what to view exactly)</p>-->
-<!--        </article>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </section>-->
-
-
 <script type="text/javascript" src="../static/js/results.js" th:src="@{js/results.js}"></script>
 </body>
 </html>

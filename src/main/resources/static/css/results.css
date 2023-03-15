@@ -52,6 +52,11 @@ img {
     max-height: 350px !important;
 }
 
+#placeholder-scatter-3d {
+    height: 400px !important;
+    max-height: 400px !important;
+}
+
 .spinner-loader {
     height: 350px !important;
     max-height: 350px !important;
