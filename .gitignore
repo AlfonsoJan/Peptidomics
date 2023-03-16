@@ -1,0 +1,17 @@
+.gradle
+.idea
+build
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.gradletasknamecache
+bin
+.vscode
+gradle
+gradlew
+gradlew.bat
+*.log
+PeptidomicsLog.html
+PeptidomicsLog.html.lck

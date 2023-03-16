@@ -1,0 +1,128 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>Peptodomics</title>
+  <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
+  <link rel="stylesheet" th:href="@{css/results.css}" href="../static/css/index.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script type="text/javascript" th:src="@{js/toastr.min.js}" src="../static/js/toastr.min.js"></script>
+  <link rel="stylesheet" th:href="@{css/toastr.min.css}" href="../static/css/toastr.min.css"/>
+  <script src="https://cdn.plot.ly/plotly-2.18.2.min.js"></script>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p id="pdb-structure" class="is-size-2" th:utext="${fileName}">__FILENAME__</p>
+    <div id="skeleton-loader">
+      <p id="pdb-title" class="is-size-4 has-text-weight-bold">Title</p>
+      <p id="pdb-subtitle" class="is-size-4 ">Subtitle</p>
+      <p id="pdb-link" class="is-size-5 is-underlined">PDB Website</p>
+      <p id="paper-link" class="is-size-5">Paper Link</p>
+    </div>
+
+    <div class="columns is-centered" style="padding: 2rem">
+      <div class="column">
+        <div class="card">
+          <div class="card-content">
+            <p class="is-size-5" style="color: #7a7a7a;">Stat</p>
+            <p class="has-text-weight-bold is-size-5">100</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="card">
+          <div class="card-content">
+            <p class="is-size-5" style="color: #7a7a7a;">Stat</p>
+            <p class="has-text-weight-bold is-size-5">100</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="card">
+          <div class="card-content">
+            <p class="is-size-5" style="color: #7a7a7a;">Stat</p>
+            <p class="has-text-weight-bold is-size-5">100</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="card">
+          <div class="card-content">
+            <p class="is-size-5" style="color: #7a7a7a;">Stat</p>
+            <p class="has-text-weight-bold is-size-5">100</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <div class="columns is-centered" style="padding: 2rem">
+      <div class="column is-two-fifths">
+        <div class="card">
+          <div class="card-content">
+            <p class="is-size-5" style="text-align: left">PCA dimensions plot</p>
+          </div>
+          <div class="card-image">
+            <figure class="image">
+              <div class="spinner-loader" id="spinner-pca">
+                <i class="fa fa-spinner fa-pulse is-size-1"></i>
+              </div>
+              <img src="" alt="Placeholder image" id="placeholder-pca">
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-three-fifths">
+        <div class="card">
+          <div class="card-content">
+            <p class="is-size-5" style="text-align: left">Scatter dimensions plot</p>
+          </div>
+          <div class="card-image">
+            <figure class="image">
+              <div class="spinner-loader" id="spinner-scatter">
+                <i class="fa fa-spinner fa-pulse is-size-1"></i>
+              </div>
+              <img src="" alt="Placeholder image" id="placeholder-scatter">
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <div class="card">
+          <div class="card-content">
+            <p class="is-size-5" style="text-align: left">Scatter 3D plot</p>
+          </div>
+
+          <figure class="image">
+            <div class="spinner-loader" id="spinner-scatter-3d">
+              <i class="fa fa-spinner fa-pulse is-size-1"></i>
+            </div>
+            <div id="placeholder-scatter-3d"></div>
+          </figure>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div th:replace="~{fragments :: footer}"></div>
+<script type="text/javascript" src="../static/js/results.js" th:src="@{js/results.js}"></script>
+</body>
+</html>

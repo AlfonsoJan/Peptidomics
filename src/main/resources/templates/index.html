@@ -1,0 +1,85 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Peptodomics</title>
+    <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
+    <link rel="stylesheet" th:href="@{css/index.css}" href="../static/css/index.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<section class="hero is-info is-medium is-bold">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title">
+                An application that reads PDB files <br>To build a map of the peptide space
+            </h1>
+        </div>
+    </div>
+</section>
+<section class="container">
+    <div class="columns features">
+        <div class="column is-4">
+            <div class="card is-shady" onclick="click_information()">
+                <div class="card-image has-text-centered">
+                    <i class="fa fa-info-circle"></i>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <h3>Information</h3>
+                        <p>In order to get more information about Oligopeptides, this application was made. It reads PDB files and analyses and visualizes the Oligopeptides!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-4">
+            <div class="card is-shady" onclick="location.href = '/upload';">
+                <div class="card-image has-text-centered">
+                    <i class="fa fa-upload"></i>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <h3>Upload Protein</h3>
+                        <p>Click here to <a href="upload">upload</a> a protein file (PDB) and start the process. The page will tell you more about what to do exactly!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-4">
+            <div class="card is-shady">
+                <div class="card-image has-text-centered">
+                    <i class="fa fa-code"></i>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <h3>Code and Papers</h3>
+                        <p>The code of this project is located within the <a href="https://github.com/AlfonsoJan/Peptidomics">github</a>. Papers linked to this project are <a href="https://somepaper.com">paper1</a>, <a href="https://otherpaper.com"> paper2</a> and <a href="https://morepaper.com"> paper3</a>!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="container info">
+    <div class="tile is-ancestor">
+        <div class="tile is-parent is-shady">
+            <article class="tile is-child notification is-white">
+                <p class="title">Workflow</p>
+                <p class="subtitle">The workflow will be explained in this tab.. first some things needed to be done in order to create a good description</p>
+            </article>
+        </div>
+        <div class="tile is-parent is-shady">
+            <article class="tile is-child notification is-white">
+                <p class="title" id="more_info">The Project</p>
+                <p class="subtitle">Relatively little is known about the broader scope of such peptides, which may be dubbed the 'peptidome'. Mapping the peptidome consists of two parts: First there are the sequences to be mapped with metadata about occurrences as native oligopeptides, as part of proteins, and with experimental data. Second, there are the configurational properties; the three- dimensional shapes the oligopeptide can adopt, the corresponding secondary structure annotations and the conformational flexibility (how and how much does it move). The latter aspect was difficult to characterize, because 1. for flexible molecules analysis of the data space and data reduction by means of PCA is very hard to apply and 2. the data are hard to cluster because of the amount and the complexity. A solution to the latter problem was recently developed that consists in essence of a combination of multidimensional scaling and multilinear regression to obtain a mapping between the actual configurations and a low-dimensional abstract data space.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<script type="text/javascript" src="../static/js/index.js" th:src="@{js/index.js}"></script>
+</body>
+</html>
