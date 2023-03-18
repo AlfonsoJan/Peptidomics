@@ -8,8 +8,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 public class PDB {
     private static final String DOWNLOAD_BY_ID_URL = "https://files.rcsb.org/download/%s.pdb";
@@ -17,6 +19,7 @@ public class PDB {
     private final String structureId;
     private final byte[] bytes;
     private final String fileName;
+    private List<Chain> chainList = new ArrayList<>();
 
     public PDB(String structureId) throws IOException {
         this.structureId = structureId;
@@ -28,6 +31,14 @@ public class PDB {
         this.fileName = fileName;
         this.bytes  = fileBytes;
         this.structureId = structureId;
+    }
+
+    public void setChainList(List<Chain> chainList) {
+        this.chainList = chainList;
+    }
+
+    public List<Chain> getChainList() {
+        return chainList;
     }
 
     public static String getStructureFromInputstream(InputStream is) throws IOException {
