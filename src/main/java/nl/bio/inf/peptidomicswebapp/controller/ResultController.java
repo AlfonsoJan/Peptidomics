@@ -3,8 +3,10 @@ package nl.bio.inf.peptidomicswebapp.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
+import nl.bio.inf.peptidomicswebapp.models.Chain;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.Plot;
+import nl.bio.inf.peptidomicswebapp.service.PDBParser;
 import nl.bio.inf.peptidomicswebapp.service.PythonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -26,6 +28,22 @@ public class ResultController {
 
     @Autowired
     private PythonService pythonService;
+
+    @Autowired
+    private PDBParser pdbParser;
+
+    @PostMapping(value = "/get_stats_pdb")
+    public PDB retrieveStatsPDB(HttpServletRequest request) {
+        PDB pdb;
+        try {
+            pdb = (PDB) request.getSession().getAttribute("PDBFiles");
+            pdbParser.setParams(pdb);
+            pdbParser.startFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return pdb;
+    }
 
 
     @PostMapping(value = "/create_temp_file" , produces = MediaType.APPLICATION_JSON_VALUE)

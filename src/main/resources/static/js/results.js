@@ -96,7 +96,46 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     })
             })
     })();
+    (function () {
+        fetch("/get_stats_pdb", { method: 'POST' })
+            .then(response => response.json())
+            .then((res) => {
+                let loader = document.getElementById("loader-stats");
+                loader.parentNode.removeChild(loader);
 
+                let elem = document.getElementById("pdb-stats");
+                res["chainList"].forEach(function (i) {
+                    const column = document.createElement("div");
+                    column.className = "column";
+
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    column.appendChild(card);
+
+                    const cardContent = document.createElement("div");
+                    cardContent.className = "card-content";
+                    card.appendChild(cardContent);
+
+                    const chainId = document.createElement("p");
+                    chainId.className = "is-size-5 has-text-weight-bold";
+                    chainId.textContent = `Chain: ${i["chainId"]}`;
+                    cardContent.appendChild(chainId);
+
+                    const seqresLength = document.createElement("p");
+                    seqresLength.className = "is-size-5";
+                    seqresLength.textContent = `SEQRES: ${i["seqres"].length}`;
+                    cardContent.appendChild(seqresLength);
+
+                    const atomLength = document.createElement("p");
+                    atomLength.className = "is-size-5";
+                    atomLength.textContent = `ATOM: ${i["count"]} residues`;
+                    cardContent.appendChild(atomLength);
+
+                    elem.appendChild(column);
+                });
+            })
+            .catch((error) => console.log(error));
+    })();
     (function () {
         let value = document.getElementById("pdb-structure").textContent;
         value = value.slice(value.indexOf(":") + 2, value.length);
