@@ -48,7 +48,8 @@ function getFileName(el) {
     document.getElementById("file-upload").required = true;
 })()
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.getElementById('pdb_code_button').addEventListener('click', function(event){
+    document.getElementById('pdb-input-form').addEventListener('submit', function(event){
+        event.preventDefault();
         document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
         let value = document.getElementById("input-pdb").value;
         const url = `https://data.rcsb.org/rest/v1/core/entry/${value}`;
@@ -68,7 +69,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             })
             .catch((error) => console.log(error));
     });
-    document.getElementById('pdb_file_button').addEventListener('click', function(event){
+    document.getElementById('file-upload-form"').addEventListener('submit', function(event){
+        event.preventDefault();
         let value = document.getElementById("file-upload").value;
         if (value.length > 0) {
             document.getElementById("file-upload-form").lastElementChild.classList.add("is-loading");
