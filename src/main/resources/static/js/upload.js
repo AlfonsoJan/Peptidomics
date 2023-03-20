@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             })
             .then((result) => {
                 document.getElementById("input-pdb").value = result["entry"].id;
+                window.location.replace(document.referrer);
                 document.getElementById("pdb-input-form").submit();
             })
             .catch((error) => console.log(error));
@@ -71,6 +72,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         let value = document.getElementById("file-upload").value;
         if (value.length > 0) {
             document.getElementById("file-upload-form").lastElementChild.classList.add("is-loading");
+            window.location.replace(document.referrer);
             document.getElementById("file-upload-form").submit();
         }
     });
