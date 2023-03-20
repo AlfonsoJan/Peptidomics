@@ -52,8 +52,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         event.preventDefault();
         document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
         let value = document.getElementById("input-pdb").value;
-        const url = `https://data.rcsb.org/rest/v1/core/entry/${value}`;
-        fetch(url, { method: 'GET' })
+        fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, { method: 'GET' })
             .then((response) => {
                 if (!response.ok) {
                     document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
@@ -63,13 +62,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 return response.json();
             })
             .then((result) => {
-                document.getElementById("input-pdb").value = result["entry"].id;
-                window.location.replace(document.referrer);
-                document.getElementById("pdb-input-form").submit();
+                fetch(`https://files.rcsb.org/download/${value}.pdb`).then(res => {
+                    if (!res.ok) {
+                        document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
+                        toastr.warning(`${value} does not exist in a PDB format!`);
+                        return Promise.reject(res);
+                    }
+                    document.getElementById("input-pdb").value = result["entry"].id;
+                    window.location.replace(document.referrer);
+                    document.getElementById("pdb-input-form").submit();
+                })
             })
             .catch((error) => console.log(error));
     });
-    document.getElementById('file-upload-form"').addEventListener('submit', function(event){
+    document.getElementById('file-upload-form').addEventListener('submit', function(event){
         event.preventDefault();
         let value = document.getElementById("file-upload").value;
         if (value.length > 0) {
