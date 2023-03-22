@@ -16,20 +16,21 @@
 <div th:replace="~{fragments :: navbar}"></div>
 
 <section class="section">
-  <div class="container has-text-centered">
+  <div class="container has-text-centered" id="stats-pdb">
     <p id="pdb-structure" class="is-size-2" th:utext="${fileName}">__FILENAME__</p>
-    <div id="skeleton-loader">
+    <div id="skeleton-loader" style="padding-bottom: 2rem">
       <p id="pdb-title" class="is-size-4 has-text-weight-bold">Title</p>
       <p id="pdb-subtitle" class="is-size-4 ">Subtitle</p>
       <p id="pdb-link" class="is-size-5 is-underlined">PDB Website</p>
       <p id="paper-link" class="is-size-5">Paper Link</p>
     </div>
 
-    <div class="columns is-centered" style="padding: 2rem" id="pdb-stats">
+    <div class="columns is-centered"  id="pdb-stats">
       <div class="column is-full" id="loader-stats">
         <div class="card">
           <div class="card-content">
-            <i class="fa fa-spinner fa-pulse is-size-1"></i>
+            <i class="fa fa-spinner fa-pulse is-size-1" id="stats-spinner"></i>
+            <p class="is-size-5 has-text-weight-bold" id="place-text">No Protein Chains</p>
           </div>
         </div>
       </div>
