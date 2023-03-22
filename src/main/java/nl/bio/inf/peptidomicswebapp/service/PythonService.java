@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class PythonService implements PythonConstructor{
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
-    private final String program = "python3";
+    private final String program = "python";
     private final String options = "-u";
 
     @Override
@@ -27,6 +27,26 @@ public class PythonService implements PythonConstructor{
         } catch (IOException | InterruptedException ex) {
             LOGGER.severe("Error while creating a numpy file, message=" + ex.getMessage());
             throw new RuntimeException(ex);
+        }
+    }
+
+    public String getChainsPBD(String pythonPath, String pdbID) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID);
+            Process p = pb.start();
+            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            StringBuilder buffer = new StringBuilder();
+            while ((line = in.readLine()) != null){
+                buffer.append(line);;
+            }
+            if (p.waitFor() != 0) {
+                LOGGER.warning("There was an error while creating pca plot");
+            }
+            in.close();
+            return buffer.toString();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

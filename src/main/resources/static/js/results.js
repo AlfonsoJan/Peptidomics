@@ -96,45 +96,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     })
             })
     })();
-    (function () {
-        fetch("/get_stats_pdb", { method: 'POST' })
-            .then(response => response.json())
-            .then((res) => {
-                let loader = document.getElementById("loader-stats");
-                loader.parentNode.removeChild(loader);
+    (async function getChains() {
+        const response = await fetch("/get_chains", { method: 'POST' });
+        const chains = await response.json();
+        const chunkSize = 4
+        const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
+        let elem = document.getElementById("pdb-stats");
+        elem.parentElement.removeChild(elem);
+        for (let i = 0; i < chain.length; i += chunkSize) {
+            const chunk = chain.slice(i, i + chunkSize);
+            const columns = document.createElement("div");
+            columns.className = "columns";
 
-                let elem = document.getElementById("pdb-stats");
-                res["chainList"].forEach(function (i) {
-                    const column = document.createElement("div");
-                    column.className = "column";
+            chunk.forEach(function (i) {
+                const column = document.createElement("div");
+                column.className = "column";
+                columns.appendChild(column);
 
-                    const card = document.createElement("div");
-                    card.className = "card";
-                    column.appendChild(card);
+                const card = document.createElement("div");
+                card.className = "card";
+                column.appendChild(card);
 
-                    const cardContent = document.createElement("div");
-                    cardContent.className = "card-content";
-                    card.appendChild(cardContent);
+                const cardContent = document.createElement("div");
+                cardContent.className = "card-content";
+                card.appendChild(cardContent);
 
-                    const chainId = document.createElement("p");
-                    chainId.className = "is-size-5 has-text-weight-bold";
-                    chainId.textContent = `Chain: ${i["chainId"]}`;
-                    cardContent.appendChild(chainId);
+                const chainId = document.createElement("p");
+                chainId.className = "is-size-5 has-text-weight-bold";
+                chainId.textContent = `Chain: ${i[0]}`;
+                cardContent.appendChild(chainId);
 
-                    const seqresLength = document.createElement("p");
-                    seqresLength.className = "is-size-5";
-                    seqresLength.textContent = `SEQRES: ${i["seqres"].length}`;
-                    cardContent.appendChild(seqresLength);
-
-                    const atomLength = document.createElement("p");
-                    atomLength.className = "is-size-5";
-                    atomLength.textContent = `ATOM: ${i["count"]} residues`;
-                    cardContent.appendChild(atomLength);
-
-                    elem.appendChild(column);
-                });
-            })
-            .catch((error) => console.log(error));
+                const atomLength = document.createElement("p");
+                atomLength.className = "is-size-5";
+                atomLength.textContent = `ATOM: ${i[1]} residues`;
+                cardContent.appendChild(atomLength);
+            });
+            document.getElementById("stats-pdb").appendChild(columns);
+        }
     })();
     (function () {
         let value = document.getElementById("pdb-structure").textContent;
