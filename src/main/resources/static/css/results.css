@@ -47,7 +47,12 @@ html,body {
 }
 
 
-img {
+#placeholder-pca {
+    height: 350px !important;
+    max-height: 350px !important;
+}
+
+#placeholder-scatter {
     height: 350px !important;
     max-height: 350px !important;
 }

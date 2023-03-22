@@ -7,9 +7,13 @@ Creates the first plot from the numpy matrix
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from io import BytesIO
-import base64
-import math
+import json
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 def get_plot(P):
     D = ((P[:, :, None, :] - P[:, None, :, :]) ** 2).sum(axis=3).reshape((len(P), -1)) ** 0.5
@@ -29,18 +33,12 @@ def get_plot(P):
 
 
     scores = D @ vecs[:, [-1, -2, -3]]
-    plt.scatter(*scores[:, :2].T, s=50, alpha=0.3)
-    plt.xlim([int(math.ceil(max(abs(scores[:, :2].T[0])) / 10.0)) * -10, int(math.ceil(max(abs(scores[:, :2].T[0])) / 10.0)) * 10])
-    plt.ylim([int(math.ceil(max(abs(scores[:, :2].T[1])) / 10.0)) * -10, int(math.ceil(max(abs(scores[:, :2].T[1])) / 10.0)) * 10])
-    fig_file = BytesIO()
-    fig.savefig(fig_file, format="png", dpi=75)
-    fig_file.seek(0)
-    base_figure = base64.b64encode(fig_file.getvalue()).decode("ascii")
-    return base_figure
+    scores = scores[:, :2].T
+    print(json.dumps({'x': scores[0], 'y': scores[1]}, cls=NumpyEncoder))
 
 def main(args):
     p = np.load(args[1])
-    print(get_plot(p))
+    get_plot(p)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

@@ -22,11 +22,11 @@ def get_plot(P):
 
     vals, vecs = np.linalg.eigh(D.T @ (D / len(D)))
     scores = np.arange(len(vals)) + 1, 100 * vals[::-1] / sum(vals)
-    print(json.dumps({'x': scores.T[0], 'y': scores.T[1]}, cls=NumpyEncoder))
+    print(json.dumps({'x': scores[0], 'y': scores[1]}, cls=NumpyEncoder))
 
 def main(args):
     p = np.load(args[1])
-    print(get_plot(p))
+    get_plot(p)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

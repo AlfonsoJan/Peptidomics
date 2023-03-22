@@ -37,11 +37,64 @@ document.addEventListener('DOMContentLoaded', (event) => {
                                 elem = document.getElementById("spinner-scatter");
                                 elem.parentNode.removeChild(elem);
 
-                                document.getElementById("placeholder-pca").src = `data:image/png;base64,${pca_result["bytes"]}`;
-                                document.getElementById("placeholder-scatter").src = `data:image/png;base64,${scatter_result["bytes"]}`;
-
                                 document.getElementById("placeholder-pca").style.display= '';
                                 document.getElementById("placeholder-scatter").style.display= '';
+                                console.log(scatter_result)
+                                let trace1 = {
+                                    type: 'scatter',
+                                    x: JSON.parse(pca_result["bytes"]).x,
+                                    y: JSON.parse(pca_result["bytes"]).y,
+                                    mode: 'markers',
+                                    marker: {
+                                        color: 'rgb(17, 157, 255)',
+                                        size: 10
+                                    }
+                                };
+                                let data = [ trace1 ];
+                                let layout = {
+                                    autosize: true,
+                                    margin: {
+                                        l: 0,
+                                        r: 0,
+                                        b: 0,
+                                        t: 0,
+                                        pad: 4
+                                    },
+                                    xaxis: {
+                                        range: [0, 10]  // to set the xaxis range to 0 to 1
+                                    },
+                                    paper_bgcolor:"white",
+                                    plot_bgcolor:"#FFFFFF"
+                                };
+                                let config = {responsive: true}
+                                Plotly.newPlot('placeholder-pca',data,layout,config);
+
+
+                                trace1 = {
+                                    type: 'scatter',
+                                    x: JSON.parse(scatter_result["bytes"]).x,
+                                    y: JSON.parse(scatter_result["bytes"]).y,
+                                    mode: 'markers',
+                                    marker: {
+                                        color: 'rgba(17, 157, 255, 0.35)',
+                                        size: 10
+                                    }
+                                };
+                                data = [ trace1 ];
+                                layout = {
+                                    autosize: true,
+                                    margin: {
+                                        l: 0,
+                                        r: 0,
+                                        b: 0,
+                                        t: 0,
+                                        pad: 4
+                                    },
+                                    paper_bgcolor:"white",
+                                    plot_bgcolor:"#FFFFFF"
+                                };
+                                config = {responsive: true}
+                                Plotly.newPlot('placeholder-scatter',data,layout,config);
                             })
                     })
                 fetch("/pca_plotly_plot", { method: 'POST' })
