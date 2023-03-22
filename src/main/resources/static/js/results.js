@@ -21,6 +21,7 @@ function insertAfter(newNode, existingNode) {
 document.getElementById("placeholder-pca").style.display= 'none';
 document.getElementById("placeholder-scatter").style.display= 'none';
 document.getElementById("placeholder-scatter-3d").style.display= 'none';
+document.getElementById("place-text").style.display= 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
     (function () {
         fetch("/create_temp_file", { method: 'POST' })
@@ -101,6 +102,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const chains = await response.json();
         const chunkSize = 4
         const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
+        if (chain.length < 1) {
+            let element = document.getElementById("stats-spinner");
+            element.parentElement.removeChild(element);
+            document.getElementById("place-text").style.display = '';
+            return;
+        }
         let elem = document.getElementById("pdb-stats");
         elem.parentElement.removeChild(elem);
         for (let i = 0; i < chain.length; i += chunkSize) {
