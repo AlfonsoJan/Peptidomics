@@ -93,8 +93,43 @@
     </div>
   </div>
 </section>
+<section class="section" style="padding-top: 0">
+  <div class="container has-text-centered">
+    <div class="columns is-centered" style="padding: 2rem">
+      <div class="column">
+        <span id=mydiv></span>
+      </div>
+    </div>
+  </div>
+</section>
 
 
+<script type="text/javascript" th:src="@{js/JSmol.min.js}" src="../static/js/JSmol.min.js"></script>
+<script type="text/javascript">
+
+  $(document).ready(function() {
+    let value = document.getElementById("pdb-structure").textContent;
+    value = value.slice(value.indexOf(":") + 2, value.length);
+    Info = {
+      width: 800,
+      height: 400,
+      debug: false,
+      j2sPath: "j2s",
+      color: "0xC0C0C0",
+      disableJ2SLoadMonitor: true,
+      disableInitialConsole: true,
+      addSelectionOptions: false,
+      serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+      use: "HTML5",
+      readyFunction: null,
+      script: `load "=${value}"; cartoons only; color structure;`
+    }
+
+    $("#mydiv").html(Jmol.getAppletHtml("jmol1",Info))
+
+  });
+
+</script>
 
 <div th:replace="~{fragments :: footer}"></div>
 <script type="text/javascript" src="../static/js/results.js" th:src="@{js/results.js}"></script>
