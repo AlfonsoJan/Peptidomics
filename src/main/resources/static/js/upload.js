@@ -33,6 +33,11 @@ function getInputType(el) {
             break;
     }
 }
+function getCompare(el) {
+    const val = el.value;
+    document.getElementById("compare_code").value = val;
+    document.getElementById("compare_file").value = val;
+}
 function getParam(el) {
     const val = el.value;
     document.getElementById("param_code").value = val;
@@ -51,6 +56,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('pdb-input-form').addEventListener('submit', function(event){
         event.preventDefault();
         document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
+        if (document.getElementById("param_file").value < 2) {
+            toastr.error(`Please type in a length higher then 1!`);
+            return;
+        }
+
         let value = document.getElementById("input-pdb").value;
         fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, { method: 'GET' })
             .then((response) => {
@@ -78,6 +88,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('file-upload-form').addEventListener('submit', function(event){
         event.preventDefault();
         let value = document.getElementById("file-upload").value;
+        let length = document.getElementById("param_file").value;
+        if (isNaN(length)) {
+            toastr.warning(`${length} is not a number!`);
+            return;
+        }
+        if (length < 2) {
+            toastr.error(`Please type in a length higher then 1!`);
+            return;
+        }
         if (value.length > 0) {
             document.getElementById("file-upload-form").lastElementChild.classList.add("is-loading");
             window.location.replace(document.referrer);

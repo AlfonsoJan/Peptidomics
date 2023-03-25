@@ -68,9 +68,6 @@ p.subtitle {
     background-color: rgb(220, 220, 220);
 }
 
-label {
-    margin-top: 1rem;
-}
 
 input[type="radio"] {
     -webkit-appearance: none;

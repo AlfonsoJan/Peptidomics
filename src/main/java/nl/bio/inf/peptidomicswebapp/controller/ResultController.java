@@ -133,6 +133,30 @@ public class ResultController {
         }
     }
 
+    @PostMapping(value = "/test")
+    public @ResponseBody Plot tr(HttpServletRequest request) {
+        try {
+            File folderScripts = new ClassPathResource("scripts").getFile();
+            File fullPath = null;
+            for (File f: folderScripts.listFiles()) {
+                if("PDBAnalyse.py".equals(f.getName())) {
+                    fullPath = f;
+                }
+            }
+            PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
+            String bytes = pythonService.PDBAnalyse(
+                    fullPath.toString(),
+                    pdb.getStructureId(),
+                    request.getSession().getAttribute("parameter").toString(),
+                    request.getSession().getAttribute("compareCode").toString()
+            );
+            return new Plot(bytes);
+        } catch (IOException ex) {
+            LOGGER.warning("Error while reading creating PCA plot, message=" + ex.getMessage());
+            throw new RuntimeException(ex);
+        }
+    }
+
     @PostMapping(value = "/pca_plotly_plot")
     public @ResponseBody Plot createPlotlyPcaPlot(HttpServletRequest request) {
         try {

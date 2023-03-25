@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{css/upload.css}" href="../static/css/upload.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{js/toastr.min.js}" src="../static/js/toastr.min.js"></script>
+    <link href=" https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.min.css " rel="stylesheet">
     <link rel="stylesheet" th:href="@{css/toastr.min.css}" href="../static/css/toastr.min.css"/>
     <link rel="icon" type="image/ico" th:href="@{../static/images/favicon.ico}">
 </head>
@@ -21,18 +22,18 @@
                 <p class="subtitle has-text-black">Please upload a .PDB file to collects oligopeptides from sequences and from (PDB) structures and stores these with metadata concerning occurrence. A 3D histogram of the XYZ coordinates of the oligopeptides. And a 3D interactive plot of the protein structure.</p>
                 <p>Select your PDB file input option</p>
                 <div class="buttons-container" id="buttons-container">
-                    <label class="form-control">
+                    <label class="form-control" style="margin-top: 1rem;">
                         <input type="radio" name="radio" id="upload-input" onchange="getInputType(this)" value="1"/>
                         Upload file
                     </label>
-                    <label class="form-control">
+                    <label class="form-control" style="margin-top: 1rem;">
                         <input type="radio" name="radio" id="pdb-input" onchange="getInputType(this)" value="2"/>
                         PDB code
                     </label>
                 </div>
                 <div class="form-box">
                     <form th:action="@{result_from_code}" method="POST" id="pdb-input-form">
-                        <div th:replace="~{fragments :: paramSelector(paramID='param_code')}"></div>
+                        <div th:replace="~{fragments :: paramSelector(paramID='param_code', compareID='compare_code')}"></div>
                         <div class="field">
                             <label class="label">PDB Code</label>
                             <div class="control">
@@ -42,8 +43,7 @@
                         <button type="submit" class="button is-block is-info is-large is-fullwidth" id="pdb_code_button">Proceed</button>
                     </form>
                     <form th:action="@{result_from_files}" method="POST" enctype="multipart/form-data" id="file-upload-form">
-                        <div th:replace="~{fragments :: paramSelector(paramID='param_file')}"></div>
-
+                        <div th:replace="~{fragments :: paramSelector(paramID='param_file', compareID='compare_file')}"></div>
                         <div class="field is-fullwidth" id="upload-file">
                             <label class="file-label">
                                 <input id="file-upload" class="file-input" type="file" name="pdb_file" accept=".pdb" onchange="getFileName(this)">

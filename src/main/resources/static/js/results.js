@@ -18,137 +18,153 @@ toastr.options = {
 function insertAfter(newNode, existingNode) {
     existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
 }
+function create3dPlot(result) {
+    let elem = document.getElementById("spinner-scatter-3d");
+    elem.parentNode.removeChild(elem);
+    document.getElementById("placeholder-scatter-3d").style.display= '';
+    let value = document.getElementById("pdb-structure").textContent;
+    value = value.slice(value.indexOf(":") + 2, value.length);
+    let trace1 = {
+        type: 'scatter3d',
+        x: JSON.parse(result["bytes"])["scatter"].x,
+        y: JSON.parse(result["bytes"])["scatter"].y,
+        z: JSON.parse(result["bytes"])["scatter"].z,
+        mode: 'markers',
+        marker: {size: 2},
+        name: `${value}`
+    };
+    let trace2 = {
+        type: 'scatter3d',
+        x: JSON.parse(result["bytes"])["compare"].x,
+        y: JSON.parse(result["bytes"])["compare"].y,
+        z: JSON.parse(result["bytes"])["compare"].z,
+        mode: 'markers',
+        marker: {size: 2},
+    };
+    let data = [ trace1, trace2 ];
+    let layout = {
+        autosize: true,
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 0,
+            pad: 4
+        },
+        scene: {
+            aspectmode: "data",
+            xaxis: {
+                showspikes: false,
+                backgroundcolor: "#edf3fa",
+                showbackground: true
+            },
+            yaxis: {
+                showspikes: false,
+                backgroundcolor: "#edf3fa",
+                showbackground: true
+            },
+            zaxis: {
+                showspikes: false,
+                backgroundcolor: "#edf3fa",
+                showbackground: true
+            }
+        },
+        paper_bgcolor:"white",
+        plot_bgcolor:"#00FF00",
+        legend: {
+            y: 0.5,
+            yref: 'paper',
+            font: {
+                size: 20,
+            },
+        }
+    }
+    let config = {responsive: true}
+    Plotly.newPlot('placeholder-scatter-3d',data,layout,config);
+}
+
+function createDimPlot(result) {
+    let elem = document.getElementById("spinner-pca");
+    elem.parentNode.removeChild(elem);
+    document.getElementById("placeholder-pca").style.display= '';
+    let trace1 = {
+        type: 'scatter',
+        x: JSON.parse(result["bytes"])["dim"].x,
+        y: JSON.parse(result["bytes"])["dim"].y,
+        mode: 'markers',
+        marker: {
+            color: 'rgb(17, 157, 255)',
+            size: 10
+        }
+    };
+    let data = [ trace1 ];
+    let layout = {
+        autosize: true,
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 0,
+            pad: 4
+
+        },
+        xaxis: {
+            range: [0, 10],
+        },
+        paper_bgcolor:"white",
+        plot_bgcolor:"#FFFFFF",
+        };
+        let config = {responsive: true}
+        Plotly.newPlot('placeholder-pca',data,layout,config);
+}
+function create2dPlot(result) {
+    let elem = document.getElementById("spinner-scatter");
+    elem.parentNode.removeChild(elem);
+    document.getElementById("placeholder-scatter").style.display= '';
+    let value = document.getElementById("pdb-structure").textContent;
+    value = value.slice(value.indexOf(":") + 2, value.length);
+    let trace1 = {
+        type: 'scatter',
+        x: JSON.parse(result["bytes"])["scatter"].x,
+        y: JSON.parse(result["bytes"])["scatter"].y,
+        mode: 'markers',
+        marker: {size: 2},
+        name: `${value}`
+    };
+    let trace2 = {
+        type: 'scatter',
+        x: JSON.parse(result["bytes"])["compare"].x,
+        y: JSON.parse(result["bytes"])["compare"].y,
+        mode: 'markers',
+        marker: {size: 2},
+    }
+    let data = [ trace1, trace2 ];
+    let layout = {
+        autosize: true,
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 0,
+            pad: 4
+        },
+        paper_bgcolor:"white",
+        plot_bgcolor:"#FFFFFF"
+    };
+    let config = {responsive: true}
+    Plotly.newPlot('placeholder-scatter',data,layout,config);
+}
 document.getElementById("placeholder-pca").style.display= 'none';
 document.getElementById("placeholder-scatter").style.display= 'none';
 document.getElementById("placeholder-scatter-3d").style.display= 'none';
 document.getElementById("place-text").style.display= 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
-    (function () {
-        fetch("/create_temp_file", { method: 'POST' })
-            .then()
-            .then(() => {
-                fetch("/create_pca_plot", { method: 'POST' })
-                    .then(res => res.json())
-                    .then(pca_result => {
-                        fetch("/create_scatter_plot", { method: 'POST' })
-                            .then(res => res.json())
-                            .then(scatter_result => {
-                                let elem = document.getElementById("spinner-pca");
-                                elem.parentNode.removeChild(elem);
-                                elem = document.getElementById("spinner-scatter");
-                                elem.parentNode.removeChild(elem);
-
-                                document.getElementById("placeholder-pca").style.display= '';
-                                document.getElementById("placeholder-scatter").style.display= '';
-                                console.log(scatter_result)
-                                let trace1 = {
-                                    type: 'scatter',
-                                    x: JSON.parse(pca_result["bytes"]).x,
-                                    y: JSON.parse(pca_result["bytes"]).y,
-                                    mode: 'markers',
-                                    marker: {
-                                        color: 'rgb(17, 157, 255)',
-                                        size: 10
-                                    }
-                                };
-                                let data = [ trace1 ];
-                                let layout = {
-                                    autosize: true,
-                                    margin: {
-                                        l: 0,
-                                        r: 0,
-                                        b: 0,
-                                        t: 0,
-                                        pad: 4
-                                    },
-                                    xaxis: {
-                                        range: [0, 10]  // to set the xaxis range to 0 to 1
-                                    },
-                                    paper_bgcolor:"white",
-                                    plot_bgcolor:"#FFFFFF"
-                                };
-                                let config = {responsive: true}
-                                Plotly.newPlot('placeholder-pca',data,layout,config);
-
-
-                                trace1 = {
-                                    type: 'scatter',
-                                    x: JSON.parse(scatter_result["bytes"]).x,
-                                    y: JSON.parse(scatter_result["bytes"]).y,
-                                    mode: 'markers',
-                                    marker: {
-                                        color: 'rgba(17, 157, 255, 0.35)',
-                                        size: 10
-                                    }
-                                };
-                                data = [ trace1 ];
-                                layout = {
-                                    autosize: true,
-                                    margin: {
-                                        l: 0,
-                                        r: 0,
-                                        b: 0,
-                                        t: 0,
-                                        pad: 4
-                                    },
-                                    paper_bgcolor:"white",
-                                    plot_bgcolor:"#FFFFFF"
-                                };
-                                config = {responsive: true}
-                                Plotly.newPlot('placeholder-scatter',data,layout,config);
-                            })
-                    })
-                fetch("/pca_plotly_plot", { method: 'POST' })
-                    .then(res => res.json())
-                    .then(result => {
-                        let elem = document.getElementById("spinner-scatter-3d");
-                        elem.parentNode.removeChild(elem);
-                        document.getElementById("placeholder-scatter-3d").style.display= '';
-                        let trace1 = {
-                            type: 'scatter3d',
-                            x: JSON.parse(result["bytes"]).x,
-                            y: JSON.parse(result["bytes"]).y,
-                            z: JSON.parse(result["bytes"]).z,
-                            mode: 'markers',
-                            marker: {
-                                size: 2
-                            }
-                        };
-                        let data = [ trace1 ];
-                        let layout = {
-                            autosize: true,
-                            margin: {
-                                l: 0,
-                                r: 0,
-                                b: 0,
-                                t: 0,
-                                pad: 4
-                            },
-                            scene: {
-                                aspectmode: "data",
-                                xaxis: {
-                                    showspikes: false,
-                                    backgroundcolor: "#edf3fa",
-                                    showbackground: true
-                                },
-                                yaxis: {
-                                    showspikes: false,
-                                    backgroundcolor: "#edf3fa",
-                                    showbackground: true
-                                },
-                                zaxis: {
-                                    showspikes: false,
-                                    backgroundcolor: "#edf3fa",
-                                    showbackground: true
-                                }
-                            },
-                            paper_bgcolor:"white",
-                            plot_bgcolor:"#00FF00"
-                        };
-                        let config = {responsive: true}
-                        Plotly.newPlot('placeholder-scatter-3d',data,layout,config);
-                    })
-            })
+    (async function getResultCoordinates() {
+        const response = await fetch("/test", { method: 'POST' });
+        const result = await response.json();
+        create3dPlot(result)
+        createDimPlot(result)
+        create2dPlot(result)
     })();
     (async function getChains() {
         const response = await fetch("/get_chains", { method: 'POST' });

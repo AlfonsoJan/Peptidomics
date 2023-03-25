@@ -7,4 +7,6 @@ public interface PythonConstructor {
     String createScatterPlot(String pythonPath, String numpyPath);
     String createPlotlyPcaPlot(String pythonPath, String numpyPath);
     String getChainsPBD(String pythonPath, String pdbID);
+
+    String PDBAnalyse(String pythonPath, String pdbID, String param, String comparePDB);
 }
