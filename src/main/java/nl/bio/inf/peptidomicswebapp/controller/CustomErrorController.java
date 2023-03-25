@@ -27,7 +27,12 @@ public class CustomErrorController implements ErrorController {
     public String renderErrorPage(Model model, final HttpServletRequest request) throws IOException {
         final int errorCode = getHttpStatusCode(request);
         final String errorMessage = errorService.generateErrorMessage(errorCode);
-        LOGGER.severe(String.format("Error with code: %s", errorCode));
+        String originalUrl = (String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+        if (404 == errorCode) {
+            LOGGER.severe(String.format("Error with code: 404, url: %s", originalUrl));
+        } else {
+            LOGGER.severe(String.format("Error with code: %s", errorCode));
+        }
         model.addAttribute("errorCode", errorCode);
         model.addAttribute("errorMsg", errorMessage);
         return "error";

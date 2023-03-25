@@ -45,6 +45,25 @@ public class ResultController {
         return pdb;
     }
 
+    @PostMapping(value = "/get_chains")
+    public @ResponseBody Plot getChains(HttpServletRequest request){
+        try {
+            PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
+            File folderScripts  = new ClassPathResource("scripts").getFile();
+            File fullPath = null;
+            for (File f: folderScripts.listFiles()) {
+                if("retrieve_chains_pdb.py".equals(f.getName())) {
+                    fullPath = f;
+                }
+            }
+            String chain = pythonService.getChainsPBD(String.valueOf(fullPath), pdb.getStructureId());
+            return new Plot(chain);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 
     @PostMapping(value = "/create_temp_file" , produces = MediaType.APPLICATION_JSON_VALUE)
     public void createTempFile(HttpServletRequest request, HttpSession session) {

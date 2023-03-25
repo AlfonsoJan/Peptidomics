@@ -30,6 +30,26 @@ public class PythonService implements PythonConstructor{
         }
     }
 
+    public String getChainsPBD(String pythonPath, String pdbID) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID);
+            Process p = pb.start();
+            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            StringBuilder buffer = new StringBuilder();
+            while ((line = in.readLine()) != null){
+                buffer.append(line);;
+            }
+            if (p.waitFor() != 0) {
+                LOGGER.warning("There was an error while retrieving the chains");
+            }
+            in.close();
+            return buffer.toString();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public String createPcaPlot(String pythonPath, String numpyPath) {
         ProcessBuilder pb = new ProcessBuilder()
