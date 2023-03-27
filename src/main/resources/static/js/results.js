@@ -30,7 +30,9 @@ function create3dPlot(result) {
         y: JSON.parse(result["bytes"])["scatter"].y,
         z: JSON.parse(result["bytes"])["scatter"].z,
         mode: 'markers',
-        marker: {size: 2},
+        marker: {
+            size: 2,
+            color: 'rgba(122, 206, 255, 0.9)'},
         name: `${value}`
     };
     let trace2 = {
@@ -39,7 +41,10 @@ function create3dPlot(result) {
         y: JSON.parse(result["bytes"])["compare"].y,
         z: JSON.parse(result["bytes"])["compare"].z,
         mode: 'markers',
-        marker: {size: 2},
+        marker: {
+            size: 1,
+            color: 'rgba(191, 205, 233, 1)'}
+        ,
     };
     let data = [ trace1, trace2 ];
     let layout = {
@@ -123,20 +128,26 @@ function create2dPlot(result) {
     document.getElementById("placeholder-scatter").style.display= '';
     let value = document.getElementById("pdb-structure").textContent;
     value = value.slice(value.indexOf(":") + 2, value.length);
-    let trace1 = {
+    let trace2 = {
         type: 'scatter',
         x: JSON.parse(result["bytes"])["scatter"].x,
         y: JSON.parse(result["bytes"])["scatter"].y,
         mode: 'markers',
-        marker: {size: 2},
+        marker: {
+            color: 'rgba(122, 206, 255, 0.6)',
+            size: 10
+        },
         name: `${value}`
     };
-    let trace2 = {
+    let trace1 = {
         type: 'scatter',
         x: JSON.parse(result["bytes"])["compare"].x,
         y: JSON.parse(result["bytes"])["compare"].y,
         mode: 'markers',
-        marker: {size: 2},
+        marker: {
+            color: 'rgba(191, 205, 233, 0.2)',
+            size: 10
+        }
     }
     let data = [ trace1, trace2 ];
     let layout = {
