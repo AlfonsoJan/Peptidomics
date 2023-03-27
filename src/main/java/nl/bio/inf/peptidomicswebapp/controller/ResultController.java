@@ -37,8 +37,7 @@ public class ResultController {
         PDB pdb;
         try {
             pdb = (PDB) request.getSession().getAttribute("PDBFiles");
-            pdbParser.setParams(pdb);
-            pdbParser.startFile();
+            pdbParser.startFile(pdb);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
