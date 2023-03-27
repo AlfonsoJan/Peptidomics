@@ -10,17 +10,15 @@ import java.util.*;
 
 @Service
 public class PDBParser {
-    private PDB pdb;
     private Map<String, Integer> map;
     private ArrayList<Chain> chains;
 
     public void setParams(PDB pdb) {
-        this.pdb = pdb;
         this.map = new HashMap<>();
         this.chains = new ArrayList<>();
     }
 
-    public void startFile() throws IOException {
+    public void startFile(PDB pdb) throws IOException {
         InputStream input = new ByteArrayInputStream(pdb.getBytes());
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         String line;

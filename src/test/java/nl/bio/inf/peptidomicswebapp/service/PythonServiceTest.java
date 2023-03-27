@@ -18,9 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PythonServiceTest {
 
-    private final String program = "python3";
-    private final String options = "-u";
-
     private final PythonService service = new PythonService();
 
     static String testResources;
