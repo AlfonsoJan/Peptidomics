@@ -16,8 +16,8 @@ class NumpyEncoder(json.JSONEncoder):
 
 def getAtomPDB(pdb, param):
     try:
-        fd, path = tempfile.mkstemp(suffix=".pdb")
-        with os.fdopen(fd, 'w') as tmp:
+        path = tempfile.NamedTemporaryFile(suffix=".pdb")
+        with open(path.name, 'w') as tmp:
             url = f"https://files.rcsb.org/download/{pdb}.pdb"
             with requests.get(url, stream=True) as r:
                 r.raise_for_status()
@@ -25,7 +25,7 @@ def getAtomPDB(pdb, param):
                     if line:
                         if line.decode('utf-8').startswith("ATOM"):
                             tmp.write(f"{line.decode('utf-8')}\n")
-        u = mda.Universe(path)
+        u = mda.Universe(path.name)
         selection = 'protein and (name N or name CA or name C or name O)'
         protein = u.select_atoms(selection)
         coordinates = protein.positions
@@ -36,8 +36,8 @@ def getAtomPDB(pdb, param):
         P -= P.mean(axis=1)[:, None, :]
         return P
     finally:
-        os.close(fd)
-        os.remove(path)
+        tmp.close()
+        os.remove(path.name)
 
 
 def dimPlot(P):
