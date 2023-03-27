@@ -46,6 +46,12 @@ html,body {
     color: darkblue;
 }
 
+#mydiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 #placeholder-pca {
     height: 350px !important;
