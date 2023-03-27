@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 @Service
 public class PythonService implements PythonConstructor{
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
-
-    private final String program = "python";
+    private static final int EXIT_CODE = 0;
+    private final String program = "python3";
     private final String options = "-u";
 
     @Override
@@ -21,7 +21,7 @@ public class PythonService implements PythonConstructor{
             ProcessBuilder pb = new ProcessBuilder()
                     .command(program, options, pythonPath, pdbPath, uniqueNameNumpy, parameter);
             Process p = pb.start();
-            if (p.waitFor() != 0) {
+            if (p.waitFor() != EXIT_CODE) {
                 LOGGER.warning("There was an error while creating a temporary numpy file");
             }
         } catch (IOException | InterruptedException ex) {
@@ -40,29 +40,8 @@ public class PythonService implements PythonConstructor{
             while ((line = in.readLine()) != null){
                 buffer.append(line);;
             }
-            if (p.waitFor() != 0) {
+            if (p.waitFor() != EXIT_CODE) {
                 LOGGER.warning("There was an error while retrieving the chains");
-            }
-            in.close();
-            return buffer.toString();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public String PDBAnalyse(String pythonPath, String pdbID, String param, String comparePDB) {
-        try {
-            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID, param, comparePDB);
-            Process p = pb.start();
-            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
-            StringBuilder buffer = new StringBuilder();
-            while ((line = in.readLine()) != null){
-                buffer.append(line);;
-            }
-            if (p.waitFor() != 0) {
-                LOGGER.warning("There was an error while testing the chains");
             }
             in.close();
             return buffer.toString();
