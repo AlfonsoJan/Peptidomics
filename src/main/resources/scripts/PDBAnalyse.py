@@ -57,6 +57,7 @@ def scatter(P):
 
 
 def main(args):
+
     P = getAtomPDB(args[1], args[2])
     P_compare = getAtomPDB(args[3], args[2])
     dim_plot = dimPlot(P)
