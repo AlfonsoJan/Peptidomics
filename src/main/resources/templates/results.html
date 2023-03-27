@@ -103,8 +103,7 @@
   </div>
 </section>
 
-
-<script type="text/javascript" th:src="@{js/JSmol.min.js}" src="../static/js/JSmol.min.js"></script>
+<script src=https://chemapps.stolaf.edu/jmol/files/JSmolMin2.js></script>
 <script type="text/javascript">
 
   $(document).ready(function() {
@@ -114,7 +113,7 @@
       width: 800,
       height: 400,
       debug: false,
-      j2sPath: "j2s",
+      j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
       color: "0xC0C0C0",
       disableJ2SLoadMonitor: true,
       disableInitialConsole: true,
@@ -124,9 +123,7 @@
       readyFunction: null,
       script: `load "=${value}"; cartoons only; color structure;`
     }
-
     $("#mydiv").html(Jmol.getAppletHtml("jmol1",Info))
-
   });
 
 </script>
