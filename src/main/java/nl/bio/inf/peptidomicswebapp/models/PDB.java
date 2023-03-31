@@ -1,17 +1,11 @@
 package nl.bio.inf.peptidomicswebapp.models;
 
-import io.micrometer.common.util.StringUtils;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class PDB {
     private static final String DOWNLOAD_BY_ID_URL = "https://files.rcsb.org/download/%s.pdb";
@@ -19,7 +13,6 @@ public class PDB {
     private final String structureId;
     private final byte[] bytes;
     private final String fileName;
-    private List<Chain> chainList = new ArrayList<>();
 
     public PDB(String structureId) throws IOException {
         this.structureId = structureId;
@@ -27,29 +20,10 @@ public class PDB {
         this.fileName = structureId + ".pdb";
     }
 
-    public PDB(String fileName, byte[] fileBytes, String structureId){
+    public PDB(byte[] fileBytes, String fileName) throws IOException {
+        this.structureId = getStructureFromInputstream(fileBytes);
+        this.bytes = fileBytes;
         this.fileName = fileName;
-        this.bytes  = fileBytes;
-        this.structureId = structureId;
-    }
-
-    public void setChainList(List<Chain> chainList) {
-        this.chainList = chainList;
-    }
-
-    public List<Chain> getChainList() {
-        return chainList;
-    }
-
-    public static String getStructureFromInputstream(InputStream is) throws IOException {
-        String line;
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-        while( (line = bufferedReader.readLine()) != null ) {
-            if (line.startsWith("HEADER")) {
-                return line.strip().substring(line.strip().lastIndexOf(" ")+1);
-            }
-        }
-        return "";
     }
 
     private InputStream getInputStream() throws IOException {
@@ -58,8 +32,74 @@ public class PDB {
         return connection.getInputStream();
     }
 
+    private static InputStream getInputStream(String pdbCode) throws IOException {
+        URL url = new URL(String.format(DOWNLOAD_BY_ID_URL, pdbCode));
+        URLConnection connection = url.openConnection();
+        return connection.getInputStream();
+    }
+
+    public static String getStructureFromInputstream(byte[] fileBytes) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileBytes)));
+        String line;
+        while( (line = reader.readLine()) != null ) {
+            if (line.startsWith("HEADER")) {
+                line = line.strip().substring(line.strip().lastIndexOf(" ")+1);
+                break;
+            }
+        }
+        reader.close();
+        return line;
+    }
+
     private byte[] getBytesConnection() throws IOException {
         return getInputStream().readAllBytes();
+    }
+
+    private static byte[] getBytesConnection(String pdbCode) throws IOException {
+        return getInputStream(pdbCode).readAllBytes();
+    }
+
+    public String createTempFile() {
+        try {
+            Path tempFilePath = Files.createTempFile(null, ".pdb");
+            FileOutputStream fos = new FileOutputStream(tempFilePath.toFile());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
+            while(reader.ready()) {
+                String line = reader.readLine();
+                if (line.toUpperCase().startsWith("ATOM")) {
+                    fos.write((line + "\n").getBytes(StandardCharsets.UTF_8));
+                }
+            }
+            reader.close();
+            fos.close();
+            return tempFilePath.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String createTempFile(String pdbCode) {
+        try {
+            byte[] fileBytes = getBytesConnection(pdbCode);
+            Path tempFilePath = Files.createTempFile(null, ".pdb");
+            FileOutputStream fos = new FileOutputStream(tempFilePath.toFile());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileBytes)));
+            while(reader.ready()) {
+                String line = reader.readLine();
+                if (line.toUpperCase().startsWith("ATOM")) {
+                    fos.write((line + "\n").getBytes(StandardCharsets.UTF_8));
+                }
+            }
+            reader.close();
+            fos.close();
+            return tempFilePath.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getStructureId() {
+        return this.structureId;
     }
 
     public byte[] getBytes(){
@@ -68,9 +108,5 @@ public class PDB {
 
     public String getFileName() {
         return fileName;
-    }
-
-    public String getStructureId() {
-        return this.structureId;
     }
 }

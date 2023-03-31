@@ -1,9 +1,6 @@
 import MDAnalysis as mda
 import numpy as np
 import json
-import requests
-import tempfile
-import os
 import sys
 
 
@@ -14,30 +11,17 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def getAtomPDB(pdb, param):
-    try:
-        path = tempfile.NamedTemporaryFile(suffix=".pdb")
-        with open(path.name, 'w') as tmp:
-            url = f"https://files.rcsb.org/download/{pdb}.pdb"
-            with requests.get(url, stream=True) as r:
-                r.raise_for_status()
-                for line in r.iter_lines():
-                    if line:
-                        if line.decode('utf-8').startswith("ATOM"):
-                            tmp.write(f"{line.decode('utf-8')}\n")
-        u = mda.Universe(path.name)
-        selection = 'protein and (name N or name CA or name C or name O)'
-        protein = u.select_atoms(selection)
-        coordinates = protein.positions
-        parts = np.split(coordinates,
-                         4 * np.where(((coordinates[4::4] - coordinates[2:-3:4]) ** 2).sum(axis=1) > 3)[0] + 4)
-        n = int(param) * 4
-        P = np.array([p[i:i + n] for p in parts for i in range(0, len(p) - n, 4)])
-        P -= P.mean(axis=1)[:, None, :]
-        return P
-    finally:
-        tmp.close()
-        os.remove(path.name)
+def getAtomPDB(path, param):
+    u = mda.Universe(path)
+    selection = 'protein and (name N or name CA or name C or name O)'
+    protein = u.select_atoms(selection)
+    coordinates = protein.positions
+    parts = np.split(coordinates,
+                     4 * np.where(((coordinates[4::4] - coordinates[2:-3:4]) ** 2).sum(axis=1) > 3)[0] + 4)
+    n = int(param) * 4
+    P = np.array([p[i:i + n] for p in parts for i in range(0, len(p) - n, 4)])
+    P -= P.mean(axis=1)[:, None, :]
+    return P
 
 
 def dimPlot(P):

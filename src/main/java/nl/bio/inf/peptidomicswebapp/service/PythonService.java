@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class PythonService implements PythonConstructor{
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
     private static final int EXIT_CODE = 0;
-    private final String program = "python3";
+    private final String program = "python";
     private final String options = "-u";
 
     @Override
