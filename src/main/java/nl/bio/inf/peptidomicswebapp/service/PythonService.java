@@ -118,4 +118,26 @@ public class PythonService implements PythonConstructor{
             throw new RuntimeException(ex);
         }
     }
+
+
+    @Override
+    public String PDBAnalyse(String pythonPath, String pdbID, String param, String comparePDB) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID, param, comparePDB);
+            Process p = pb.start();
+            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            StringBuilder buffer = new StringBuilder();
+            while ((line = in.readLine()) != null){
+                buffer.append(line);;
+            }
+            if (p.waitFor() != 0) {
+                LOGGER.warning("There was an error while testing the chains");
+            }
+            in.close();
+            return buffer.toString();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
