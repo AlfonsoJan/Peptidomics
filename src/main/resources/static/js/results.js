@@ -30,7 +30,9 @@ function create3dPlot(result) {
         y: JSON.parse(result["bytes"])["scatter"].y,
         z: JSON.parse(result["bytes"])["scatter"].z,
         mode: 'markers',
-        marker: {size: 2},
+        marker: {
+            size: 2,
+            color: 'rgba(122, 206, 255, 0.9)'},
         name: `${value}`
     };
     let trace2 = {
@@ -39,7 +41,10 @@ function create3dPlot(result) {
         y: JSON.parse(result["bytes"])["compare"].y,
         z: JSON.parse(result["bytes"])["compare"].z,
         mode: 'markers',
-        marker: {size: 2},
+        marker: {
+            size: 1,
+            color: 'rgba(191, 205, 233, 1)'}
+        ,
     };
     let data = [ trace1, trace2 ];
     let layout = {
@@ -113,9 +118,9 @@ function createDimPlot(result) {
         },
         paper_bgcolor:"white",
         plot_bgcolor:"#FFFFFF",
-        };
-        let config = {responsive: true}
-        Plotly.newPlot('placeholder-pca',data,layout,config);
+    };
+    let config = {responsive: true}
+    Plotly.newPlot('placeholder-pca',data,layout,config);
 }
 function create2dPlot(result) {
     let elem = document.getElementById("spinner-scatter");
@@ -123,20 +128,26 @@ function create2dPlot(result) {
     document.getElementById("placeholder-scatter").style.display= '';
     let value = document.getElementById("pdb-structure").textContent;
     value = value.slice(value.indexOf(":") + 2, value.length);
-    let trace1 = {
+    let trace2 = {
         type: 'scatter',
         x: JSON.parse(result["bytes"])["scatter"].x,
         y: JSON.parse(result["bytes"])["scatter"].y,
         mode: 'markers',
-        marker: {size: 2},
+        marker: {
+            color: 'rgba(122, 206, 255, 0.6)',
+            size: 10
+        },
         name: `${value}`
     };
-    let trace2 = {
+    let trace1 = {
         type: 'scatter',
         x: JSON.parse(result["bytes"])["compare"].x,
         y: JSON.parse(result["bytes"])["compare"].y,
         mode: 'markers',
-        marker: {size: 2},
+        marker: {
+            color: 'rgba(191, 205, 233, 0.2)',
+            size: 10
+        }
     }
     let data = [ trace1, trace2 ];
     let layout = {
@@ -154,60 +165,67 @@ function create2dPlot(result) {
     let config = {responsive: true}
     Plotly.newPlot('placeholder-scatter',data,layout,config);
 }
+function setChain(chains) {
+    const chunkSize = 4
+    const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
+    if (chain.length < 1) {
+        let element = document.getElementById("stats-spinner");
+        element.parentElement.removeChild(element);
+        document.getElementById("place-text").style.display = '';
+        return;
+    }
+    let elem = document.getElementById("pdb-stats");
+    elem.parentElement.removeChild(elem);
+    for (let i = 0; i < chain.length; i += chunkSize) {
+        const chunk = chain.slice(i, i + chunkSize);
+        const columns = document.createElement("div");
+        columns.className = "columns";
+
+        chunk.forEach(function (i) {
+            const column = document.createElement("div");
+            column.className = "column";
+            columns.appendChild(column);
+
+            const card = document.createElement("div");
+            card.className = "card";
+            column.appendChild(card);
+
+            const cardContent = document.createElement("div");
+            cardContent.className = "card-content";
+            card.appendChild(cardContent);
+
+            const chainId = document.createElement("p");
+            chainId.className = "is-size-5 has-text-weight-bold";
+            chainId.textContent = `Chain: ${i[0]}`;
+            cardContent.appendChild(chainId);
+
+            const atomLength = document.createElement("p");
+            atomLength.className = "is-size-5";
+            atomLength.textContent = `ATOM: ${i[1]} residues`;
+            cardContent.appendChild(atomLength);
+        });
+        document.getElementById("stats-pdb").appendChild(columns);
+    }
+}
 document.getElementById("placeholder-pca").style.display= 'none';
 document.getElementById("placeholder-scatter").style.display= 'none';
 document.getElementById("placeholder-scatter-3d").style.display= 'none';
 document.getElementById("place-text").style.display= 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
-    (async function getResultCoordinates() {
-        const response = await fetch("/test", { method: 'POST' });
-        const result = await response.json();
-        create3dPlot(result)
-        createDimPlot(result)
-        create2dPlot(result)
-    })();
-    (async function getChains() {
-        const response = await fetch("/get_chains", { method: 'POST' });
-        const chains = await response.json();
-        const chunkSize = 4
-        const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
-        if (chain.length < 1) {
-            let element = document.getElementById("stats-spinner");
-            element.parentElement.removeChild(element);
-            document.getElementById("place-text").style.display = '';
-            return;
-        }
-        let elem = document.getElementById("pdb-stats");
-        elem.parentElement.removeChild(elem);
-        for (let i = 0; i < chain.length; i += chunkSize) {
-            const chunk = chain.slice(i, i + chunkSize);
-            const columns = document.createElement("div");
-            columns.className = "columns";
+    (async function getData() {
+        const response = await fetch("/create_temp_file", { method: 'POST' });
+        if (response.ok) {
+            const chainResponse = await fetch("/get_chains", { method: 'POST' });
+            const chainResult = await chainResponse.json();
+            setChain(chainResult)
 
-            chunk.forEach(function (i) {
-                const column = document.createElement("div");
-                column.className = "column";
-                columns.appendChild(column);
-
-                const card = document.createElement("div");
-                card.className = "card";
-                column.appendChild(card);
-
-                const cardContent = document.createElement("div");
-                cardContent.className = "card-content";
-                card.appendChild(cardContent);
-
-                const chainId = document.createElement("p");
-                chainId.className = "is-size-5 has-text-weight-bold";
-                chainId.textContent = `Chain: ${i[0]}`;
-                cardContent.appendChild(chainId);
-
-                const atomLength = document.createElement("p");
-                atomLength.className = "is-size-5";
-                atomLength.textContent = `ATOM: ${i[1]} residues`;
-                cardContent.appendChild(atomLength);
-            });
-            document.getElementById("stats-pdb").appendChild(columns);
+            const dataResponse = await fetch("/create_compare_test", { method: 'POST' });
+            const dataResult = await dataResponse.json();
+            create3dPlot(dataResult)
+            createDimPlot(dataResult)
+            create2dPlot(dataResult)
+        } else {
+            console.log("Error!")
         }
     })();
     (function () {
