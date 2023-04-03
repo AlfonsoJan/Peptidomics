@@ -28,9 +28,9 @@ public class UploadController {
                                  String compare_code,
                                  HttpSession session) {
         try {
-            PDB pdb = new PDB(pdbCode);
+            PDB testPDB = new PDB(pdbCode);
             session.setAttribute("parameter", param_code);
-            session.setAttribute("PDBFiles", pdb);
+            session.setAttribute("PDBFiles", testPDB);
             session.setAttribute("compareCode", compare_code);
             return "redirect:/result";
         } catch (IOException ex) {
@@ -44,11 +44,11 @@ public class UploadController {
                                   String param_file,
                                   String compare_file,
                                   HttpSession session) {
-        session.setAttribute("compareCode", compare_file);
         try {
-            PDB pdb = new PDB(file.getOriginalFilename(), file.getBytes(), PDB.getStructureFromInputstream(file.getInputStream()));
+            PDB testPDB = new PDB(file.getBytes(), file.getOriginalFilename());
             session.setAttribute("parameter", param_file);
-            session.setAttribute("PDBFiles", pdb);
+            session.setAttribute("PDBFiles", testPDB);
+            session.setAttribute("compareCode", compare_file);
             return "redirect:/result";
         } catch (IOException ex) {
             LOGGER.warning("Error while reading PDB file, message=" + ex.getMessage());
@@ -63,13 +63,13 @@ public class UploadController {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             if (pdb == null || pdb.getStructureId() == null) {
                 LOGGER.warning(String.format("PDB structure of %s is null", request.getSession().getId()));
-                return "redirect:/";
+                return "redirect:/upload";
             }
             model.addAttribute("fileName", "<strong>Results of: </strong>" + pdb.getStructureId());
             return "results";
         } catch (ClassCastException ex) {
             LOGGER.warning("Error while class casting to PDB, message=" + ex.getMessage());
-            return "redirect:/";
+            return "redirect:/upload";
         }
     }
 }

@@ -1,6 +1,7 @@
 package nl.bio.inf.peptidomicswebapp.service;
 
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -10,10 +11,14 @@ import java.util.logging.Logger;
 
 @Service
 public class PythonService implements PythonConstructor{
-    private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
-    private final String program = "python3";
-    private final String options = "-u";
+    @Value("${python.path-name}")
+    private String program;
+
+    @Value("${python.path-optons}")
+    private String options;
+    private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
+    private static final int EXIT_CODE = 0;
 
     @Override
     public void createTempNumpyFile(String pythonPath, String uniqueNameNumpy, String pdbPath, String parameter) {
@@ -21,7 +26,7 @@ public class PythonService implements PythonConstructor{
             ProcessBuilder pb = new ProcessBuilder()
                     .command(program, options, pythonPath, pdbPath, uniqueNameNumpy, parameter);
             Process p = pb.start();
-            if (p.waitFor() != 0) {
+            if (p.waitFor() != EXIT_CODE) {
                 LOGGER.warning("There was an error while creating a temporary numpy file");
             }
         } catch (IOException | InterruptedException ex) {
@@ -40,7 +45,7 @@ public class PythonService implements PythonConstructor{
             while ((line = in.readLine()) != null){
                 buffer.append(line);;
             }
-            if (p.waitFor() != 0) {
+            if (p.waitFor() != EXIT_CODE) {
                 LOGGER.warning("There was an error while retrieving the chains");
             }
             in.close();

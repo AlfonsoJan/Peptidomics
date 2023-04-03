@@ -5,6 +5,7 @@
   <title>Peptodomics</title>
   <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
   <link rel="stylesheet" th:href="@{css/results.css}" href="../static/css/index.css"/>
+  <link rel="stylesheet" th:href="@{css/general.css}" href="../static/css/general.css"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{js/toastr.min.js}" src="../static/js/toastr.min.js"></script>
@@ -96,38 +97,14 @@
   <div class="container has-text-centered">
     <div class="columns is-centered" style="padding: 2rem">
       <div class="column" id="3d-protein">
-        <span id=mydiv></span>
+        <span id=protein></span>
       </div>
     </div>
   </div>
 </section>
 
-<script src=https://chemapps.stolaf.edu/jmol/files/JSmolMin2.js></script>
-<script type="text/javascript">
-
-  $(document).ready(function() {
-    let value = document.getElementById("pdb-structure").textContent;
-    value = value.slice(value.indexOf(":") + 2, value.length);
-    Info = {
-      width: 800,
-      height: 400,
-      debug: false,
-      j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
-      color: "0xC0C0C0",
-      disableJ2SLoadMonitor: true,
-      disableInitialConsole: true,
-      addSelectionOptions: false,
-      serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
-      use: "HTML5",
-      readyFunction: null,
-      script: `load "=${value}"; cartoons only; color structure;`
-    }
-    $("#mydiv").html(Jmol.getAppletHtml("jmol1",Info))
-  });
-
-</script>
-
 <div th:replace="~{fragments :: footer}"></div>
+<script src=https://chemapps.stolaf.edu/jmol/files/JSmolMin2.js></script>
 <script type="text/javascript" src="../static/js/results.js" th:src="@{js/results.js}"></script>
 </body>
 </html>

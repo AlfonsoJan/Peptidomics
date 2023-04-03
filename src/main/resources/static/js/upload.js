@@ -52,8 +52,17 @@ function getFileName(el) {
     document.getElementById("pdb-input-form").style.display = 'none';
     document.getElementById("file-upload").required = true;
 })()
+
+async function checkPDBCode(value) {
+    const response = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, { method: 'GET' })
+    return response;
+}
+async function checkPDBSize(value) {
+    const response = fetch(`https://files.rcsb.org/download/${value}.pdb`)
+    return response;
+}
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.getElementById('pdb-input-form').addEventListener('submit', function(event){
+    document.getElementById('pdb-input-form').addEventListener('submit', async function (event) {
         event.preventDefault();
         document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
         if (document.getElementById("param_file").value < 2) {
@@ -61,44 +70,62 @@ document.addEventListener('DOMContentLoaded', (event) => {
             return;
         }
 
-        let value = document.getElementById("input-pdb").value;
-        fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, { method: 'GET' })
-            .then((response) => {
-                if (!response.ok) {
-                    document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
-                    toastr.error(`${value} is not a valid PDB code!`);
-                    return Promise.reject(response);
-                }
-                return response.json();
-            })
-            .then((result) => {
-                fetch(`https://files.rcsb.org/download/${value}.pdb`).then(res => {
-                    if (!res.ok) {
-                        document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
-                        toastr.warning(`${value} does not exist in a PDB format!`);
-                        return Promise.reject(res);
-                    }
-                    document.getElementById("input-pdb").value = result["entry"].id;
-                    window.location.replace(document.referrer);
-                    document.getElementById("pdb-input-form").submit();
-                })
-            })
-            .catch((error) => console.log(error));
+        let compareCode = document.getElementById("compare_code").value;
+        const compareStatus = await checkPDBCode(compareCode)
+        if (!compareStatus.ok) {
+            toastr.error(`${compareCode} is not a valid PDB code!`);
+            document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
+            return;
+        }
+        const compareSize = await checkPDBSize(compareCode)
+        if (!compareSize.ok) {
+            toastr.warning(`${compareCode} does not exist in a PDB format!`);
+            document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
+            return;
+        }
+
+        let pdbCode = document.getElementById("input-pdb").value;
+        const pdbStatus = await checkPDBCode(pdbCode)
+        if (!pdbStatus.ok) {
+            toastr.error(`${pdbCode} is not a valid PDB code!`);
+            document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
+            return;
+        }
+        const pdbSize = await checkPDBSize(pdbCode)
+        if (!pdbSize.ok) {
+            toastr.warning(`${pdbCode} does not exist in a PDB format!`);
+            document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
+            return;
+        }
+        window.location.replace(document.referrer);
+        document.getElementById("pdb-input-form").submit();
     });
-    document.getElementById('file-upload-form').addEventListener('submit', function(event){
+    document.getElementById('file-upload-form').addEventListener('submit', async function (event) {
         event.preventDefault();
-        let value = document.getElementById("file-upload").value;
+        document.getElementById("file-upload-form").lastElementChild.classList.add("is-loading");
         let length = document.getElementById("param_file").value;
         if (isNaN(length)) {
             toastr.warning(`${length} is not a number!`);
+            document.getElementById("file-upload-form").lastElementChild.classList.remove("is-loading");
             return;
         }
         if (length < 2) {
             toastr.error(`Please type in a length higher then 1!`);
+            document.getElementById("file-upload-form").lastElementChild.classList.remove("is-loading");
             return;
         }
+
+        let compareCode = document.getElementById("compare_file").value;
+        const compareStatus = await checkPDBCode(compareCode)
+        if (!compareStatus.ok) {
+            toastr.error(`${compareCode} is not a valid PDB code!`);
+            document.getElementById("file-upload-form").lastElementChild.classList.remove("is-loading");
+            return;
+        }
+
+        let value = document.getElementById("file-upload").value;
         if (value.length > 0) {
-            document.getElementById("file-upload-form").lastElementChild.classList.add("is-loading");
+
             window.location.replace(document.referrer);
             document.getElementById("file-upload-form").submit();
         }
