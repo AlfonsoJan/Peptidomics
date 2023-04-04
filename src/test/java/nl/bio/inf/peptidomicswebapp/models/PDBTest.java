@@ -80,4 +80,28 @@ class PDBTest {
         PDB pdb = new PDB(code);
         assertEquals(code, pdb.getStructureId());
     }
+
+    @Test
+    void testGetStructureFromInputstream() {
+    }
+
+    @Test
+    void createTempFile() {
+    }
+
+    @Test
+    void testCreateTempFile() {
+    }
+
+    @Test
+    void testGetStructureId() {
+    }
+
+    @Test
+    void testGetBytes() {
+    }
+
+    @Test
+    void testGetFileName() {
+    }
 }
