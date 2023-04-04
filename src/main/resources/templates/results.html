@@ -74,7 +74,6 @@
         </div>
       </div>
     </div>
-
     <div class="columns is-centered">
       <div class="column is-full">
         <div class="card">
@@ -94,10 +93,18 @@
     </div>
   </div>
 </section>
-
-
+<section class="section" style="padding-top: 0">
+  <div class="container has-text-centered">
+    <div class="columns is-centered" style="padding: 2rem">
+      <div class="column" id="3d-protein">
+        <span id=protein></span>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div th:replace="~{fragments :: footer}"></div>
+<script src=https://chemapps.stolaf.edu/jmol/files/JSmolMin2.js></script>
 <script type="text/javascript" src="../static/js/results.js" th:src="@{js/results.js}"></script>
 </body>
 </html>

@@ -36,10 +36,11 @@ public class ResultController {
     }
 
     @PostMapping(value = "/create_compare_test")
-    public Plot tester1(HttpServletRequest request) {
+    public Plot tester1(HttpServletRequest request, HttpSession session) {
         try {
             String compareCode = String.valueOf(request.getSession().getAttribute("compareCode"));
             String location = PDB.createTempFile(compareCode);
+            session.setAttribute("tempLocationCompare", location);
             File folderScripts = new ClassPathResource("scripts").getFile();
             File fullPath = null;
             for (File f: folderScripts.listFiles()) {
