@@ -25,12 +25,13 @@ public class UploadController {
     @PostMapping(value = "/result_from_code")
     public String resultFromCode(@RequestParam("pdb_code") String pdbCode,
                                  String param_code,
+                                 String compare_code,
                                  HttpSession session) {
-
         try {
-            PDB pdb = new PDB(pdbCode);
+            PDB testPDB = new PDB(pdbCode);
             session.setAttribute("parameter", param_code);
-            session.setAttribute("PDBFiles", pdb);
+            session.setAttribute("PDBFiles", testPDB);
+            session.setAttribute("compareCode", compare_code);
             return "redirect:/result";
         } catch (IOException ex) {
             LOGGER.warning("Error while reading creating PDB class with pdb code, message=" + ex.getMessage());
@@ -41,11 +42,13 @@ public class UploadController {
     @PostMapping(value = "/result_from_files")
     public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file,
                                   String param_file,
+                                  String compare_file,
                                   HttpSession session) {
         try {
-            PDB pdb = new PDB(file.getOriginalFilename(), file.getBytes(), PDB.getStructureFromInputstream(file.getInputStream()));
+            PDB testPDB = new PDB(file.getBytes(), file.getOriginalFilename());
             session.setAttribute("parameter", param_file);
-            session.setAttribute("PDBFiles", pdb);
+            session.setAttribute("PDBFiles", testPDB);
+            session.setAttribute("compareCode", compare_file);
             return "redirect:/result";
         } catch (IOException ex) {
             LOGGER.warning("Error while reading PDB file, message=" + ex.getMessage());
@@ -60,13 +63,13 @@ public class UploadController {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             if (pdb == null || pdb.getStructureId() == null) {
                 LOGGER.warning(String.format("PDB structure of %s is null", request.getSession().getId()));
-                return "redirect:/";
+                return "redirect:/upload";
             }
             model.addAttribute("fileName", "<strong>Results of: </strong>" + pdb.getStructureId());
             return "results";
         } catch (ClassCastException ex) {
             LOGGER.warning("Error while class casting to PDB, message=" + ex.getMessage());
-            return "redirect:/";
+            return "redirect:/upload";
         }
     }
 }

@@ -47,7 +47,7 @@ class PDBTest {
         MultipartFile result = new MockMultipartFile(name,
                 originalFileName, contentType, content);
 
-        PDB pdb = new PDB(name, result.getBytes(), PDB.getStructureFromInputstream(result.getInputStream()));
+        PDB pdb = new PDB(result.getBytes(), name);
         assertEquals(pdb.getFileName(), "6zdh.pdb");
     }
 

@@ -14,6 +14,11 @@
     cursor: pointer;
     color: darkblue;
 }
+#protein {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 #paper-link:hover {
     cursor: pointer;
@@ -21,7 +26,12 @@
 }
 
 
-img {
+#placeholder-pca {
+    height: 350px !important;
+    max-height: 350px !important;
+}
+
+#placeholder-scatter {
     height: 350px !important;
     max-height: 350px !important;
 }

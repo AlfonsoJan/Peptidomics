@@ -7,11 +7,11 @@
 <body>
 <div class="navbar is-inline-flex is-transparent" th:fragment="navbar">
     <div class="navbar-brand">
-      <a class="navbar-item is-size-2" href="/">Peptodomics</a>
+        <a class="navbar-item is-size-2" href="/">Peptodomics</a>
     </div>
     <div class="navbar-item is-flex-touch">
-      <a class="navbar-item is-size-4" href="/">Home</a>
-      <a class="navbar-item is-size-4" href="upload">Upload</a>
+        <a class="navbar-item is-size-4" href="/">Home</a>
+        <a class="navbar-item is-size-4" href="upload">Upload</a>
     </div>
 </div>
 <div class="footer" th:fragment="footer">
@@ -19,14 +19,32 @@
         Project of <a href="https://nl.linkedin.com/in/tsjerkwassenaar">Tsjerk Wassenaar</a>
     </p>
 </div>
-<div class="field pt-1" th:fragment="paramSelector (paramID)">
-    <label class="label">Oligo Length</label>
-    <div class="select is-info">
-        <select th:id="${paramID}" onchange="getParam(this)" th:name="${paramID}">
-            <th:block th:each="i: ${#numbers.sequence(3, 12)}">
-                <option th:if="${i % 2 != 0}" th:text="${i}" th:value="${i}">_UNEVEN</option>
-            </th:block>
-        </select>
+<div class="field pt-1" th:fragment="paramSelector (paramID, compareID)">
+
+    <div class="field">
+        <label class="label">Oligo Length</label>
+        <div class="control">
+            <input th:id="${paramID}" onchange="getParam(this)" class="input" type="number" th:name="${paramID}" min="1">
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="field-label is-normal">
+            <label class="label has-text-centered">Compare against</label>
+        </div>
+        <div class="field-body">
+            <div class="field is-horizontal">
+                <input th:id="${compareID}" class="input" type="text" th:name="${compareID}" onchange="getCompare(this)" placeholder="PDB code" maxlength="4" minlength="4">
+                <button class="button" data-tooltip="The pdb you want to compare against">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-help" width="40" height="40" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                        <path d="M12 17l0 .01"></path>
+                        <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 </body>
