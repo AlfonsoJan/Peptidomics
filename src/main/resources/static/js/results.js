@@ -32,7 +32,7 @@ function create3dPlot(result) {
         mode: 'markers',
         marker: {
             size: 2,
-            color: 'rgba(122, 206, 255, 0.9)'},
+            color: 'rgba(122, 206, 255, 1)'},
         name: `${value}`
     };
     let trace2 = {

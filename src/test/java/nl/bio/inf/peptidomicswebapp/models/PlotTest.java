@@ -24,20 +24,14 @@ class PlotTest {
 
     @Test
     void createPlot() throws IOException {
-        Plot plot = new Plot(Arrays.toString(Files.readAllBytes(Paths.get(path + "/scatter_example.npy"))));
+        Plot plot = new Plot(Arrays.toString(Files.readAllBytes(Paths.get(path + "/1b58.pdb"))));
         assertNotNull(plot);
     }
 
     @Test
-    void getBytes() throws IOException {
-        Plot plot = new Plot(Arrays.toString(Files.readAllBytes(Paths.get(path + "/scatter_example.npy"))));
-        assertEquals(Arrays.toString(Files.readAllBytes(Paths.get(path + "/scatter_example.npy"))), plot.getBytes());
+    void bytes() throws IOException {
+        Plot plot = new Plot(Arrays.toString(Files.readAllBytes(Paths.get(path + "/1b58.pdb"))));
+        assertEquals(Arrays.toString(Files.readAllBytes(Paths.get(path + "/1b58.pdb"))), plot.bytes());
     }
 
-    @Test
-    void setBytes() throws IOException {
-        Plot plot = new Plot(Arrays.toString(Files.readAllBytes(Paths.get(path + "/scatter_example.npy"))));
-        plot.setBytes("x");
-        assertEquals("x", plot.getBytes());
-    }
 }
