@@ -9,6 +9,10 @@
     to {background-color: lightgray;}
 }
 
+.chain-content {
+    padding: 0;
+}
+
 #pdb-link:hover {
     cursor: pointer;
     color: darkblue;
