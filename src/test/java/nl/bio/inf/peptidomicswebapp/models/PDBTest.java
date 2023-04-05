@@ -1,7 +1,9 @@
 package nl.bio.inf.peptidomicswebapp.models;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -14,17 +16,27 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PDBTest {
 
     static String path;
+    static List<String> tempPaths = new ArrayList<>();
 
     @BeforeAll
     static void setup() {
         Path resourceDirectory = Paths.get("src","test","resources");
         path = resourceDirectory.toFile().getAbsolutePath();
+    }
+
+    @AfterAll
+    static void deleteTemp() throws IOException {
+        for (String tempPath : tempPaths) {
+            Files.deleteIfExists(Path.of(tempPath));
+        }
     }
 
     @Test
@@ -81,27 +93,42 @@ class PDBTest {
         assertEquals(code, pdb.getStructureId());
     }
 
-    @Test
-    void testGetStructureFromInputstream() {
+    @ParameterizedTest
+    @ValueSource(strings = {"6zdh", "1b58"})
+    void testGetStructureFromInputstream(String code) throws IOException {
+        PDB pdb = new PDB(code);
+        String resultCode = PDB.getStructureFromInputstream(pdb.getBytes());
+        assert(resultCode.equalsIgnoreCase(code));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"6zdh", "1b58"})
+    void testCreateTempFile(String code) throws IOException {
+        PDB pdb = new PDB(code);
+        String path = pdb.createTempFile();
+        tempPaths.add(path);
+        File file = new File(path);
+        assertTrue(file.exists());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"6zdh", "1b58"})
+    void testGetStructureId(String code) throws IOException {
+        PDB pdb = new PDB(code);
+        assert(pdb.getStructureId().equalsIgnoreCase(code));
+    }
+
+    @Disabled
+    @Test // Memory heap ?
+    void testGetBytes() throws IOException {
+        PDB pdb = new PDB("1b58");
+        byte[] bytes = Files.readAllBytes(Paths.get(path + "/1b58.pdb"));
+        assertEquals(pdb.getBytes(), bytes);
     }
 
     @Test
-    void createTempFile() {
-    }
-
-    @Test
-    void testCreateTempFile() {
-    }
-
-    @Test
-    void testGetStructureId() {
-    }
-
-    @Test
-    void testGetBytes() {
-    }
-
-    @Test
-    void testGetFileName() {
+    void testGetFileName() throws IOException {
+        PDB pdb = new PDB("1b58");
+        System.out.println(pdb.getFileName());
     }
 }
