@@ -15,6 +15,17 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+
+const HSLToRGB = (h, s, l) => {
+    s /= 100;
+    l /= 100;
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = n =>
+        l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return [255 * f(0), 255 * f(8), 255 * f(4)];
+};
+
 function insertAfter(newNode, existingNode) {
     existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
 }
@@ -176,12 +187,13 @@ function setChain(chains) {
     }
     let elem = document.getElementById("pdb-stats");
     elem.parentElement.removeChild(elem);
+    var color_count = 0;
     for (let i = 0; i < chain.length; i += chunkSize) {
         const chunk = chain.slice(i, i + chunkSize);
         const columns = document.createElement("div");
         columns.className = "columns";
 
-        chunk.forEach(function (i) {
+        chunk.forEach(function (c) {
             const column = document.createElement("div");
             column.className = "column";
             columns.appendChild(column);
@@ -191,18 +203,24 @@ function setChain(chains) {
             column.appendChild(card);
 
             const cardContent = document.createElement("div");
-            cardContent.className = "card-content";
+            cardContent.className = "chain-content card-content";
             card.appendChild(cardContent);
+
+            let hsl_value = 255 / chain.length * color_count;
+            console.log(hsl_value)
+            let rgb = HSLToRGB(hsl_value, 100, 80);
 
             const chainId = document.createElement("p");
             chainId.className = "is-size-5 has-text-weight-bold";
-            chainId.textContent = `Chain: ${i[0]}`;
+            chainId.textContent = `Chain: ${c[0]}`;
+            chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
             cardContent.appendChild(chainId);
 
             const atomLength = document.createElement("p");
             atomLength.className = "is-size-5";
-            atomLength.textContent = `ATOM: ${i[1]} residues`;
+            atomLength.textContent = `ATOM: ${c[1]} residues`;
             cardContent.appendChild(atomLength);
+            color_count++;
         });
         document.getElementById("stats-pdb").appendChild(columns);
     }
