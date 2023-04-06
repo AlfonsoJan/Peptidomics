@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 $("#protein").html(Jmol.getAppletHtml("jmol1",Info))
             }
 
-            const dataResponse = await fetch("/create_compare_test", { method: 'POST' });
+            const dataResponse = await fetch("/create_compare_temp", { method: 'POST' });
             const dataResult = await dataResponse.json();
             create3dPlot(dataResult)
             createDimPlot(dataResult)

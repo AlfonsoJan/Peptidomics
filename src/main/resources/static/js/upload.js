@@ -35,13 +35,13 @@ function getInputType(el) {
 }
 function getCompare(el) {
     const val = el.value;
-    document.getElementById("compare_code").value = val;
-    document.getElementById("compare_file").value = val;
+    document.getElementById("compareCode").value = val;
+    document.getElementById("compareFile").value = val;
 }
 function getParam(el) {
     const val = el.value;
-    document.getElementById("param_code").value = val;
-    document.getElementById("param_file").value = val;
+    document.getElementById("paramCode").value = val;
+    document.getElementById("paramFile").value = val;
 }
 function getFileName(el) {
     document.getElementById("file-name").textContent = el.files[0].name;
@@ -65,12 +65,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('pdb-input-form').addEventListener('submit', async function (event) {
         event.preventDefault();
         document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
-        if (document.getElementById("param_file").value < 2) {
+        if (document.getElementById("paramFile").value < 2) {
             toastr.error(`Please type in a length higher then 1!`);
             return;
         }
 
-        let compareCode = document.getElementById("compare_code").value;
+        let compareCode = document.getElementById("compareCode").value;
         const compareStatus = await checkPDBCode(compareCode)
         if (!compareStatus.ok) {
             toastr.error(`${compareCode} is not a valid PDB code!`);
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('file-upload-form').addEventListener('submit', async function (event) {
         event.preventDefault();
         document.getElementById("file-upload-form").lastElementChild.classList.add("is-loading");
-        let length = document.getElementById("param_file").value;
+        let length = document.getElementById("paramFile").value;
         if (isNaN(length)) {
             toastr.warning(`${length} is not a number!`);
             document.getElementById("file-upload-form").lastElementChild.classList.remove("is-loading");
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             return;
         }
 
-        let compareCode = document.getElementById("compare_file").value;
+        let compareCode = document.getElementById("compareFile").value;
         const compareStatus = await checkPDBCode(compareCode)
         if (!compareStatus.ok) {
             toastr.error(`${compareCode} is not a valid PDB code!`);

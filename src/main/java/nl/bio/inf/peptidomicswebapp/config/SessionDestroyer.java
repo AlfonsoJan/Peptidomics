@@ -2,7 +2,6 @@ package nl.bio.inf.peptidomicswebapp.config;
 
 import jakarta.servlet.http.HttpSessionEvent;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
+/**
+ *  This class handles the creation and deletion of the session.
+ */
 @Component
 public class SessionDestroyer extends HttpSessionEventPublisher {
 

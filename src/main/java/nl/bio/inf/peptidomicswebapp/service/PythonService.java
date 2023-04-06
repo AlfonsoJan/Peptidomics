@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
+/**
+ * This class will call the python script and return the scripts.
+ */
 @Service
 public class PythonService implements PythonConstructor{
 

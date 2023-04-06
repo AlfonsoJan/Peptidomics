@@ -1,24 +1,33 @@
 # Peptidomics Spring Boot Project
 
-This project is a Java Spring Boot application that provides an API for the analysis of peptidomic data using Python scripts. Peptidomics is a field of study that deals with the identification and quantification of peptides in biological samples.
+The majority of the biological machinery is made up of proteins, which are just lengthy chains of connected amino acids. Although this relationship is exceedingly difficult to assess, in theory, the structure, dynamics, and function of such proteins follow from the individual building pieces.
+
+An oligopeptide, which is made up of building units spanning multiple amino acids, is frequently preferable. Many similar oligopeptides are also known to serve significant purposes on their own. On the broader range of such peptides, not much is known. Their configurational qualities are one of them. The oligopeptide's conformational flexibility, the secondary structure annotations that correlate to those shapes, and their three-dimensional capabilities.
+
+This software is the creation of something that essentially combines PCA and multilinear regression to translate the protein structure between its actual configurations and a low-dimensional abstract data space.
+
 ## Requirements
+````
+Java (min. version 8)
+    Spring (version 3.0.2)
+    Spring Security (version 2.0.4-RELEASE)
 
-    Java 8 or higher
-    Python 3.7 or higher
+Python (min. version 3.9)
+    Numpy (version 1.23.1)
+    MDAnalysis (version 2.4.2)
 
+JavaScript
+    Toastr (version 2.1.4)
+    JSmol (version 14.32)
+    JQuery (version 3.6.3)
+    Bulma Tooltip (version 1.2.0)
+    Plotly (version 2.20.0)
+````
 ## Installation
-
-    Clone this repository to your local machine:
-
-    bash
-
+````
+Clone this repository to your local machine:
     git clone https://github.com/AlfonsoJan/Peptidomics.git
-
-Navigate to the project directory:
-
-    bash
-
-    cd peptidomics-spring-boot
+````
 
 Install the required Python dependencies:
 
@@ -26,13 +35,11 @@ Install the required Python dependencies:
 
 ## Usage
 
-    Start the Spring Boot application:
+For now open the project in IntelliJ
 
-    arduino
+Set in the application.properties the python.path-name to your python3 shortcurt (eg, py, python, python3)
 
-    ./mvnw spring-boot:run
-
-    Use the provided REST API endpoints to analyze peptidomic data.
+And run the main in the class: PeptidomicsWebAppApplication.
 
 ## Contributors
 

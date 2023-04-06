@@ -6,7 +6,6 @@ import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.Plot;
 import nl.bio.inf.peptidomicswebapp.service.PythonService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,13 +15,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+/**
+ *  This class handles the result methods.
+ */
+
 @RestController
 public class ResultController {
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
-    @Autowired
-    private PythonService pythonService;
+    private final PythonService pythonService;
 
+    public ResultController(PythonService pythonService) {
+        this.pythonService = pythonService;
+    }
+
+    /**
+     * This method will create a temp file.
+     * @param request
+     * @param session
+     */
     @PostMapping(value = "/create_temp_file")
     public void tester(HttpServletRequest request, HttpSession session) {
         try {
@@ -35,7 +46,14 @@ public class ResultController {
         }
     }
 
-    @PostMapping(value = "/create_compare_test")
+    /**
+     * This method will create a temp file of the compare pdb code and
+     * call the script that will run the analysis and return to the site.
+     * @param request
+     * @param session
+     * @return
+     */
+    @PostMapping(value = "/create_compare_temp")
     public Plot tester1(HttpServletRequest request, HttpSession session) {
         try {
             String compareCode = String.valueOf(request.getSession().getAttribute("compareCode"));
@@ -62,6 +80,11 @@ public class ResultController {
 
     }
 
+    /**
+     * This method will call a python script that will retrieve the chains of the pdb file and return to the site.
+     * @param request
+     * @return
+     */
     @PostMapping(value = "/get_chains")
     public @ResponseBody Plot getChains(HttpServletRequest request){
         try {
