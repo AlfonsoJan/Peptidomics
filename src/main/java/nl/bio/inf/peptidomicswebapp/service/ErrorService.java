@@ -5,6 +5,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class will handle all the errors thrown.
+ */
 @Service
 @PropertySource("classpath:httpErrorCodes.properties")
 public class ErrorService {

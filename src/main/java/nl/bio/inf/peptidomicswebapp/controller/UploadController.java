@@ -12,6 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+/**
+ *  This class handles the file/code uploads. And set these in a session
+ */
 
 @Controller
 public class UploadController {
@@ -22,16 +25,23 @@ public class UploadController {
         return "upload";
     }
 
+    /**
+     * This method creates a session and sets the codes in the session and redirect to the result page.
+     * @param pdbCode
+     * @param paramCode
+     * @param compareCode
+     * @param session
+     */
     @PostMapping(value = "/result_from_code")
     public String resultFromCode(@RequestParam("pdb_code") String pdbCode,
-                                 String param_code,
-                                 String compare_code,
+                                 String paramCode,
+                                 String compareCode,
                                  HttpSession session) {
         try {
             PDB testPDB = new PDB(pdbCode);
-            session.setAttribute("parameter", param_code);
+            session.setAttribute("parameter", paramCode);
             session.setAttribute("PDBFiles", testPDB);
-            session.setAttribute("compareCode", compare_code);
+            session.setAttribute("compareCode", compareCode);
             return "redirect:/result";
         } catch (IOException ex) {
             LOGGER.warning("Error while reading creating PDB class with pdb code, message=" + ex.getMessage());
@@ -39,16 +49,23 @@ public class UploadController {
         }
     }
 
+    /**
+     * This method creates a session and sets the file and codes in the session and redirect to the result page.
+     * @param file
+     * @param paramFile
+     * @param compareFile
+     * @param session
+     */
     @PostMapping(value = "/result_from_files")
     public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file,
-                                  String param_file,
-                                  String compare_file,
+                                  String paramFile,
+                                  String compareFile,
                                   HttpSession session) {
         try {
             PDB testPDB = new PDB(file.getBytes(), file.getOriginalFilename());
-            session.setAttribute("parameter", param_file);
+            session.setAttribute("parameter", paramFile);
             session.setAttribute("PDBFiles", testPDB);
-            session.setAttribute("compareCode", compare_file);
+            session.setAttribute("compareCode", compareFile);
             return "redirect:/result";
         } catch (IOException ex) {
             LOGGER.warning("Error while reading PDB file, message=" + ex.getMessage());
@@ -57,6 +74,12 @@ public class UploadController {
         }
     }
 
+    /**
+     * This method will return the result page if its a correct pdb file/code.
+     * And if there is nothing in the session then go to the upload page
+     * @param model
+     * @param request
+     */
     @RequestMapping(value = "/result")
     public String resultPage(Model model, HttpServletRequest request){
         try {

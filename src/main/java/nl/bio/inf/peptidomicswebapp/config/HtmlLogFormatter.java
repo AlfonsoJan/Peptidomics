@@ -5,6 +5,10 @@ import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+/**
+ *  This class setups the table for the HTML Log file.
+ */
+
 public class HtmlLogFormatter extends Formatter {
     public String format(LogRecord record) {
         return ("<tr><td>"

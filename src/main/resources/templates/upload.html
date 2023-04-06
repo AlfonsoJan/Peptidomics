@@ -34,7 +34,7 @@
                 </div>
                 <div class="form-box">
                     <form th:action="@{result_from_code}" method="POST" id="pdb-input-form">
-                        <div th:replace="~{fragments :: paramSelector(paramID='param_code', compareID='compare_code')}"></div>
+                        <div th:replace="~{fragments :: paramSelector(paramID='paramCode', compareID='compareCode')}"></div>
                         <div class="field">
                             <label class="label">PDB Code</label>
                             <div class="control">
@@ -44,7 +44,7 @@
                         <button type="submit" class="button is-block is-info is-large is-fullwidth" id="pdb_code_button">Proceed</button>
                     </form>
                     <form th:action="@{result_from_files}" method="POST" enctype="multipart/form-data" id="file-upload-form">
-                        <div th:replace="~{fragments :: paramSelector(paramID='param_file', compareID='compare_file')}"></div>
+                        <div th:replace="~{fragments :: paramSelector(paramID='paramFile', compareID='compareFile')}"></div>
                         <div class="field is-fullwidth" id="upload-file">
                             <label class="file-label">
                                 <input id="file-upload" class="file-input" type="file" name="pdb_file" accept=".pdb" onchange="getFileName(this)">

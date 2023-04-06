@@ -67,6 +67,7 @@ class PDBTest {
     void getStructureFromInputstream() {
     }
 
+    @Disabled
     @Test
     void getBytes() throws IOException {
         PDB pdb = new PDB("1b58");

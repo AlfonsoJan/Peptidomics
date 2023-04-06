@@ -32,32 +32,12 @@ public class PDB {
         return connection.getInputStream();
     }
 
-    private static InputStream getInputStream(String pdbCode) throws IOException {
-        URL url = new URL(String.format(DOWNLOAD_BY_ID_URL, pdbCode));
-        URLConnection connection = url.openConnection();
-        return connection.getInputStream();
-    }
 
-    public static String getStructureFromInputstream(byte[] fileBytes) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileBytes)));
-        String line;
-        while( (line = reader.readLine()) != null ) {
-            if (line.startsWith("HEADER")) {
-                line = line.strip().substring(line.strip().lastIndexOf(" ")+1);
-                break;
-            }
-        }
-        reader.close();
-        return line;
-    }
 
     private byte[] getBytesConnection() throws IOException {
         return getInputStream().readAllBytes();
     }
 
-    private static byte[] getBytesConnection(String pdbCode) throws IOException {
-        return getInputStream(pdbCode).readAllBytes();
-    }
 
     public String createTempFile() {
         try {
@@ -76,6 +56,33 @@ public class PDB {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Here below are all the static method needed for the constructor.
+     */
+
+    private static byte[] getBytesConnection(String pdbCode) throws IOException {
+        return getInputStream(pdbCode).readAllBytes();
+    }
+
+    private static InputStream getInputStream(String pdbCode) throws IOException {
+        URL url = new URL(String.format(DOWNLOAD_BY_ID_URL, pdbCode));
+        URLConnection connection = url.openConnection();
+        return connection.getInputStream();
+    }
+
+    public static String getStructureFromInputstream(byte[] fileBytes) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileBytes)));
+        String line;
+        while( (line = reader.readLine()) != null ) {
+            if (line.startsWith("HEADER")) {
+                line = line.strip().substring(line.strip().lastIndexOf(" ")+1);
+                break;
+            }
+        }
+        reader.close();
+        return line;
     }
 
     public static String createTempFile(String pdbCode) {
@@ -103,7 +110,7 @@ public class PDB {
     }
 
     public byte[] getBytes(){
-        return bytes;
+        return bytes.clone();
     }
 
     public String getFileName() {
