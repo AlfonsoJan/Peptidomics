@@ -5,6 +5,8 @@ import numpy as np
 import json
 import sys
 
+__author__ = "Wouter Zeevat"
+
 def get_chains(path):
     u = mda.Universe(path)
     selection = 'protein and (name N or name CA or name C or name O)'

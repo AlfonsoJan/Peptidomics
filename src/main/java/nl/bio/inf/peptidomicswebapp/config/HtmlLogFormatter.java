@@ -7,6 +7,7 @@ import java.util.logging.LogRecord;
 
 /**
  *  This class setups the table for the HTML Log file.
+ * @author Jan Alfonso
  */
 
 public class HtmlLogFormatter extends Formatter {

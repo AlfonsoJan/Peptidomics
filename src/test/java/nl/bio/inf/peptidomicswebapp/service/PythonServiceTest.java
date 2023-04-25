@@ -16,6 +16,9 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+@Wouter Zeevat
+ **/
 class PythonServiceTest {
 
     private final PythonService service = new PythonService();

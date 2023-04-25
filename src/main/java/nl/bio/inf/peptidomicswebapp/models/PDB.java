@@ -7,6 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+@Jan Alfonso
+ **/
 public class PDB {
     private static final String DOWNLOAD_BY_ID_URL = "https://files.rcsb.org/download/%s.pdb";
 

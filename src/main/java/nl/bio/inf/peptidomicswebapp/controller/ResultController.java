@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the result methods.
+ * @author Jan Alfonso
+ * @author Wouter Zeevat
  */
 
 @RestController

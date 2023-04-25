@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
+
 import MDAnalysis as mda
 import numpy as np
 import json
 import sys
 
+__author__ = "Wouter Zeevat"
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):

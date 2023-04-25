@@ -12,6 +12,9 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+@Wouter Zeevat
+ **/
 class PlotTest {
 
     static String path;

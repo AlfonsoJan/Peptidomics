@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the errors and what message to show on the page.
+ * @author Jan Alfonso
  */
 
 @Controller
