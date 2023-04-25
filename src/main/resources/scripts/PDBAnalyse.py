@@ -8,7 +8,7 @@ import sys
 __author__ = "Wouter Zeevat"
 
 """
-This class is to encode the numpy array for the json
+This class is made in order to encode the numpy array for the json
 """
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -18,7 +18,7 @@ class NumpyEncoder(json.JSONEncoder):
 
 
 """
-This function is to get the coordinates of the pdb file and return an array with all the coordinates minus the mean
+This function is there to get the coordinates of the pdb file and returns an array with all the coordinates minus the mean
 """
 def getAtomPDB(path, param):
     u = mda.Universe(path)
@@ -34,7 +34,7 @@ def getAtomPDB(path, param):
 
 
 """
-This function is to get the result for the dim plot
+This function is made to get the result for the dim plot
 """
 def dimPlot(P):
     D = ((P[:, :, None, :] - P[:, None, :, :]) ** 2).sum(axis=3).reshape((len(P), -1)) ** 0.5
@@ -45,7 +45,7 @@ def dimPlot(P):
 
 
 """
-This function is to get the result for the scatter plot
+This function gest the result for the scatter plot
 """
 def scatter(P):
     D = ((P[:, :, None, :] - P[:, None, :, :]) ** 2).sum(axis=3).reshape((len(P), -1)) ** 0.5
@@ -56,7 +56,7 @@ def scatter(P):
 
 
 """
-Main function that call everything
+Main function that calls everything
 """
 def main(args):
 

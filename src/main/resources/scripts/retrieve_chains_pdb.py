@@ -8,7 +8,7 @@ import sys
 __author__ = "Wouter Zeevat"
 
 """
-This function return the chains if the pdb file
+This function returns the chains if the pdb file
 """
 def get_chains(path):
     u = mda.Universe(path)
@@ -27,7 +27,7 @@ def get_chains(path):
     print(json.dumps({p:str(count[p]) for p in count}))
 
 """
-Main function that call everything
+Main function that calls everything
 """
 def main(args):
     get_chains(args[1])

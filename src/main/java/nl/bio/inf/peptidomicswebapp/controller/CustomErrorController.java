@@ -26,6 +26,12 @@ public class CustomErrorController implements ErrorController {
         this.errorService = errorService;
     }
 
+    /**
+     * Renders the error page with the errorCode and message according to the errorService
+     * @param model
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/error")
     public String renderErrorPage(Model model, final HttpServletRequest request) {
         final int errorCode = getHttpStatusCode(request);

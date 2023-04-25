@@ -35,6 +35,7 @@ function create3dPlot(result) {
     document.getElementById("placeholder-scatter-3d").style.display= '';
     let value = document.getElementById("pdb-structure").textContent;
     value = value.slice(value.indexOf(":") + 2, value.length);
+    // 2 traces because there is the normal, and compared to data
     let trace1 = {
         type: 'scatter3d',
         x: JSON.parse(result["bytes"])["scatter"].x,
@@ -196,6 +197,7 @@ function setChain(chains) {
         const columns = document.createElement("div");
         columns.className = "columns";
 
+        // Creates element for each chain
         chunk.forEach(function (c) {
             const column = document.createElement("div");
             column.className = "column";
@@ -209,6 +211,7 @@ function setChain(chains) {
             cardContent.className = "chain-content card-content";
             card.appendChild(cardContent);
 
+            // Loops rainbow colors to get best colors that the plot will late be using
             let hsl_value = 255 / chain.length * color_count;
             console.log(hsl_value)
             let rgb = HSLToRGB(hsl_value, 100, 80);

@@ -1,7 +1,7 @@
 package nl.bio.inf.peptidomicswebapp.service;
 
 /**
- * Interface for the python constructor.
+ * Interface for the pythonService class.
  * @author Wouter Zeevat
  */
 public interface PythonConstructor {

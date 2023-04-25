@@ -6,7 +6,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 /**
- *  This class setups the table for the HTML Log file.
+ *  This class set the table for the HTML Log file up.
  * @author Jan Alfonso Busker
  */
 
