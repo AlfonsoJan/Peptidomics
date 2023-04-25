@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 /**
  * This class will call the python script and return the scripts.
+ * @Jan Alfonso
  */
 @Service
 public class PythonService implements PythonConstructor{

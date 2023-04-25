@@ -1,3 +1,7 @@
+/*
+Wouter Zeevat
+Alfonso Jan
+*/
 toastr.options = {
     "closeButton": true,
     "debug": false,

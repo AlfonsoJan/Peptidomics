@@ -9,6 +9,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 /**
  *  This class build the security filter chain for the application.
+ * @Jan Alfonso
  */
 @EnableWebSecurity
 @EnableMethodSecurity

@@ -10,6 +10,9 @@ import nl.bio.inf.peptidomicswebapp.config.HtmlLogFormatter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/*
+Jan Alfonso
+ */
 @SpringBootApplication
 public class PeptidomicsWebAppApplication {
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());

@@ -1,3 +1,6 @@
+/*
+Alfonso Jan
+ */
 p {
     font-weight: 700;
 }
@@ -5,17 +8,54 @@ p.subtitle {
     padding-top: 1rem;
 }
 
-.upload-hr{
-    border-bottom: 1px solid black;
-}
-
 .has-text-black{
     color: black;
 }
 
+
 .form-box {
     margin-top: 1.5rem;
-    border-top: 1px solid black;
+}
+
+.blue-bg {
+    background-color: #4d83db;
+    color: #FFFFFF;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.card {
+    border-radius: 1rem;
+}
+
+.card-image > .fa {
+    font-size: 8rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    color: #209cee;
+}
+
+.flex-class {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+#pdb_code_button {
+    padding-left: 6rem;
+    padding-right: 6rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.control {
+    margin-left: 3rem;
+    margin-right:3rem;
 }
 
 .buttons-container {

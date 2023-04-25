@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the creation and deletion of the session.
+ * @Jan Alfonso
  */
 @Component
 public class SessionDestroyer extends HttpSessionEventPublisher {

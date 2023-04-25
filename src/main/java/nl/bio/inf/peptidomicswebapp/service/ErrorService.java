@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * This class will handle all the errors thrown.
+ * @Jan Alfonso
  */
 @Service
 @PropertySource("classpath:httpErrorCodes.properties")
