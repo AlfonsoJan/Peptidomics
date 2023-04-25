@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 /**
  * This class will call the python script and return the scripts.
+ * @author Wouter Zeevat
+ * @author Jan Alfonso Busker
  */
 @Service
 public class PythonService implements PythonConstructor{
@@ -23,6 +25,12 @@ public class PythonService implements PythonConstructor{
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
     private static final int EXIT_CODE = 0;
 
+    /**
+     * Call the python script to get the chains of the pdb file
+     * @param pythonPath
+     * @param pdbID
+     * @return
+     */
     public String getChainsPBD(String pythonPath, String pdbID) {
         try {
             ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID);
@@ -43,6 +51,12 @@ public class PythonService implements PythonConstructor{
         }
     }
 
+    /**
+     * Call the python script to perform PCA analysis and retrieve the result
+     * @param pythonPath
+     * @param pdbID
+     * @return
+     */
     @Override
     public String PDBAnalyse(String pythonPath, String pdbID, String param, String comparePDB) {
         try {

@@ -1,5 +1,9 @@
 package nl.bio.inf.peptidomicswebapp.service;
 
+/**
+ * Interface for the python constructor.
+ * @author Wouter Zeevat
+ */
 public interface PythonConstructor {
 
     String getChainsPBD(String pythonPath, String pdbID);

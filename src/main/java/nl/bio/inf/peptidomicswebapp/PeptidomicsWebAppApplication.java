@@ -5,10 +5,15 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
-
 import nl.bio.inf.peptidomicswebapp.config.HtmlLogFormatter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * The main to run the spring boot project
+ * @author Wouter Zeevat
+ * @author Jan Alfonso Busker
+ */
 
 @SpringBootApplication
 public class PeptidomicsWebAppApplication {
@@ -16,6 +21,8 @@ public class PeptidomicsWebAppApplication {
 
     public static void main(String[] args) throws IOException {
         SpringApplication.run(PeptidomicsWebAppApplication.class, args);
+
+        // Set the file handler for the logger-
 
         Handler[] handlers = LOGGER.getHandlers();
         for(Handler handler : handlers) {

@@ -7,6 +7,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * ErrorService Test class
+ * @author Wouter Zeevat
+ */
 class ErrorServiceTest {
 
     @Disabled

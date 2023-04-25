@@ -21,6 +21,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * PDB Test class
+ * @author Wouter Zeevat
+ */
 class PDBTest {
 
     static String path;

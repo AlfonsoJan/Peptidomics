@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the file/code uploads. And set these in a session
+ * @author Jan Alfonso
+ * @author Wouter Zeevat
  */
 
 @Controller
@@ -62,9 +64,9 @@ public class UploadController {
                                   String compareFile,
                                   HttpSession session) {
         try {
-            PDB testPDB = new PDB(file.getBytes(), file.getOriginalFilename());
+            PDB pdb = new PDB(file.getBytes(), file.getOriginalFilename());
             session.setAttribute("parameter", paramFile);
-            session.setAttribute("PDBFiles", testPDB);
+            session.setAttribute("PDBFiles", pdb);
             session.setAttribute("compareCode", compareFile);
             return "redirect:/result";
         } catch (IOException ex) {
@@ -83,6 +85,7 @@ public class UploadController {
     @RequestMapping(value = "/result")
     public String resultPage(Model model, HttpServletRequest request){
         try {
+            // If the session if null, then redirect to the upload page
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             if (pdb == null || pdb.getStructureId() == null) {
                 LOGGER.warning(String.format("PDB structure of %s is null", request.getSession().getId()));

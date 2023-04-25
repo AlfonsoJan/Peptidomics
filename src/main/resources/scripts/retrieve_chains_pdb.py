@@ -5,13 +5,20 @@ import numpy as np
 import json
 import sys
 
+__author__ = "Wouter Zeevat"
+
+"""
+This function return the chains if the pdb file
+"""
 def get_chains(path):
     u = mda.Universe(path)
     selection = 'protein and (name N or name CA or name C or name O)'
     proteins = u.select_atoms(selection)
     prev = count = {protein:0 for protein in np.unique(proteins.segids)}
 
-
+    """
+    Counts all the unique residues count
+    """
     for protein in proteins:
         chain = protein.segid
         if prev[chain] != protein.resid:
@@ -19,6 +26,9 @@ def get_chains(path):
             count[chain] += 1
     print(json.dumps({p:str(count[p]) for p in count}))
 
+"""
+Main function that call everything
+"""
 def main(args):
     get_chains(args[1])
 

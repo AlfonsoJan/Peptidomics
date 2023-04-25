@@ -1,3 +1,4 @@
+// author: Jan Alfonso Busker
 toastr.options = {
     "closeButton": true,
     "debug": false,
@@ -15,6 +16,7 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+// Function set the oligo length and the compare pdb code for both forms
 function getInputType(el) {
     switch(el.value) {
         case "1":
@@ -33,11 +35,13 @@ function getInputType(el) {
             break;
     }
 }
+// Function set compare pdb code for both forms
 function getCompare(el) {
     const val = el.value;
     document.getElementById("compareCode").value = val;
     document.getElementById("compareFile").value = val;
 }
+// Function set the oligo length for both forms
 function getParam(el) {
     const val = el.value;
     document.getElementById("paramCode").value = val;
@@ -53,15 +57,19 @@ function getFileName(el) {
     document.getElementById("file-upload").required = true;
 })()
 
+// Function that checks if it is valid pdb code
 async function checkPDBCode(value) {
     const response = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, { method: 'GET' })
     return response;
 }
+// Function that checks if it is valid pdb code because some pdb files are
+// big that they don't have a pdb format
 async function checkPDBSize(value) {
     const response = fetch(`https://files.rcsb.org/download/${value}.pdb`)
     return response;
 }
 document.addEventListener('DOMContentLoaded', (event) => {
+    // Function that checks every thing before submitting the pdb code form
     document.getElementById('pdb-input-form').addEventListener('submit', async function (event) {
         event.preventDefault();
         document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
@@ -100,6 +108,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         window.location.replace(document.referrer);
         document.getElementById("pdb-input-form").submit();
     });
+
+    // Function that checks every thing before submitting the file upload form
     document.getElementById('file-upload-form').addEventListener('submit', async function (event) {
         event.preventDefault();
         document.getElementById("file-upload-form").lastElementChild.classList.add("is-loading");
