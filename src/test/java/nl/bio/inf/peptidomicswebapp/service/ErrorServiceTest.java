@@ -8,8 +8,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
-Wouter Zeevat
- **/
+ * ErrorService Test class
+ * @author Wouter Zeevat
+ */
 class ErrorServiceTest {
 
     @Disabled

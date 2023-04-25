@@ -13,8 +13,9 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
-@Wouter Zeevat
- **/
+ * Plot Test class
+ * @author Wouter Zeevat
+ */
 class PlotTest {
 
     static String path;

@@ -85,6 +85,7 @@ public class UploadController {
     @RequestMapping(value = "/result")
     public String resultPage(Model model, HttpServletRequest request){
         try {
+            // If the session if null, then redirect to the upload page
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             if (pdb == null || pdb.getStructureId() == null) {
                 LOGGER.warning(String.format("PDB structure of %s is null", request.getSession().getId()));

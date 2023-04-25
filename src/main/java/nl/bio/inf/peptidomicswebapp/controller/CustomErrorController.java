@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the errors and what message to show on the page.
- * @author Jan Alfonso
+ * @author Jan Alfonso Busker
  */
 
 @Controller
@@ -41,6 +41,11 @@ public class CustomErrorController implements ErrorController {
         return "error";
     }
 
+    /**
+     * Returns the error status code
+     * @param request
+     * @return integer
+     */
     private int getHttpStatusCode(final HttpServletRequest request) {
         if (request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) == null) {
             return -1;

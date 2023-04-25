@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the result methods.
- * @author Jan Alfonso
+ * @author Jan Alfonso Busker
  * @author Wouter Zeevat
  */
 
@@ -32,12 +32,12 @@ public class ResultController {
     }
 
     /**
-     * This method will create a temp file.
+     * This method will create a temp file. And set the file in the session.
      * @param request
      * @param session
      */
     @PostMapping(value = "/create_temp_file")
-    public void tester(HttpServletRequest request, HttpSession session) {
+    public void createTemporaryFile(HttpServletRequest request, HttpSession session) {
         try {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             String tempLocation = pdb.createTempFile();
@@ -56,18 +56,20 @@ public class ResultController {
      * @return
      */
     @PostMapping(value = "/create_compare_temp")
-    public Plot tester1(HttpServletRequest request, HttpSession session) {
+    public Plot createTemporaryFileCompare(HttpServletRequest request, HttpSession session) {
         try {
             String compareCode = String.valueOf(request.getSession().getAttribute("compareCode"));
             String location = PDB.createTempFile(compareCode);
             session.setAttribute("tempLocationCompare", location);
             File folderScripts = new ClassPathResource("scripts").getFile();
             File fullPath = null;
+            // Get the location for the python file
             for (File f: folderScripts.listFiles()) {
                 if("PDBAnalyse.py".equals(f.getName())) {
                     fullPath = f;
                 }
             }
+            // Call the python script
             String bytes = pythonService.PDBAnalyse(
                     fullPath.toString(),
                     request.getSession().getAttribute("tempLocation").toString(),
@@ -92,11 +94,13 @@ public class ResultController {
         try {
             File folderScripts  = new ClassPathResource("scripts").getFile();
             File fullPath = null;
+            // Get the location for the python file
             for (File f: folderScripts.listFiles()) {
                 if("retrieve_chains_pdb.py".equals(f.getName())) {
                     fullPath = f;
                 }
             }
+            // Call the python script
             String chain = pythonService.getChainsPBD(
                     String.valueOf(fullPath),
                     request.getSession().getAttribute("tempLocation").toString());

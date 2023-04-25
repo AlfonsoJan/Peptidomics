@@ -1,6 +1,7 @@
 package nl.bio.inf.peptidomicswebapp.models;
 
 /**
-@Wouter Zeevat
- **/
+ *  This class handles the body for javascript.
+ * @author Wouter Zeevat
+ */
 public record Plot(String bytes) { }

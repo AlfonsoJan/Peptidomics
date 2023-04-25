@@ -1,4 +1,6 @@
-// Wouter Zeevat / Jan Alfonso
+// author: Jan Alfonso Busker
+//
+// author: Wouter Zeevat
 toastr.options = {
     "closeButton": true,
     "debug": false,
@@ -16,7 +18,7 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
-
+// Function that converts hue to RGB
 const HSLToRGB = (h, s, l) => {
     s /= 100;
     l /= 100;
@@ -26,10 +28,7 @@ const HSLToRGB = (h, s, l) => {
         l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
-
-function insertAfter(newNode, existingNode) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-}
+// Function that create the 3d scatter plotly plot
 function create3dPlot(result) {
     let elem = document.getElementById("spinner-scatter-3d");
     elem.parentNode.removeChild(elem);
@@ -99,7 +98,7 @@ function create3dPlot(result) {
     let config = {responsive: true}
     Plotly.newPlot('placeholder-scatter-3d',data,layout,config);
 }
-
+// Function that create the 2d scatter plotly plot for the dimension
 function createDimPlot(result) {
     let elem = document.getElementById("spinner-pca");
     elem.parentNode.removeChild(elem);
@@ -134,6 +133,7 @@ function createDimPlot(result) {
     let config = {responsive: true}
     Plotly.newPlot('placeholder-pca',data,layout,config);
 }
+// Function that create the 2d scatter plotly plot for the PCA results
 function create2dPlot(result) {
     let elem = document.getElementById("spinner-scatter");
     elem.parentNode.removeChild(elem);
@@ -177,7 +177,9 @@ function create2dPlot(result) {
     let config = {responsive: true}
     Plotly.newPlot('placeholder-scatter',data,layout,config);
 }
+// Function that set the chains on the site
 function setChain(chains) {
+    // The size for how many chains per row
     const chunkSize = 4
     const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
     if (chain.length < 1) {
@@ -231,6 +233,7 @@ document.getElementById("placeholder-scatter").style.display= 'none';
 document.getElementById("placeholder-scatter-3d").style.display= 'none';
 document.getElementById("place-text").style.display= 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
+    // This function will call the function to create a temporary file and handles the response
     (async function getData() {
         const response = await fetch("/create_temp_file", { method: 'POST' });
         if (response.ok) {
@@ -240,6 +243,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             let value = document.getElementById("pdb-structure").textContent;
             value = value.slice(value.indexOf(":") + 2, value.length);
+            // Functionality for the 3D protein plot
             if (value != null) {
                 Info = {
                     width: 800,
@@ -271,6 +275,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             console.log("Error!")
         }
     })();
+    // This function sets the metadata of the pdb on top of the site. Like the paper link and stuff
     (function () {
         let value = document.getElementById("pdb-structure").textContent;
         value = value.slice(value.indexOf(":") + 2, value.length);

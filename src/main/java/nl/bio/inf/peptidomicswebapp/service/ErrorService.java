@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * This class will handle all the errors thrown.
- * @Jan Alfonso
+ * @author Jan Alfonso Busker
  */
 @Service
 @PropertySource("classpath:httpErrorCodes.properties")
@@ -16,6 +16,11 @@ public class ErrorService {
     @Autowired
     private Environment env;
 
+    /**
+     * Generates the error text
+     * @param errorCode
+     * @return
+     */
     public String generateErrorMessage(final int errorCode) {
         String message = "There was a code " + errorCode + " error: ";
         switch (errorCode) {

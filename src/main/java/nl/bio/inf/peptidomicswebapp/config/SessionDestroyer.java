@@ -30,7 +30,7 @@ public class SessionDestroyer extends HttpSessionEventPublisher {
     }
 
     /**
-     * Destroys the session
+     * Destroys the session and deletes the files in the session
      * @param event The HttpSessionEvent pass in by the container
      */
     @Override
