@@ -36,13 +36,13 @@ public class PDB {
      * @throws IOException
      */
     public PDB(byte[] fileBytes, String fileName) throws IOException {
-        this.structureId = getStructureFromInputstream(fileBytes);
+        this.structureId = getStructureFromInputStream(fileBytes);
         this.bytes = fileBytes;
         this.fileName = fileName;
     }
 
     /**
-     * Return the inputstream of the pdb file
+     * Return the input stream of the pdb file
      * @return
      * @throws IOException
      */
@@ -54,7 +54,7 @@ public class PDB {
 
 
     /**
-     * Returns the bytes of the inputstream
+     * Returns the bytes of the input stream
      * @return
      * @throws IOException
      */
@@ -66,6 +66,7 @@ public class PDB {
     /**
      * This method will create a temporary file, with a random prefix
      * @return
+     * @throws RuntimeException when temp file can't be created
      */
     public String createTempFile() {
         try {
@@ -90,7 +91,7 @@ public class PDB {
     // Here below are all the static method needed for the constructor.
 
     /**
-     * Returns the inputstream of the pdb file
+     * Returns the input stream of the pdb file
      * @param pdbCode
      * @return
      * @throws IOException
@@ -100,7 +101,7 @@ public class PDB {
     }
 
     /**
-     * Returns the bytes of the inputstream
+     * Returns the bytes of the input stream
      * @param pdbCode
      * @return
      * @throws IOException
@@ -117,7 +118,7 @@ public class PDB {
      * @return
      * @throws IOException
      */
-    public static String getStructureFromInputstream(byte[] fileBytes) throws IOException {
+    public static String getStructureFromInputStream(byte[] fileBytes) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileBytes)));
         String line;
         while( (line = reader.readLine()) != null ) {
@@ -135,6 +136,7 @@ public class PDB {
      * The static method to create a file. Needed in createTemporaryFileCompare.
      * @param pdbCode
      * @return
+     * @throws RuntimeException when file can not be accessed correctly
      */
     public static String createTempFile(String pdbCode) {
         try {

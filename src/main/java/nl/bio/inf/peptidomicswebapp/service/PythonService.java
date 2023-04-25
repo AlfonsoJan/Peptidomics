@@ -26,11 +26,12 @@ public class PythonService implements PythonConstructor{
     private static final int EXIT_CODE = 0;
 
     /**
-     * Call the python script to get the chains of the pdb file
+     * Calls the python script to get the chains of the pdb file
      * @param pythonPath
      * @param pdbID
      * @return
      */
+    @Override
     public String getChainsPBD(String pythonPath, String pdbID) {
         try {
             ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID);
@@ -52,7 +53,7 @@ public class PythonService implements PythonConstructor{
     }
 
     /**
-     * Call the python script to perform PCA analysis and retrieve the result
+     * Calls the python script to perform PCA analysis and retrieve the result
      * @param pythonPath
      * @param pdbID
      * @return

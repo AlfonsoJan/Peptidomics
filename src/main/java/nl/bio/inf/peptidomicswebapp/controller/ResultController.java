@@ -35,6 +35,7 @@ public class ResultController {
      * This method will create a temp file. And set the file in the session.
      * @param request
      * @param session
+     * @throws Exception when file cant be created
      */
     @PostMapping(value = "/create_temp_file")
     public void createTemporaryFile(HttpServletRequest request, HttpSession session) {
@@ -54,6 +55,7 @@ public class ResultController {
      * @param request
      * @param session
      * @return
+     * @throws IOException when the script can't be run correctly
      */
     @PostMapping(value = "/create_compare_temp")
     public Plot createTemporaryFileCompare(HttpServletRequest request, HttpSession session) {
@@ -88,6 +90,7 @@ public class ResultController {
      * This method will call a python script that will retrieve the chains of the pdb file and return to the site.
      * @param request
      * @return
+     * @throws RuntimeException when the file can't be read
      */
     @PostMapping(value = "/get_chains")
     public @ResponseBody Plot getChains(HttpServletRequest request){

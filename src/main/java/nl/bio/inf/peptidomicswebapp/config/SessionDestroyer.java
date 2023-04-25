@@ -43,6 +43,7 @@ public class SessionDestroyer extends HttpSessionEventPublisher {
     /**
      * Deletes the temporary files from the system!
      * @param event
+     * @throws RuntimeException when files can not be accessed
      */
     private void deleteTempFiles(HttpSessionEvent event) {
         String tempLocationCompare = String.valueOf(event.getSession().getAttribute("tempLocationCompare"));
