@@ -8,8 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- *  This class build the security filter chain for the application.
- * @Jan Alfonso
+ *  This class builds the security filter chain for the application.
+ * @author Jan Alfonso Busker
  */
 @EnableWebSecurity
 @EnableMethodSecurity

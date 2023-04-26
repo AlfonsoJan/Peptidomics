@@ -6,11 +6,16 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 /**
- *  This class setups the table for the HTML Log file.
- * @Jan Alfonso
+ *  This class set the table for the HTML Log file up.
+ * @author Jan Alfonso Busker
  */
 
 public class HtmlLogFormatter extends Formatter {
+    /**
+     *
+     * @param record the log record to be formatted.
+     * @return a table row with the information
+     */
     public String format(LogRecord record) {
         return ("<tr><td>"
                 + (new Date(record.getMillis()))
@@ -23,6 +28,11 @@ public class HtmlLogFormatter extends Formatter {
                 + "</td></tr>\n");
     }
 
+    /**
+     *
+     * @param h  The target handler (can be null)
+     * @return String containing the header for the table
+     */
     public String getHead(Handler h) {
         return ("""
                 <html>
@@ -32,6 +42,11 @@ public class HtmlLogFormatter extends Formatter {
                 """);
     }
 
+    /**
+     *
+     * @param h  The target handler (can be null)
+     * @return String containing the tail/end for the table
+     */
     public String getTail(Handler h) {
         return ("</table>\n</body>\n</html>");
     }

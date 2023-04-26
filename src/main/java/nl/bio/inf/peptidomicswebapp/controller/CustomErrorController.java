@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the errors and what message to show on the page.
- * @Jan Alfonso
+ * @author Jan Alfonso Busker
  */
 
 @Controller
@@ -26,6 +26,12 @@ public class CustomErrorController implements ErrorController {
         this.errorService = errorService;
     }
 
+    /**
+     * Renders the error page with the errorCode and message according to the errorService
+     * @param model
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/error")
     public String renderErrorPage(Model model, final HttpServletRequest request) {
         final int errorCode = getHttpStatusCode(request);
@@ -41,6 +47,11 @@ public class CustomErrorController implements ErrorController {
         return "error";
     }
 
+    /**
+     * Returns the error status code
+     * @param request
+     * @return integer
+     */
     private int getHttpStatusCode(final HttpServletRequest request) {
         if (request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) == null) {
             return -1;

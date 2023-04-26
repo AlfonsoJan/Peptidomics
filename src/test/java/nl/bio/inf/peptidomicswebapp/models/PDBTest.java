@@ -21,6 +21,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * PDB Test class
+ * @author Wouter Zeevat
+ */
 class PDBTest {
 
     static String path;
@@ -98,7 +102,7 @@ class PDBTest {
     @ValueSource(strings = {"6zdh", "1b58"})
     void testGetStructureFromInputstream(String code) throws IOException {
         PDB pdb = new PDB(code);
-        String resultCode = PDB.getStructureFromInputstream(pdb.getBytes());
+        String resultCode = PDB.getStructureFromInputStream(pdb.getBytes());
         assert(resultCode.equalsIgnoreCase(code));
     }
 

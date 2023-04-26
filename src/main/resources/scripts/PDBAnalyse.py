@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import MDAnalysis as mda
 import numpy as np
@@ -7,6 +7,9 @@ import sys
 
 __author__ = "Wouter Zeevat"
 
+"""
+This class is made in order to encode the numpy array for the json
+"""
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
@@ -14,6 +17,9 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
+"""
+This function is there to get the coordinates of the pdb file and returns an array with all the coordinates minus the mean
+"""
 def getAtomPDB(path, param):
     u = mda.Universe(path)
     selection = 'protein and (name N or name CA or name C or name O)'
@@ -27,6 +33,9 @@ def getAtomPDB(path, param):
     return P
 
 
+"""
+This function is made to get the result for the dim plot
+"""
 def dimPlot(P):
     D = ((P[:, :, None, :] - P[:, None, :, :]) ** 2).sum(axis=3).reshape((len(P), -1)) ** 0.5
     D -= D.mean(axis=0)
@@ -35,6 +44,9 @@ def dimPlot(P):
     return scores
 
 
+"""
+This function gest the result for the scatter plot
+"""
 def scatter(P):
     D = ((P[:, :, None, :] - P[:, None, :, :]) ** 2).sum(axis=3).reshape((len(P), -1)) ** 0.5
     D -= D.mean(axis=0)
@@ -43,6 +55,9 @@ def scatter(P):
     return scores.T
 
 
+"""
+Main function that calls everything
+"""
 def main(args):
 
     P = getAtomPDB(args[1], args[2])

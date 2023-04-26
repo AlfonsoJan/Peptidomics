@@ -13,5 +13,4 @@ gradle
 gradlew
 gradlew.bat
 *.log
-PeptidomicsLog.html
-PeptidomicsLog.html.lck
+PeptidomicsLog.*

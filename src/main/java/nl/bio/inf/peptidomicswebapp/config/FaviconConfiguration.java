@@ -10,7 +10,7 @@ import java.util.Collections;
 
 /**
  *  This class handles the favicon for the webapp.
- *  @Jan Alfonso
+ * @author Jan Alfonso
  */
 
 @Configuration

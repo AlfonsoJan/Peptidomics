@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,8 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the file/code uploads. And set these in a session
- * @John Alfonso
+ * @author Jan Alfonso
+ * @author Wouter Zeevat
  */
 
 @Controller
@@ -28,10 +30,12 @@ public class UploadController {
 
     /**
      * This method creates a session and sets the codes in the session and redirect to the result page.
+     *
      * @param pdbCode
      * @param paramCode
      * @param compareCode
      * @param session
+     * @throws RuntimeException when the PDB is invalid
      */
     @PostMapping(value = "/result_from_code")
     public String resultFromCode(@RequestParam("pdb_code") String pdbCode,
@@ -39,9 +43,9 @@ public class UploadController {
                                  String compareCode,
                                  HttpSession session) {
         try {
-            PDB testPDB = new PDB(pdbCode);
+            PDB pdb = new PDB(pdbCode);
             session.setAttribute("parameter", paramCode);
-            session.setAttribute("PDBFiles", testPDB);
+            session.setAttribute("PDBFiles", pdb);
             session.setAttribute("compareCode", compareCode);
             return "redirect:/result";
         } catch (IOException ex) {
@@ -56,16 +60,19 @@ public class UploadController {
      * @param paramFile
      * @param compareFile
      * @param session
+     * @throws RuntimeException when PDB file can not be read correctly
      */
     @PostMapping(value = "/result_from_files")
-    public String resultFromFiles(@RequestParam("pdb_file") MultipartFile file,
+    public String resultFromFiles(@RequestParam("pdb-file") MultipartFile file,
                                   String paramFile,
                                   String compareFile,
                                   HttpSession session) {
+        System.out.println(file);
         try {
-            PDB testPDB = new PDB(file.getBytes(), file.getOriginalFilename());
+            // Creates PDB instance and redirects to page
+            PDB pdb = new PDB(file.getBytes(), file.getOriginalFilename());
             session.setAttribute("parameter", paramFile);
-            session.setAttribute("PDBFiles", testPDB);
+            session.setAttribute("PDBFiles", pdb);
             session.setAttribute("compareCode", compareFile);
             return "redirect:/result";
         } catch (IOException ex) {
@@ -76,14 +83,16 @@ public class UploadController {
     }
 
     /**
-     * This method will return the result page if its a correct pdb file/code.
+     * This method will return the result page if it's a correct pdb file/code.
      * And if there is nothing in the session then go to the upload page
      * @param model
      * @param request
+     * @throws ClassCastException when PDB can't turn into a PDB class instance
      */
     @RequestMapping(value = "/result")
     public String resultPage(Model model, HttpServletRequest request){
         try {
+            // If the session is null, then redirect to the upload page
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             if (pdb == null || pdb.getStructureId() == null) {
                 LOGGER.warning(String.format("PDB structure of %s is null", request.getSession().getId()));

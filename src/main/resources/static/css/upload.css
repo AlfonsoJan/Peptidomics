@@ -112,6 +112,21 @@ input[type="radio"]:checked::before {
     transform: scale(1);
 }
 
+.file {
+    background-color: #EEEEEE;
+    margin-bottom: 3rem;
+}
+
+#file-text {
+    margin-top: 3rem;
+}
+
+#file-selected {
+    padding-left: 1rem;
+    padding-right: 2rem;
+    max-width: 30ch;
+}
+
 .file-label {
     display: flex;
     justify-content: flex-start;
