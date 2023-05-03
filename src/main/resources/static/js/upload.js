@@ -23,7 +23,6 @@ function getFileName(el) {
 
 // Function that checks if it is valid pdb code
 async function checkPDBCode(value) {
-    console.log(value);
     const response = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, { method: 'GET' })
     return response;
 }
@@ -40,8 +39,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
 
         // Oligo length check > 1
-        if (document.getElementById("oligo-param").value < 2) {
-            toastr.error(`Please type in a length higher then 1!`);
+        if (document.getElementById("oligoParam").value < 1 || document.getElementById("oligoParam").value > 30) {
+            toastr.error(`Please type in a length higher than 0 and lower than 31!`);
             document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
             return;
         }
@@ -71,7 +70,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
             document.getElementById("pdb-input-form").action = "result_from_code";
         }
-        document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
         window.location.replace(document.referrer);
         document.getElementById("pdb-input-form").submit();
     });

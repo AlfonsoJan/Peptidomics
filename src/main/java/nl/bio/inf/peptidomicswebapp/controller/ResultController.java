@@ -57,12 +57,9 @@ public class ResultController {
      * @return
      * @throws IOException when the script can't be run correctly
      */
-    @PostMapping(value = "/create_compare_temp")
-    public Plot createTemporaryFileCompare(HttpServletRequest request, HttpSession session) {
+    @PostMapping(value = "/perform_pca_analysis")
+    public @ResponseBody Plot createTemporaryFileCompare(HttpServletRequest request, HttpSession session) {
         try {
-            String compareCode = String.valueOf(request.getSession().getAttribute("compareCode"));
-            String location = PDB.createTempFile(compareCode);
-            session.setAttribute("tempLocationCompare", location);
             File folderScripts = new ClassPathResource("scripts").getFile();
             File fullPath = null;
             // Get the location for the python file
@@ -75,15 +72,13 @@ public class ResultController {
             String bytes = pythonService.PDBAnalyse(
                     fullPath.toString(),
                     request.getSession().getAttribute("tempLocation").toString(),
-                    request.getSession().getAttribute("parameter").toString(),
-                    location
+                    request.getSession().getAttribute("parameter").toString()
             );
             return new Plot(bytes);
         } catch (IOException ex) {
             LOGGER.warning("Error while performing the script on the data, message=" + ex.getMessage());
             throw new RuntimeException(ex);
         }
-
     }
 
     /**

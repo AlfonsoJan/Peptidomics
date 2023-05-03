@@ -46,10 +46,8 @@ public class SessionDestroyer extends HttpSessionEventPublisher {
      * @throws RuntimeException when files can not be accessed
      */
     private void deleteTempFiles(HttpSessionEvent event) {
-        String tempLocationCompare = String.valueOf(event.getSession().getAttribute("tempLocationCompare"));
         String tempLocation = String.valueOf(event.getSession().getAttribute("tempLocation"));
         try {
-            Files.delete(Path.of(tempLocationCompare));
             Files.delete(Path.of(tempLocation));
             LOGGER.info("Deleted session files of: " + event.getSession().getId());
         } catch (IOException e) {

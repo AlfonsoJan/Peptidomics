@@ -32,21 +32,18 @@ public class UploadController {
      * This method creates a session and sets the codes in the session and redirect to the result page.
      *
      * @param pdbCode
-     * @param paramCode
-     * @param compareCode
+     * @param oligoParam
      * @param session
      * @throws RuntimeException when the PDB is invalid
      */
     @PostMapping(value = "/result_from_code")
     public String resultFromCode(@RequestParam("pdb_code") String pdbCode,
-                                 String paramCode,
-                                 String compareCode,
+                                 String oligoParam,
                                  HttpSession session) {
         try {
             PDB pdb = new PDB(pdbCode);
-            session.setAttribute("parameter", paramCode);
+            session.setAttribute("parameter", oligoParam);
             session.setAttribute("PDBFiles", pdb);
-            session.setAttribute("compareCode", compareCode);
             return "redirect:/result";
         } catch (IOException ex) {
             LOGGER.warning("Error while reading creating PDB class with pdb code, message=" + ex.getMessage());
@@ -57,23 +54,20 @@ public class UploadController {
     /**
      * This method creates a session and sets the file and codes in the session and redirect to the result page.
      * @param file
-     * @param paramFile
-     * @param compareFile
+     * @param oligoParam
      * @param session
      * @throws RuntimeException when PDB file can not be read correctly
      */
     @PostMapping(value = "/result_from_files")
     public String resultFromFiles(@RequestParam("pdb-file") MultipartFile file,
-                                  String paramFile,
-                                  String compareFile,
+                                  String oligoParam,
                                   HttpSession session) {
-        System.out.println(file);
+
         try {
             // Creates PDB instance and redirects to page
             PDB pdb = new PDB(file.getBytes(), file.getOriginalFilename());
-            session.setAttribute("parameter", paramFile);
+            session.setAttribute("parameter", oligoParam);
             session.setAttribute("PDBFiles", pdb);
-            session.setAttribute("compareCode", compareFile);
             return "redirect:/result";
         } catch (IOException ex) {
             LOGGER.warning("Error while reading PDB file, message=" + ex.getMessage());
