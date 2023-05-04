@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 /**
  *  This class builds the security filter chain for the application.
@@ -21,7 +22,9 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .formLogin().disable()
-                .csrf().disable().cors() ;
+                .csrf()
+                .and()
+                .cors();
         return http.build();
     }
 

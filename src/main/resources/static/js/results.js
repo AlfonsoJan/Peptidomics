@@ -407,9 +407,12 @@ document.getElementById("place-text").style.display= 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
     // This function will call the function to create a temporary file and handles the response
     (async function getData() {
-        const response = await fetch("/create_temp_file", { method: 'POST' });
+        const tokenResponse = await fetch("/csrf-token", {method: "GET"});
+        const csrfToken = await tokenResponse.text();
+        const fetchParameters = { method: 'POST', headers: {'X-CSRF-TOKEN': csrfToken}}
+        const response = await fetch("/create_temp_file", fetchParameters);
         if (response.ok) {
-            const chainResponse = await fetch("/get_chains", { method: 'POST' });
+            const chainResponse = await fetch("/get_chains", fetchParameters);
             const chainResult = await chainResponse.json();
             setChain(chainResult)
 
@@ -420,14 +423,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 let Info = getInfoProtein3d("4hhb");
                 $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
             }
-            const dataResponse = await fetch("/perform_pca_analysis", { method: 'POST' });
+            const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
             let dataResult = await dataResponse.json();
             dataResult = JSON.parse(dataResult["bytes"]);
             create3dPlot(dataResult)
             create2dPlot(dataResult)
             //createDimPlot(dataResult)
         } else {
-            console.log("Error!")
+            console.log(response)
         }
     })();
     // This function sets the metadata of the pdb on top of the site. Like the paper link and stuff
