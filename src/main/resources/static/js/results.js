@@ -96,7 +96,7 @@ function create3dPlot(result) {
         const atomMin = parseInt(data[0]);
         const atomMax = parseInt(data[1]);
         let a = document.createElement("a");
-        let script = `"spacefill off; select all; cartoons; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; spacefill; color [10,0,255];"`
+        let script = `"spacefill off; select all; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; spacefill; cartoon; color [10,0,255];"`
         a.href = `javascript:Jmol.script(jmol1, ${script})`
         a.click();
     });
@@ -117,7 +117,7 @@ function create2dPlot(result) {
         const atomMin = parseInt(data[0]);
         const atomMax = parseInt(data[1]);
         let a = document.createElement("a");
-        let script = `"spacefill off; select all; cartoons; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; spacefill; color [10,0,255];"`
+        let script = `"spacefill off; select all; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; spacefill; cartoon; color [10,0,255];"`
         a.href = `javascript:Jmol.script(jmol1, ${script})`
         a.click();
     });
@@ -415,7 +415,7 @@ const getInfoProtein3d = (pdb) => {
         serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
         use: "HTML5",
         readyFunction: null,
-        script: `load "=${pdb}"; cartoons only; color structure; zoom 50; wireframe; background white; zoom 100`
+        script: `load "=${pdb}"; cartoons; color structure; zoom 50; wireframe; background white; zoom 100`
     }
 };
 document.getElementById("placeholder-scatter").style.display= 'none';
