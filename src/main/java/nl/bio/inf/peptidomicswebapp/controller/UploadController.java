@@ -3,7 +3,9 @@ package nl.bio.inf.peptidomicswebapp.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
+import nl.bio.inf.peptidomicswebapp.config.SessionDestroyer;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
@@ -40,8 +44,10 @@ public class UploadController {
     public String resultFromCode(@RequestParam("pdb_code") String pdbCode,
                                  String oligoParam,
                                  HttpSession session) {
+
         try {
             PDB pdb = new PDB(pdbCode);
+            deletePreviousSession(session);
             session.setAttribute("parameter", oligoParam);
             session.setAttribute("PDBFiles", pdb);
             return "redirect:/result";
@@ -62,10 +68,11 @@ public class UploadController {
     public String resultFromFiles(@RequestParam("pdb-file") MultipartFile file,
                                   String oligoParam,
                                   HttpSession session) {
-
+        System.out.println(session);
         try {
             // Creates PDB instance and redirects to page
             PDB pdb = new PDB(file.getBytes(), file.getOriginalFilename());
+            deletePreviousSession(session);
             session.setAttribute("parameter", oligoParam);
             session.setAttribute("PDBFiles", pdb);
             return "redirect:/result";
@@ -98,5 +105,28 @@ public class UploadController {
             LOGGER.warning("Error while class casting to PDB, message=" + ex.getMessage());
             return "redirect:/upload";
         }
+    }
+
+    /**
+     * This method checks if there is an existing session and deletes it if there is one.
+     *
+     * @param session
+     * @throws RuntimeException when the PDB is invalid
+     */
+    public void deletePreviousSession(HttpSession session) {
+        if (session.getAttribute("tempLocation") != null) {
+            String tempLocation = String.valueOf(session.getAttribute("tempLocation"));
+            try {
+                Files.delete(Path.of(tempLocation));
+                LOGGER.info("Deleted session files of: " + session.getId());
+            } catch (IOException e) {
+                LOGGER.warning("Could not delete the files!!");
+                throw new RuntimeException(e);
+            }
+            session.removeAttribute("chains");
+            session.removeAttribute("tempLocation");
+            session.removeAttribute("analysis");
+        }
+
     }
 }

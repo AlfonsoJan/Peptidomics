@@ -50,6 +50,9 @@ public class ResultController {
      */
     @PostMapping(value = "/create_temp_file")
     public void createTemporaryFile(HttpServletRequest request, HttpSession session) {
+        if (session.getAttribute("tempLocation") != null) {
+            return;
+        }
         try {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             String tempLocation = pdb.createTempFile();
@@ -70,6 +73,9 @@ public class ResultController {
      */
     @PostMapping(value = "/perform_pca_analysis")
     public @ResponseBody Plot createTemporaryFileCompare(HttpServletRequest request, HttpSession session) {
+        if (request.getSession().getAttribute("analysis") != null) {
+            return (Plot) session.getAttribute("analysis");
+        }
         try {
             File folderScripts = new ClassPathResource("scripts").getFile();
             File fullPath = null;
@@ -85,7 +91,9 @@ public class ResultController {
                     request.getSession().getAttribute("tempLocation").toString(),
                     request.getSession().getAttribute("parameter").toString()
             );
-            return new Plot(bytes);
+            Plot plot = new Plot(bytes);
+            request.getSession().setAttribute("analysis", plot);
+            return plot;
         } catch (IOException ex) {
             LOGGER.warning("Error while performing the script on the data, message=" + ex.getMessage());
             throw new RuntimeException(ex);
@@ -100,6 +108,9 @@ public class ResultController {
      */
     @PostMapping(value = "/get_chains")
     public @ResponseBody Plot getChains(HttpServletRequest request){
+        if (request.getSession().getAttribute("chains") != null) {
+            return (Plot) request.getSession().getAttribute("chains");
+        }
         try {
             File folderScripts  = new ClassPathResource("scripts").getFile();
             File fullPath = null;
@@ -109,11 +120,14 @@ public class ResultController {
                     fullPath = f;
                 }
             }
+
             // Call the python script
             String chain = pythonService.getChainsPBD(
                     String.valueOf(fullPath),
                     request.getSession().getAttribute("tempLocation").toString());
-            return new Plot(chain);
+            Plot plot = new Plot(chain);
+            request.getSession().setAttribute("chains", plot);
+            return plot;
         } catch (IOException ex) {
             LOGGER.warning("Error while retrieving the chains from the data, message=" + ex.getMessage());
             throw new RuntimeException(ex);
