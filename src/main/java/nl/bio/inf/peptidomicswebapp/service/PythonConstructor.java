@@ -8,5 +8,5 @@ public interface PythonConstructor {
 
     String getChainsPBD(String pythonPath, String pdbID);
 
-    String PDBAnalyse(String pythonPath, String pdbID, String param, String comparePDB);
+    String PDBAnalyse(String pythonPath, String pdbID, String param);
 }

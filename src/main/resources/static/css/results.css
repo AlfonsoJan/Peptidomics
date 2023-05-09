@@ -12,6 +12,10 @@ Wouter Zeevat
     to {background-color: lightgray;}
 }
 
+.scatter-2d-card {
+    padding-bottom: 2rem;
+}
+
 .chain-content {
     padding: 0;
 }
@@ -40,6 +44,11 @@ Wouter Zeevat
 #placeholder-scatter {
     height: 350px !important;
     max-height: 350px !important;
+}
+
+#placeholder-protein {
+    height: 300px !important;
+    max-height: 300px !important;
 }
 
 #placeholder-scatter-3d {

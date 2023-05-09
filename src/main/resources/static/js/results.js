@@ -18,6 +18,7 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+
 // Function that converts hue to RGB
 const HSLToRGB = (h, s, l) => {
     s /= 100;
@@ -28,77 +29,22 @@ const HSLToRGB = (h, s, l) => {
         l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
-// Function that create the 3d scatter plotly plot
-function create3dPlot(result) {
-    let elem = document.getElementById("spinner-scatter-3d");
-    elem.parentNode.removeChild(elem);
-    document.getElementById("placeholder-scatter-3d").style.display= '';
-    let value = document.getElementById("pdb-structure").textContent;
-    value = value.slice(value.indexOf(":") + 2, value.length);
-    // 2 traces because there is the normal, and compared to data
-    let trace1 = {
-        type: 'scatter3d',
-        x: JSON.parse(result["bytes"])["scatter"].x,
-        y: JSON.parse(result["bytes"])["scatter"].y,
-        z: JSON.parse(result["bytes"])["scatter"].z,
-        mode: 'markers',
-        marker: {
-            size: 2,
-            color: 'rgba(122, 206, 255, 1)'},
-        name: `${value}`
-    };
-    let trace2 = {
-        type: 'scatter3d',
-        x: JSON.parse(result["bytes"])["compare"].x,
-        y: JSON.parse(result["bytes"])["compare"].y,
-        z: JSON.parse(result["bytes"])["compare"].z,
-        mode: 'markers',
-        marker: {
-            size: 1,
-            color: 'rgba(191, 205, 233, 1)'}
-        ,
-    };
-    let data = [ trace1, trace2 ];
-    let layout = {
-        autosize: true,
-        margin: {
-            l: 0,
-            r: 0,
-            b: 0,
-            t: 0,
-            pad: 4
-        },
-        scene: {
-            aspectmode: "data",
-            xaxis: {
-                showspikes: false,
-                backgroundcolor: "#edf3fa",
-                showbackground: true
-            },
-            yaxis: {
-                showspikes: false,
-                backgroundcolor: "#edf3fa",
-                showbackground: true
-            },
-            zaxis: {
-                showspikes: false,
-                backgroundcolor: "#edf3fa",
-                showbackground: true
-            }
-        },
-        paper_bgcolor:"white",
-        plot_bgcolor:"#00FF00",
-        legend: {
-            y: 0.5,
-            yref: 'paper',
-            font: {
-                size: 20,
-            },
-        }
-    }
-    let config = {responsive: true}
-    Plotly.newPlot('placeholder-scatter-3d',data,layout,config);
+
+
+let colorArray = [];
+for (let i = 0; i < 26; i++) {
+    let hsl_value = 255 / 26 * i;
+    let rgb = HSLToRGB(hsl_value, 100, 80);
+    colorArray.push(rgb)
 }
+for (let i = colorArray.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [colorArray[i], colorArray[j]] = [colorArray[j], colorArray[i]];
+}
+
+let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
+chain_dict = letters.map((x, i) => ({ x, y: colorArray[i] }));
+
 // Function that create the 2d scatter plotly plot for the dimension
 function createDimPlot(result) {
     let elem = document.getElementById("spinner-pca");
@@ -134,49 +80,47 @@ function createDimPlot(result) {
     let config = {responsive: true}
     Plotly.newPlot('placeholder-pca',data,layout,config);
 }
+// Function that create the 3d scatter plotly plot
+function create3dPlot(result) {
+    let elem = document.getElementById("spinner-scatter-3d");
+    elem.parentNode.removeChild(elem);
+    document.getElementById("placeholder-scatter-3d").style.display= '';
+    let { data, initialView, secondaryView } = getDataPCA3D(result);
+    let updateMenus = initializePlotlyButtons(initialView, secondaryView);
+    let layout = setLayoutPlotly3D(updateMenus);
+    let config = {responsive: true};
+    Plotly.newPlot("placeholder-scatter-3d", data, layout, config);
+    let myPlot = document.getElementById("placeholder-scatter-3d");
+    myPlot.on("plotly_click", function(datapoints){
+        const data = datapoints.points[0].data.freetext[datapoints.points[0].pointNumber];
+        const atomMin = parseInt(data[0]);
+        const atomMax = parseInt(data[1]);
+        let a = document.createElement("a");
+        let script = `"spacefill off; select all; cartoons; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; spacefill; color [10,0,255];"`
+        a.href = `javascript:Jmol.script(jmol1, ${script})`
+        a.click();
+    });
+}
 // Function that create the 2d scatter plotly plot for the PCA results
 function create2dPlot(result) {
     let elem = document.getElementById("spinner-scatter");
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter").style.display= '';
-    let value = document.getElementById("pdb-structure").textContent;
-    value = value.slice(value.indexOf(":") + 2, value.length);
-    let trace2 = {
-        type: 'scatter',
-        x: JSON.parse(result["bytes"])["scatter"].x,
-        y: JSON.parse(result["bytes"])["scatter"].y,
-        mode: 'markers',
-        marker: {
-            color: 'rgba(122, 206, 255, 0.6)',
-            size: 10
-        },
-        name: `${value}`
-    };
-    let trace1 = {
-        type: 'scatter',
-        x: JSON.parse(result["bytes"])["compare"].x,
-        y: JSON.parse(result["bytes"])["compare"].y,
-        mode: 'markers',
-        marker: {
-            color: 'rgba(191, 205, 233, 0.2)',
-            size: 10
-        }
-    }
-    let data = [ trace1, trace2 ];
-    let layout = {
-        autosize: true,
-        margin: {
-            l: 0,
-            r: 0,
-            b: 0,
-            t: 0,
-            pad: 4
-        },
-        paper_bgcolor:"white",
-        plot_bgcolor:"#FFFFFF"
-    };
-    let config = {responsive: true}
-    Plotly.newPlot('placeholder-scatter',data,layout,config);
+    let { data, initialView, secondaryView } = getDataPCA2D(result);
+    let updateMenus = initializePlotlyButtons(initialView, secondaryView);
+    let layout = setLayoutPlotly2D(updateMenus);
+    let config = {responsive: true};
+    Plotly.newPlot('placeholder-scatter', data, layout, config);
+    let myPlot = document.getElementById("placeholder-scatter");
+    myPlot.on("plotly_click", function(datapoints){
+        const data = datapoints.points[0].data.freetext[datapoints.points[0].pointNumber];
+        const atomMin = parseInt(data[0]);
+        const atomMax = parseInt(data[1]);
+        let a = document.createElement("a");
+        let script = `"spacefill off; select all; cartoons; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; spacefill; color [10,0,255];"`
+        a.href = `javascript:Jmol.script(jmol1, ${script})`
+        a.click();
+    });
 }
 // Function that set the chains on the site
 function setChain(chains) {
@@ -191,7 +135,6 @@ function setChain(chains) {
     }
     let elem = document.getElementById("pdb-stats");
     elem.parentElement.removeChild(elem);
-    var color_count = 0;
     for (let i = 0; i < chain.length; i += chunkSize) {
         const chunk = chain.slice(i, i + chunkSize);
         const columns = document.createElement("div");
@@ -212,70 +155,300 @@ function setChain(chains) {
             card.appendChild(cardContent);
 
             // Loops rainbow colors to get best colors that the plot will late be using
-            let hsl_value = 255 / chain.length * color_count;
-            console.log(hsl_value)
-            let rgb = HSLToRGB(hsl_value, 100, 80);
-
+            let rgb = chain_dict.filter(word => word.x === c[0])[0]["y"];
             const chainId = document.createElement("p");
             chainId.className = "is-size-5 has-text-weight-bold";
             chainId.textContent = `Chain: ${c[0]}`;
-            chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+            chainId.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]}`;
             cardContent.appendChild(chainId);
 
             const atomLength = document.createElement("p");
             atomLength.className = "is-size-5";
             atomLength.textContent = `ATOM: ${c[1]} residues`;
             cardContent.appendChild(atomLength);
-            color_count++;
         });
         document.getElementById("stats-pdb").appendChild(columns);
     }
 }
-document.getElementById("placeholder-pca").style.display= 'none';
+const getCategoriesPepties2D = (data) => {
+    let traces = [];
+    let categories = [];
+    for (let i = 0; i < Object.keys(data).length; i ++) {
+        if (categories.indexOf(data[i].peptide) === -1) {
+            traces.push({
+                type: "scatter",
+                x: [],
+                y: [],
+                freetext: [],
+                mode: "markers",
+                marker: {size: 10},
+                text: `Peptide: ${data[i].peptide}`,
+                name: data[i].peptide,
+            });
+            categories.push(data[i].peptide);
+        } else {
+            traces[categories.indexOf(data[i].peptide)].x.push(data[i].x);
+            traces[categories.indexOf(data[i].peptide)].y.push(data[i].y);
+            traces[categories.indexOf(data[i].peptide)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+        }
+    }
+    return traces
+};
+const getCategoriesPepties3D = (data) => {
+    let traces = [];
+    let categories = [];
+    for (let i = 0; i < Object.keys(data).length; i ++) {
+        if (categories.indexOf(data[i].peptide) === -1) {
+            traces.push({
+                type: "scatter3d",
+                x: [],
+                y: [],
+                z: [],
+                freetext: [],
+                mode: "markers",
+                marker: {size: 2},
+                text: `Peptide: ${data[i].peptide}`,
+                name: data[i].peptide,
+            });
+            categories.push(data[i].peptide);
+        } else {
+            traces[categories.indexOf(data[i].peptide)].x.push(data[i].x);
+            traces[categories.indexOf(data[i].peptide)].y.push(data[i].y);
+            traces[categories.indexOf(data[i].peptide)].z.push(data[i].z);
+            traces[categories.indexOf(data[i].peptide)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+        }
+    }
+    return traces
+};
+
+const getCategoriesChains2D = (data) => {
+    let traces = [];
+    let categories = [];
+    for (let i = 0; i < Object.keys(data).length; i ++) {
+        if (categories.indexOf(data[i].chain) === -1) {
+            traces.push({
+                type: "scatter",
+                x: [],
+                y: [],
+                freetext: [],
+                mode: "markers",
+                marker: {size: 10},
+                text: `Chain: ${data[i].chain}`,
+                name: data[i].chain,
+                visible: false,
+            });
+            categories.push(data[i].chain);
+        } else {
+            traces[categories.indexOf(data[i].chain)].x.push(data[i].x);
+            traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
+            traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+        }
+    }
+    return traces;
+};
+const getCategoriesChains3D = (data) => {
+    let traces = [];
+    let categories = [];
+    for (let i = 0; i < Object.keys(data).length; i ++) {
+        if (categories.indexOf(data[i].chain) === -1) {
+            traces.push({
+                type: "scatter3d",
+                x: [],
+                y: [],
+                z: [],
+                freetext: [],
+                mode: "markers",
+                marker: {size: 2},
+                color: [],
+                text: `Chain: ${data[i].chain}`,
+                name: data[i].chain,
+                visible: false,
+            });
+            categories.push(data[i].chain);
+        } else {
+            traces[categories.indexOf(data[i].chain)].x.push(data[i].x);
+            traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
+            traces[categories.indexOf(data[i].chain)].z.push(data[i].z);
+            traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+            let hex = chain_dict.filter(c => c.x === data[i].chain)[0]['y'];
+            traces[categories.indexOf(data[i].chain)].color.push(`${hex}`);
+        }
+    }
+    console.log(traces);
+    return traces;
+};
+const getDataPCA2D = (json) => {
+    let tracesPeptides = getCategoriesPepties2D(json);
+    let tracesChains = getCategoriesChains2D(json);
+
+    let buttonVisible = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false));
+    let buttonVisibleReverse = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true));
+
+    return {
+        "data": tracesPeptides.concat(tracesChains),
+        "initialView": buttonVisible,
+        "secondaryView": buttonVisibleReverse,
+    }
+};
+const getDataPCA3D = (json) => {
+    let tracesPeptides = getCategoriesPepties3D(json);
+    let tracesChains = getCategoriesChains3D(json);
+
+    let buttonVisible = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false));
+    let buttonVisibleReverse = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true));
+
+    return {
+        "data": tracesPeptides.concat(tracesChains),
+        "initialView": buttonVisible,
+        "secondaryView": buttonVisibleReverse,
+    }
+};
+const initializePlotlyButtons = (initialView, secondaryView) => {
+    return [{
+        buttons: [
+            {
+                args: [
+                    {"visible": initialView},
+                    {"title": "Peptides", "showlegend": initialView}
+                ],
+                label: "Peptides",
+                method: "update"
+            },
+            {
+                args: [
+                    {"visible": secondaryView},
+                    {"title": "Chains", "showlegend": secondaryView}
+                ],
+                label: "Chains",
+                method: "update"
+            }
+        ],
+        direction: "left",
+        pad: {"r": 10, "t": 10},
+        showactive: true,
+        type: "buttons",
+        x: 0.1,
+        xanchor: "left",
+        y: 1.1,
+        yanchor: "top"
+    }]
+};
+const setLayoutPlotly2D = (updatemenus) => {
+    return  {
+        autosize: true,
+        title: "Peptides",
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 0,
+            pad: 4
+        },
+        hovermode: "closest",
+        updatemenus: updatemenus,
+        showlegend: true,
+        paper_bgcolor:"white",
+        plot_bgcolor:"#FFFFFF",
+        legend: {
+            y: 0.5,
+            yref: 'paper',
+            font: {
+                size: 10,
+            },
+        }
+    }
+};
+const setLayoutPlotly3D = (updatemenus) => {
+    return {
+        autosize: true,
+        title: "Peptides",
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 0,
+            pad: 4
+        },
+        hovermode: "closest",
+        updatemenus: updatemenus,
+        showlegend: true,
+        scene: {
+            aspectmode: "data",
+            xaxis: {
+                showspikes: false,
+                backgroundcolor: "#edf3fa",
+                showbackground: true
+            },
+            yaxis: {
+                showspikes: false,
+                backgroundcolor: "#edf3fa",
+                showbackground: true
+            },
+            zaxis: {
+                showspikes: false,
+                backgroundcolor: "#edf3fa",
+                showbackground: true
+            },
+        },
+        paper_bgcolor:"white",
+        plot_bgcolor:"#00FF00",
+        legend: {
+            y: 0.5,
+            yref: 'paper',
+            font: {
+                size: 10,
+            },
+        },
+        colorway: colorArray
+    }
+};
+const getInfoProtein3d = (pdb) => {
+    return {
+        width: 400,
+        height: 292,
+        debug: false,
+        j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
+        color: "0xC0C0C0",
+        disableJ2SLoadMonitor: true,
+        disableInitialConsole: true,
+        addSelectionOptions: false,
+        serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+        use: "HTML5",
+        readyFunction: null,
+        script: `load "=${pdb}"; cartoons only; color structure; zoom 50; wireframe; background white; zoom 100`
+    }
+};
 document.getElementById("placeholder-scatter").style.display= 'none';
 document.getElementById("placeholder-scatter-3d").style.display= 'none';
 document.getElementById("place-text").style.display= 'none';
 document.addEventListener('DOMContentLoaded', (event) => {
     // This function will call the function to create a temporary file and handles the response
     (async function getData() {
-        const response = await fetch("/create_temp_file", { method: 'POST' });
+        const tokenResponse = await fetch("/csrf-token", {method: "GET"});
+        const csrfToken = await tokenResponse.text();
+        const fetchParameters = { method: 'POST', headers: {'X-CSRF-TOKEN': csrfToken}}
+        const response = await fetch("/create_temp_file", fetchParameters);
         if (response.ok) {
-            const chainResponse = await fetch("/get_chains", { method: 'POST' });
+            const chainResponse = await fetch("/get_chains", fetchParameters);
             const chainResult = await chainResponse.json();
+
             setChain(chainResult)
 
             let value = document.getElementById("pdb-structure").textContent;
             value = value.slice(value.indexOf(":") + 2, value.length);
             // Functionality for the 3D protein plot
             if (value != null) {
-                Info = {
-                    width: 800,
-                    height: 400,
-                    debug: false,
-                    j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
-                    color: "0xC0C0C0",
-                    disableJ2SLoadMonitor: true,
-                    disableInitialConsole: true,
-                    addSelectionOptions: false,
-                    serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
-                    use: "HTML5",
-                    readyFunction: null,
-                    script: `load "=${value}"; cartoons only; color structure;`
-                }
-                $("#protein").html(Jmol.getAppletHtml("jmol1",Info))
+                let Info = getInfoProtein3d(value);
+                $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
             }
-
-            const dataResponse = await fetch("/create_compare_temp", { method: 'POST' });
-            const dataResult = await dataResponse.json();
+            const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
+            let dataResult = await dataResponse.json();
+            dataResult = JSON.parse(dataResult["bytes"]);
             create3dPlot(dataResult)
-            createDimPlot(dataResult)
             create2dPlot(dataResult)
-
-            $(document).ready(function() {
-
-            });
+            //createDimPlot(dataResult)
         } else {
-            console.log("Error!")
+            console.log(response)
         }
     })();
     // This function sets the metadata of the pdb on top of the site. Like the paper link and stuff

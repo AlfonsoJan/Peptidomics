@@ -7,9 +7,8 @@ import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.Plot;
 import nl.bio.inf.peptidomicswebapp.service.PythonService;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +28,18 @@ public class ResultController {
 
     public ResultController(PythonService pythonService) {
         this.pythonService = pythonService;
+    }
+
+
+    /**
+     * This will return the csrf token for the stateless fetch calls
+     * @param request
+     * @return
+     */
+    @RequestMapping(value="/csrf-token", method= RequestMethod.GET)
+    public @ResponseBody String getCsrfToken(HttpServletRequest request) {
+        CsrfToken token = (CsrfToken)request.getAttribute(CsrfToken.class.getName());
+        return token.getToken();
     }
 
     /**
@@ -57,12 +68,9 @@ public class ResultController {
      * @return
      * @throws IOException when the script can't be run correctly
      */
-    @PostMapping(value = "/create_compare_temp")
-    public Plot createTemporaryFileCompare(HttpServletRequest request, HttpSession session) {
+    @PostMapping(value = "/perform_pca_analysis")
+    public @ResponseBody Plot createTemporaryFileCompare(HttpServletRequest request, HttpSession session) {
         try {
-            String compareCode = String.valueOf(request.getSession().getAttribute("compareCode"));
-            String location = PDB.createTempFile(compareCode);
-            session.setAttribute("tempLocationCompare", location);
             File folderScripts = new ClassPathResource("scripts").getFile();
             File fullPath = null;
             // Get the location for the python file
@@ -75,15 +83,13 @@ public class ResultController {
             String bytes = pythonService.PDBAnalyse(
                     fullPath.toString(),
                     request.getSession().getAttribute("tempLocation").toString(),
-                    request.getSession().getAttribute("parameter").toString(),
-                    location
+                    request.getSession().getAttribute("parameter").toString()
             );
             return new Plot(bytes);
         } catch (IOException ex) {
             LOGGER.warning("Error while performing the script on the data, message=" + ex.getMessage());
             throw new RuntimeException(ex);
         }
-
     }
 
     /**

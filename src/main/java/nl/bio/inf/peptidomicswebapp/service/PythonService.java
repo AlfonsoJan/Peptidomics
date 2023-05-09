@@ -59,9 +59,9 @@ public class PythonService implements PythonConstructor{
      * @return
      */
     @Override
-    public String PDBAnalyse(String pythonPath, String pdbID, String param, String comparePDB) {
+    public String PDBAnalyse(String pythonPath, String pdbID, String param) {
         try {
-            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID, param, comparePDB);
+            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID, param);
             Process p = pb.start();
             BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
