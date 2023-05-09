@@ -19,3 +19,13 @@ p {
     font-weight: 600;
     font-size: 3rem;
 }
+
+.card {
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+.button {
+    margin: 2rem;
+    font-size: large;
+}
