@@ -431,22 +431,25 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (response.ok) {
             const chainResponse = await fetch("/get_chains", fetchParameters);
             const chainResult = await chainResponse.json();
-
-            setChain(chainResult)
-
             let value = document.getElementById("pdb-structure").textContent;
             value = value.slice(value.indexOf(":") + 2, value.length);
-            // Functionality for the 3D protein plot
-            if (value != null) {
-                let Info = getInfoProtein3d(value);
-                $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
+            if (chainResult["bytes"].length > 2) {
+                console.log(chainResult["bytes"])
+                setChain(chainResult)
+
+                // Functionality for the 3D protein plot
+                if (value != null) {
+                    let Info = getInfoProtein3d(value);
+                    $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
+                }
+                const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
+                let dataResult = await dataResponse.json();
+                dataResult = JSON.parse(dataResult["bytes"]);
+                create3dPlot(dataResult)
+                create2dPlot(dataResult)
+            } else {
+                window.location.href = `/pdb_error?code=${value}`
             }
-            const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
-            let dataResult = await dataResponse.json();
-            dataResult = JSON.parse(dataResult["bytes"]);
-            create3dPlot(dataResult)
-            create2dPlot(dataResult)
-            //createDimPlot(dataResult)
         } else {
             console.log(response)
         }

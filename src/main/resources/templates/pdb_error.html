@@ -1,0 +1,35 @@
+<!--
+author: Wouter Zeevat
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Error</title>
+    <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
+    <link rel="stylesheet" th:href="@{css/error.css}" href="../static/css/error.css"/>
+    <link rel="stylesheet" th:href="@{css/general.css}" href="../static/css/general.css"/>
+    <link rel="icon" type="image/ico" th:href="@{../static/images/favicon.ico}">
+</head>
+<body>
+<div class='hero is-fullheight'>
+    <div th:replace="~{fragments :: navbar}"></div>
+    <div class="hero-body">
+        <div class="container has-text-centered card">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mood-confuzed" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                <path d="M9 10l.01 0"></path>
+                <path d="M15 10l.01 0"></path>
+                <path d="M9.5 16a10 10 0 0 1 6 -1.5"></path>
+            </svg>
+            <h1 class="error-code">Invalid PDB File</h1>
+            <h1 th:text="'There was an error with code ' + ${code}" class="error-message">_Code_</h1>
+            <h1 class="error-message">This code is not a protein PDB file!</h1>
+            <button type="button" class="button is-info is-large" id="back-button" onclick="window.location.href = 'upload'">Back to upload</button>
+        </div>
+    </div>
+    <div th:replace="~{fragments :: footer}"></div>
+</div>
+</body>
+</html>

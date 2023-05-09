@@ -48,6 +48,19 @@ public class CustomErrorController implements ErrorController {
     }
 
     /**
+     * Renders the custom PDB error page with the errorCode and message according to the errorService
+     * @param model
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/pdb_error")
+    public String renderPDBErrorPage(Model model, final HttpServletRequest request) {
+        final String error = request.getParameter("code");
+        model.addAttribute("code", error);
+        return "pdb_error";
+    }
+
+    /**
      * Returns the error status code
      * @param request
      * @return integer
