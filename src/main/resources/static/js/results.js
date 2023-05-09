@@ -30,25 +30,17 @@ const HSLToRGB = (h, s, l) => {
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
 
-function rgbToHex(r, g, b) {
-    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
 
 let colorArray = [];
 for (let i = 0; i < 26; i++) {
     let hsl_value = 255 / 26 * i;
     let rgb = HSLToRGB(hsl_value, 100, 80);
-    let hex = rgbToHex(rgb[0], rgb[1], rgb[2])
-    colorArray.push(hex)
+    colorArray.push(rgb)
 }
 for (let i = colorArray.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [colorArray[i], colorArray[j]] = [colorArray[j], colorArray[i]];
 }
-
-Plotly.setPlotConfig({
-    colors: colorArray
-});
 
 let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
 chain_dict = letters.map((x, i) => ({ x, y: colorArray[i] }));
@@ -163,11 +155,11 @@ function setChain(chains) {
             card.appendChild(cardContent);
 
             // Loops rainbow colors to get best colors that the plot will late be using
-            let hex = chain_dict.filter(word => word.x === c[0])[0]["y"];
+            let rgb = chain_dict.filter(word => word.x === c[0])[0]["y"];
             const chainId = document.createElement("p");
             chainId.className = "is-size-5 has-text-weight-bold";
             chainId.textContent = `Chain: ${c[0]}`;
-            chainId.style.backgroundColor = `${hex}`;
+            chainId.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]}`;
             cardContent.appendChild(chainId);
 
             const atomLength = document.createElement("p");
@@ -413,7 +405,7 @@ const setLayoutPlotly3D = (updatemenus) => {
 const getInfoProtein3d = (pdb) => {
     return {
         width: 400,
-        height: 400,
+        height: 292,
         debug: false,
         j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
         color: "0xC0C0C0",
@@ -423,7 +415,7 @@ const getInfoProtein3d = (pdb) => {
         serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
         use: "HTML5",
         readyFunction: null,
-        script: `load "=${pdb}"; cartoons only; color structure; zoom 50; wireframe;`
+        script: `load "=${pdb}"; cartoons only; color structure; zoom 50; wireframe; background white; zoom 100`
     }
 };
 document.getElementById("placeholder-scatter").style.display= 'none';

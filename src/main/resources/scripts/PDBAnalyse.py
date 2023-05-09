@@ -49,6 +49,7 @@ def peptidize(pdbfile, pepsize):
         for part in parts
         for i in range(len(part) - pepsize)
     ])
+    pepcoords -= pepcoords.mean(axis=1)[:,None,:]
     # Peptides per part
     peptides = [
         Counter(part[i:i+pepsize:3]).most_common()[0][0]
