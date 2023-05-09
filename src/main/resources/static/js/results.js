@@ -18,6 +18,7 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+
 // Function that converts hue to RGB
 const HSLToRGB = (h, s, l) => {
     s /= 100;
@@ -28,6 +29,30 @@ const HSLToRGB = (h, s, l) => {
         l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
+
+function rgbToHex(r, g, b) {
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+let colorArray = [];
+for (let i = 0; i < 26; i++) {
+    let hsl_value = 255 / 26 * i;
+    let rgb = HSLToRGB(hsl_value, 100, 80);
+    let hex = rgbToHex(rgb[0], rgb[1], rgb[2])
+    colorArray.push(hex)
+}
+for (let i = colorArray.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [colorArray[i], colorArray[j]] = [colorArray[j], colorArray[i]];
+}
+
+Plotly.setPlotConfig({
+    colors: colorArray
+});
+
+let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
+chain_dict = letters.map((x, i) => ({ x, y: colorArray[i] }));
+
 // Function that create the 2d scatter plotly plot for the dimension
 function createDimPlot(result) {
     let elem = document.getElementById("spinner-pca");
@@ -118,7 +143,6 @@ function setChain(chains) {
     }
     let elem = document.getElementById("pdb-stats");
     elem.parentElement.removeChild(elem);
-    var color_count = 0;
     for (let i = 0; i < chain.length; i += chunkSize) {
         const chunk = chain.slice(i, i + chunkSize);
         const columns = document.createElement("div");
@@ -139,20 +163,17 @@ function setChain(chains) {
             card.appendChild(cardContent);
 
             // Loops rainbow colors to get best colors that the plot will late be using
-            let hsl_value = 255 / chain.length * color_count;
-            let rgb = HSLToRGB(hsl_value, 100, 80);
-
+            let hex = chain_dict.filter(word => word.x === c[0])[0]["y"];
             const chainId = document.createElement("p");
             chainId.className = "is-size-5 has-text-weight-bold";
             chainId.textContent = `Chain: ${c[0]}`;
-            chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+            chainId.style.backgroundColor = `${hex}`;
             cardContent.appendChild(chainId);
 
             const atomLength = document.createElement("p");
             atomLength.className = "is-size-5";
             atomLength.textContent = `ATOM: ${c[1]} residues`;
             cardContent.appendChild(atomLength);
-            color_count++;
         });
         document.getElementById("stats-pdb").appendChild(columns);
     }
@@ -246,6 +267,7 @@ const getCategoriesChains3D = (data) => {
                 freetext: [],
                 mode: "markers",
                 marker: {size: 2},
+                color: [],
                 text: `Chain: ${data[i].chain}`,
                 name: data[i].chain,
                 visible: false,
@@ -256,8 +278,11 @@ const getCategoriesChains3D = (data) => {
             traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
             traces[categories.indexOf(data[i].chain)].z.push(data[i].z);
             traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+            let hex = chain_dict.filter(c => c.x === data[i].chain)[0]['y'];
+            traces[categories.indexOf(data[i].chain)].color.push(`${hex}`);
         }
     }
+    console.log(traces);
     return traces;
 };
 const getDataPCA2D = (json) => {
@@ -381,12 +406,13 @@ const setLayoutPlotly3D = (updatemenus) => {
             font: {
                 size: 10,
             },
-        }
+        },
+        colorway: colorArray
     }
 };
 const getInfoProtein3d = (pdb) => {
     return {
-        width: 800,
+        width: 400,
         height: 400,
         debug: false,
         j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
@@ -400,7 +426,6 @@ const getInfoProtein3d = (pdb) => {
         script: `load "=${pdb}"; cartoons only; color structure; zoom 50; wireframe;`
     }
 };
-document.getElementById("placeholder-pca").style.display= 'none';
 document.getElementById("placeholder-scatter").style.display= 'none';
 document.getElementById("placeholder-scatter-3d").style.display= 'none';
 document.getElementById("place-text").style.display= 'none';
@@ -414,13 +439,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (response.ok) {
             const chainResponse = await fetch("/get_chains", fetchParameters);
             const chainResult = await chainResponse.json();
+
             setChain(chainResult)
 
             let value = document.getElementById("pdb-structure").textContent;
             value = value.slice(value.indexOf(":") + 2, value.length);
             // Functionality for the 3D protein plot
             if (value != null) {
-                let Info = getInfoProtein3d("4hhb");
+                let Info = getInfoProtein3d(value);
                 $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
             }
             const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
