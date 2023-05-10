@@ -35,21 +35,17 @@ const HSLToRGB = (h, s, l) => {
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
 
-/* FOR RAINBOW COLORS LATER
 let colorArray = [];
 for (let i = 0; i < 26; i++) {
     let hsl_value = 255 / 26 * i;
-    let rgb = HSLToRGB(hsl_value, 100, 80);
+    let rgb = HSLToRGB(hsl_value, 100, 70);
     colorArray.push(rgb)
- }*/
+ }
 
-colorArray = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'];
-/*for (let i = colorArray.length - 1; i > 0; i--) {
+for (let i = colorArray.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [colorArray[i], colorArray[j]] = [colorArray[j], colorArray[i]];
-}*/
+}
 
 let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
 chain_dict = letters.map((x, i) => ({ x, y: colorArray[i] }));
@@ -199,11 +195,11 @@ function setChain(chains) {
             card.appendChild(cardContent);
 
             // Loops rainbow colors to get best colors that the plot will late be using
-            let hex = chain_dict.filter(word => word.x === c[0])[0]["y"];
+            let rgb = chain_dict.filter(word => word.x === c[0])[0]["y"];
             const chainId = document.createElement("p");
             chainId.className = "is-size-5 has-text-weight-bold";
             chainId.textContent = `Chain: ${c[0]}`;
-            chainId.style.backgroundColor = `${hex}`;
+            chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
             cardContent.appendChild(chainId);
 
             const atomLength = document.createElement("p");
@@ -317,7 +313,9 @@ const getCategoriesChains2D = (data) => {
                 y: [],
                 freetext: [],
                 mode: "markers",
-                marker: {size: 10},
+                marker: {size: 10,
+                color: [],
+                opacity: 1},
                 text: `Chain: ${data[i].chain}`,
                 name: data[i].chain,
                 visible: false,
@@ -327,6 +325,8 @@ const getCategoriesChains2D = (data) => {
             traces[categories.indexOf(data[i].chain)].x.push(data[i].x);
             traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
             traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+            let rgb = chain_dict.filter(c => c.x === data[i].chain)[0].y;
+            traces[categories.indexOf(data[i].chain)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
         }
     }
     return traces;
@@ -343,8 +343,10 @@ const getCategoriesChains3D = (data) => {
                 z: [],
                 freetext: [],
                 mode: "markers",
-                marker: {size: 2},
-                color: [],
+                marker: {size: 2,
+                    opacity: 1,
+                color: []
+                },
                 text: `Chain: ${data[i].chain}`,
                 name: data[i].chain,
                 visible: false,
@@ -355,8 +357,8 @@ const getCategoriesChains3D = (data) => {
             traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
             traces[categories.indexOf(data[i].chain)].z.push(data[i].z);
             traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
-            let hex = chain_dict.filter(c => c.x === data[i].chain)[0]['y'];
-            traces[categories.indexOf(data[i].chain)].color.push(`${hex}`);
+            let rgb = chain_dict.filter(c => c.x === data[i].chain)[0].y;
+            traces[categories.indexOf(data[i].chain)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
         }
     }
     console.log(traces);
