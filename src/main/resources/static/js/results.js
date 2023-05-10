@@ -19,6 +19,11 @@ toastr.options = {
     "hideMethod": "fadeOut"
 }
 
+let atomMin = 0;
+let atomMax = 0;
+let hidden = false;
+let reset = true;
+
 // Function that converts hue to RGB
 const HSLToRGB = (h, s, l) => {
     s /= 100;
@@ -30,17 +35,21 @@ const HSLToRGB = (h, s, l) => {
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
 
-
+/* FOR RAINBOW COLORS LATER
 let colorArray = [];
 for (let i = 0; i < 26; i++) {
     let hsl_value = 255 / 26 * i;
     let rgb = HSLToRGB(hsl_value, 100, 80);
     colorArray.push(rgb)
-}
-for (let i = colorArray.length - 1; i > 0; i--) {
+ }*/
+
+colorArray = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'];
+/*for (let i = colorArray.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [colorArray[i], colorArray[j]] = [colorArray[j], colorArray[i]];
-}
+}*/
 
 let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
 chain_dict = letters.map((x, i) => ({ x, y: colorArray[i] }));
@@ -92,13 +101,30 @@ function create3dPlot(result) {
     Plotly.newPlot("placeholder-scatter-3d", data, layout, config);
     let myPlot = document.getElementById("placeholder-scatter-3d");
     myPlot.on("plotly_click", function(datapoints){
+
+        // Unhides and rehides the selected after BUG FIX QUICK FIX
+        let was_hidden = false;
+        if (hidden) {
+            hideGlobal();
+            was_hidden = true;
+        }
+
         const data = datapoints.points[0].data.freetext[datapoints.points[0].pointNumber];
-        const atomMin = parseInt(data[0]);
-        const atomMax = parseInt(data[1]);
+        atomMin = parseInt(data[0]);
+        atomMax = parseInt(data[1]);
         let a = document.createElement("a");
-        let script = `"spacefill off; select all; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; spacefill; cartoon; color [10,0,255];"`
+        let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; cartoons; color [10,0,255];"`
         a.href = `javascript:Jmol.script(jmol1, ${script})`
         a.click();
+
+        if (was_hidden) {
+            hideGlobal();
+            script = `"zoom 0"`;
+            a.href = `javascript:Jmol.script(jmol1, ${script})`
+            a.click();
+        }
+        reset = false;
+
     });
 }
 // Function that create the 2d scatter plotly plot for the PCA results
@@ -113,13 +139,31 @@ function create2dPlot(result) {
     Plotly.newPlot('placeholder-scatter', data, layout, config);
     let myPlot = document.getElementById("placeholder-scatter");
     myPlot.on("plotly_click", function(datapoints){
+
+        // Unhides and rehides the selected after BUG FIX QUICK FIX
+        let was_hidden = false;
+        if (hidden) {
+            hideGlobal();
+            was_hidden = true;
+        }
+
         const data = datapoints.points[0].data.freetext[datapoints.points[0].pointNumber];
-        const atomMin = parseInt(data[0]);
-        const atomMax = parseInt(data[1]);
+        atomMin = parseInt(data[0]);
+        atomMax = parseInt(data[1]);
         let a = document.createElement("a");
-        let script = `"spacefill off; select all; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; spacefill; cartoon; color [10,0,255];"`
+        let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; cartoons; color [10,0,255]; zoom 0"`
         a.href = `javascript:Jmol.script(jmol1, ${script})`
         a.click();
+
+        if (was_hidden) {
+            hideGlobal();
+
+            script = `"zoom 0"`;
+            a.href = `javascript:Jmol.script(jmol1, ${script})`
+            a.click();
+        }
+        reset = false;
+
     });
 }
 // Function that set the chains on the site
@@ -155,11 +199,11 @@ function setChain(chains) {
             card.appendChild(cardContent);
 
             // Loops rainbow colors to get best colors that the plot will late be using
-            let rgb = chain_dict.filter(word => word.x === c[0])[0]["y"];
+            let hex = chain_dict.filter(word => word.x === c[0])[0]["y"];
             const chainId = document.createElement("p");
             chainId.className = "is-size-5 has-text-weight-bold";
             chainId.textContent = `Chain: ${c[0]}`;
-            chainId.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]}`;
+            chainId.style.backgroundColor = `${hex}`;
             cardContent.appendChild(chainId);
 
             const atomLength = document.createElement("p");
@@ -170,6 +214,47 @@ function setChain(chains) {
         document.getElementById("stats-pdb").appendChild(columns);
     }
 }
+
+function resetScript() {
+    if (hidden) {
+        hideGlobal();
+    }
+    console.log("Reset the 3D viewer!")
+    let a = document.createElement("a");
+    let script = `"select all; cartoons only; color structure; background white; zoom 0"`;
+    a.href = `javascript:Jmol.script(jmol1, ${script})`
+    a.click();
+    reset = true;
+}
+
+function hideGlobal() {
+
+    let a = document.createElement("a");
+
+    if (reset) {
+        return;
+    }
+    let script;
+    if (!hidden) {
+        console.log("Hidden the global protein!")
+        script = `"hide all; display atomno>${atomMin - 1} and atomno<${atomMax + 1}; color [10,0,255];"`
+        a.href = `javascript:Jmol.script(jmol1, ${script})`
+        hidden = true;
+        a.click()
+
+    } else {
+        console.log("Unhidden the global protein!")
+        hidden = false;
+        script = '"hide none"'
+        a.href = `javascript:Jmol.script(jmol1, ${script})`
+        a.click();
+    }
+
+    script = `"zoom 0"`;
+    a.href = `javascript:Jmol.script(jmol1, ${script})`
+    a.click();
+}
+
 const getCategoriesPepties2D = (data) => {
     let traces = [];
     let categories = [];
@@ -415,7 +500,7 @@ const getInfoProtein3d = (pdb) => {
         serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
         use: "HTML5",
         readyFunction: null,
-        script: `load "=${pdb}"; cartoons; color structure; zoom 50; wireframe; background white; zoom 100`
+        script: `load "=${pdb}"; cartoons only; color structure; background white; zoom 100`
     }
 };
 document.getElementById("placeholder-scatter").style.display= 'none';
