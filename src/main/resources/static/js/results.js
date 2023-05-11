@@ -19,6 +19,29 @@ toastr.options = {
     "hideMethod": "fadeOut"
 }
 
+const aminoAcidCodes = [
+    "ALA", // Alanine
+    "ARG", // Arginine
+    "ASN", // Asparagine
+    "ASP", // Aspartic Acid
+    "CYS", // Cysteine
+    "GLN", // Glutamine
+    "GLU", // Glutamic Acid
+    "GLY", // Glycine
+    "HIS", // Histidine
+    "ILE", // Isoleucine
+    "LEU", // Leucine
+    "LYS", // Lysine
+    "MET", // Methionine
+    "PHE", // Phenylalanine
+    "PRO", // Proline
+    "SER", // Serine
+    "THR", // Threonine
+    "TRP", // Tryptophan
+    "TYR", // Tyrosine
+    "VAL", // Valine
+];
+
 let atomMin = 0;
 let atomMax = 0;
 let hidden = false;
@@ -35,20 +58,17 @@ const HSLToRGB = (h, s, l) => {
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
 
-let colorArray = [];
-for (let i = 0; i < 26; i++) {
-    let hsl_value = 255 / 26 * i;
-    let rgb = HSLToRGB(hsl_value, 100, 70);
-    colorArray.push(rgb)
- }
+function createColors(keys) {
 
-for (let i = colorArray.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [colorArray[i], colorArray[j]] = [colorArray[j], colorArray[i]];
+    let colorArray = [];
+    for (let i = 0; i < keys.length; i++) {
+        let hsl_value = 255 / keys.length * i;
+        let rgb = HSLToRGB(hsl_value, 100, 70);
+        colorArray.push(rgb)
+    }
+
+    return keys.map((x, i) => ({x, y: colorArray[i]}));
 }
-
-let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
-chain_dict = letters.map((x, i) => ({ x, y: colorArray[i] }));
 
 // Function that create the 2d scatter plotly plot for the dimension
 function createDimPlot(result) {
@@ -86,11 +106,11 @@ function createDimPlot(result) {
     Plotly.newPlot('placeholder-pca',data,layout,config);
 }
 // Function that create the 3d scatter plotly plot
-function create3dPlot(result) {
+function create3dPlot(result, colors) {
     let elem = document.getElementById("spinner-scatter-3d");
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter-3d").style.display= '';
-    let { data, initialView, secondaryView } = getDataPCA3D(result);
+    let { data, initialView, secondaryView } = getDataPCA3D(result, colors);
     let updateMenus = initializePlotlyButtons(initialView, secondaryView);
     let layout = setLayoutPlotly3D(updateMenus);
     let config = {responsive: true};
@@ -124,11 +144,11 @@ function create3dPlot(result) {
     });
 }
 // Function that create the 2d scatter plotly plot for the PCA results
-function create2dPlot(result) {
+function create2dPlot(result, colors) {
     let elem = document.getElementById("spinner-scatter");
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter").style.display= '';
-    let { data, initialView, secondaryView } = getDataPCA2D(result);
+    let { data, initialView, secondaryView } = getDataPCA2D(result, colors);
     let updateMenus = initializePlotlyButtons(initialView, secondaryView);
     let layout = setLayoutPlotly2D(updateMenus);
     let config = {responsive: true};
@@ -163,7 +183,7 @@ function create2dPlot(result) {
     });
 }
 // Function that set the chains on the site
-function setChain(chains) {
+function setChain(chains, colors) {
     // The size for how many chains per row
     const chunkSize = 4
     const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
@@ -195,7 +215,7 @@ function setChain(chains) {
             card.appendChild(cardContent);
 
             // Loops rainbow colors to get best colors that the plot will late be using
-            let rgb = chain_dict.filter(word => word.x === c[0])[0]["y"];
+            let rgb = colors.filter(word => word.x === c[0])[0]["y"];
             const chainId = document.createElement("p");
             chainId.className = "is-size-5 has-text-weight-bold";
             chainId.textContent = `Chain: ${c[0]}`;
@@ -254,6 +274,7 @@ function hideGlobal() {
 const getCategoriesPepties2D = (data) => {
     let traces = [];
     let categories = [];
+    let colors = createColors(aminoAcidCodes);
     for (let i = 0; i < Object.keys(data).length; i ++) {
         if (categories.indexOf(data[i].peptide) === -1) {
             traces.push({
@@ -262,7 +283,7 @@ const getCategoriesPepties2D = (data) => {
                 y: [],
                 freetext: [],
                 mode: "markers",
-                marker: {size: 10},
+                marker: {size: 10, color: []},
                 text: `Peptide: ${data[i].peptide}`,
                 name: data[i].peptide,
             });
@@ -271,6 +292,8 @@ const getCategoriesPepties2D = (data) => {
             traces[categories.indexOf(data[i].peptide)].x.push(data[i].x);
             traces[categories.indexOf(data[i].peptide)].y.push(data[i].y);
             traces[categories.indexOf(data[i].peptide)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+            let rgb = colors.filter(c => c.x === data[i].peptide)[0].y;
+            traces[categories.indexOf(data[i].peptide)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
         }
     }
     return traces
@@ -278,6 +301,7 @@ const getCategoriesPepties2D = (data) => {
 const getCategoriesPepties3D = (data) => {
     let traces = [];
     let categories = [];
+    let colors = createColors(aminoAcidCodes);
     for (let i = 0; i < Object.keys(data).length; i ++) {
         if (categories.indexOf(data[i].peptide) === -1) {
             traces.push({
@@ -287,7 +311,7 @@ const getCategoriesPepties3D = (data) => {
                 z: [],
                 freetext: [],
                 mode: "markers",
-                marker: {size: 2},
+                marker: {size: 2, color: []},
                 text: `Peptide: ${data[i].peptide}`,
                 name: data[i].peptide,
             });
@@ -297,12 +321,14 @@ const getCategoriesPepties3D = (data) => {
             traces[categories.indexOf(data[i].peptide)].y.push(data[i].y);
             traces[categories.indexOf(data[i].peptide)].z.push(data[i].z);
             traces[categories.indexOf(data[i].peptide)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+            let rgb = colors.filter(c => c.x === data[i].peptide)[0].y;
+            traces[categories.indexOf(data[i].peptide)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
         }
     }
     return traces
 };
 
-const getCategoriesChains2D = (data) => {
+const getCategoriesChains2D = (data, colors) => {
     let traces = [];
     let categories = [];
     for (let i = 0; i < Object.keys(data).length; i ++) {
@@ -325,13 +351,13 @@ const getCategoriesChains2D = (data) => {
             traces[categories.indexOf(data[i].chain)].x.push(data[i].x);
             traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
             traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
-            let rgb = chain_dict.filter(c => c.x === data[i].chain)[0].y;
+            let rgb = colors.filter(c => c.x === data[i].chain)[0].y;
             traces[categories.indexOf(data[i].chain)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
         }
     }
     return traces;
 };
-const getCategoriesChains3D = (data) => {
+const getCategoriesChains3D = (data, colors) => {
     let traces = [];
     let categories = [];
     for (let i = 0; i < Object.keys(data).length; i ++) {
@@ -357,16 +383,16 @@ const getCategoriesChains3D = (data) => {
             traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
             traces[categories.indexOf(data[i].chain)].z.push(data[i].z);
             traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
-            let rgb = chain_dict.filter(c => c.x === data[i].chain)[0].y;
+            let rgb = colors.filter(c => c.x === data[i].chain)[0].y;
             traces[categories.indexOf(data[i].chain)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
         }
     }
     console.log(traces);
     return traces;
 };
-const getDataPCA2D = (json) => {
+const getDataPCA2D = (json, colors) => {
     let tracesPeptides = getCategoriesPepties2D(json);
-    let tracesChains = getCategoriesChains2D(json);
+    let tracesChains = getCategoriesChains2D(json, colors);
 
     let buttonVisible = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false));
     let buttonVisibleReverse = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true));
@@ -377,9 +403,9 @@ const getDataPCA2D = (json) => {
         "secondaryView": buttonVisibleReverse,
     }
 };
-const getDataPCA3D = (json) => {
+const getDataPCA3D = (json, colors) => {
     let tracesPeptides = getCategoriesPepties3D(json);
-    let tracesChains = getCategoriesChains3D(json);
+    let tracesChains = getCategoriesChains3D(json, colors);
 
     let buttonVisible = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false));
     let buttonVisibleReverse = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true));
@@ -486,7 +512,6 @@ const setLayoutPlotly3D = (updatemenus) => {
                 size: 10,
             },
         },
-        colorway: colorArray
     }
 };
 const getInfoProtein3d = (pdb) => {
@@ -521,8 +546,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             let value = document.getElementById("pdb-structure").textContent;
             value = value.slice(value.indexOf(":") + 2, value.length);
             if (chainResult["bytes"].length > 2) {
-                console.log(chainResult["bytes"])
-                setChain(chainResult)
+                let colors = createColors(Object.keys(JSON.parse(chainResult["bytes"])));
+                setChain(chainResult, colors)
 
                 // Functionality for the 3D protein plot
                 if (value != null) {
@@ -532,8 +557,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
                 let dataResult = await dataResponse.json();
                 dataResult = JSON.parse(dataResult["bytes"]);
-                create3dPlot(dataResult)
-                create2dPlot(dataResult)
+                create3dPlot(dataResult, colors)
+                create2dPlot(dataResult, colors)
             } else {
                 window.location.href = `/pdb_error?code=${value}`
             }
