@@ -88,30 +88,6 @@ public class PDB {
         }
     }
 
-    // Here below are all the static method needed for the constructor.
-
-    /**
-     * Returns the input stream of the pdb file
-     * @param pdbCode
-     * @return
-     * @throws IOException
-     */
-    private static byte[] getBytesConnection(String pdbCode) throws IOException {
-        return getInputStream(pdbCode).readAllBytes();
-    }
-
-    /**
-     * Returns the bytes of the input stream
-     * @param pdbCode
-     * @return
-     * @throws IOException
-     */
-    private static InputStream getInputStream(String pdbCode) throws IOException {
-        URL url = new URL(String.format(DOWNLOAD_BY_ID_URL, pdbCode));
-        URLConnection connection = url.openConnection();
-        return connection.getInputStream();
-    }
-
     /**
      * Get the structure id of the pdb file that is uploaded
      * @param fileBytes
@@ -132,32 +108,6 @@ public class PDB {
         return line;
     }
 
-    /**
-     * The static method to create a file. Needed in createTemporaryFileCompare.
-     * @param pdbCode
-     * @return
-     * @throws RuntimeException when file can not be accessed correctly
-     */
-    public static String createTempFile(String pdbCode) {
-        try {
-            byte[] fileBytes = getBytesConnection(pdbCode);
-            Path tempFilePath = Files.createTempFile(null, ".pdb");
-            FileOutputStream fos = new FileOutputStream(tempFilePath.toFile());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileBytes)));
-            while(reader.ready()) {
-                String line = reader.readLine();
-                if (line.toUpperCase().startsWith("ATOM")) {
-                    fos.write((line + "\n").getBytes(StandardCharsets.UTF_8));
-                }
-            }
-            reader.close();
-            fos.close();
-            return tempFilePath.toString();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public String getStructureId() {
         return this.structureId;
