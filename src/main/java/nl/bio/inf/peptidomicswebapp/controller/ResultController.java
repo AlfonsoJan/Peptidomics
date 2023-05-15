@@ -34,7 +34,7 @@ public class ResultController {
     /**
      * This will return the csrf token for the stateless fetch calls
      * @param request
-     * @return
+     * @return csrf token
      */
     @RequestMapping(value="/csrf-token", method= RequestMethod.GET)
     public @ResponseBody String getCsrfToken(HttpServletRequest request) {
@@ -72,11 +72,12 @@ public class ResultController {
      * @throws IOException when the script can't be run correctly
      */
     @PostMapping(value = "/perform_pca_analysis")
-    public @ResponseBody Plot createTemporaryFileCompare(HttpServletRequest request, HttpSession session) {
+    public @ResponseBody Plot performPCAAnalysis(HttpServletRequest request, HttpSession session) {
         if (request.getSession().getAttribute("analysis") != null) {
             return (Plot) session.getAttribute("analysis");
         }
         try {
+            PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             File folderScripts = new ClassPathResource("scripts").getFile();
             File fullPath = null;
             // Get the location for the python file
@@ -89,7 +90,8 @@ public class ResultController {
             String bytes = pythonService.PDBAnalyse(
                     fullPath.toString(),
                     request.getSession().getAttribute("tempLocation").toString(),
-                    request.getSession().getAttribute("parameter").toString()
+                    request.getSession().getAttribute("parameter").toString(),
+                    pdb.getStructureId()
             );
             Plot plot = new Plot(bytes);
             request.getSession().setAttribute("analysis", plot);

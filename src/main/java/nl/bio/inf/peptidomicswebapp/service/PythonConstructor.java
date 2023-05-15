@@ -6,7 +6,7 @@ package nl.bio.inf.peptidomicswebapp.service;
  */
 public interface PythonConstructor {
 
-    String getChainsPBD(String pythonPath, String pdbID);
+    String getChainsPBD(String pythonPath, String pdbPath);
 
-    String PDBAnalyse(String pythonPath, String pdbID, String param);
+    String PDBAnalyse(String pythonPath, String pdbPath, String param, String pdbCode);
 }
