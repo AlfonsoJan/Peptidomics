@@ -111,7 +111,7 @@ function create3dPlot(result, colors) {
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter-3d").style.display= '';
     let { data, initialView, secondaryView, thirdView } = getDataPCA3D(result, colors);
-    let updateMenus = initializePlotlyButtons(initialView, secondaryView);
+    let updateMenus = initializePlotlyButtons(initialView, secondaryView, thirdView);
     let layout = setLayoutPlotly3D(updateMenus);
     let config = {responsive: true};
     Plotly.newPlot("placeholder-scatter-3d", data, layout, config);
@@ -148,7 +148,7 @@ function create2dPlot(result, colors) {
     let elem = document.getElementById("spinner-scatter");
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter").style.display= '';
-    let { data, initialView, secondaryView, thirdView } = getDataPCA2D(result);
+    let { data, initialView, secondaryView, thirdView } = getDataPCA2D(result, colors);
     let updateMenus = initializePlotlyButtons(initialView, secondaryView, thirdView);
     let layout = setLayoutPlotly2D(updateMenus);
     let config = {responsive: true};
@@ -425,7 +425,7 @@ const getCategoriesStructure3D = (data) => {
                 z: [],
                 freetext: [],
                 mode: "markers",
-                marker: {size: 10},
+                marker: {size: 2},
                 text: `Structure: ${data[i].structure}`,
                 name: data[i].structure,
                 visible: false,
@@ -440,9 +440,9 @@ const getCategoriesStructure3D = (data) => {
     return traces;
 }
 
-const getDataPCA2D = (json) => {
-    let tracesPeptides = getCategoriesPeptides2D(json);
-    let tracesChains = getCategoriesChains2D(json);
+const getDataPCA2D = (json, colors) => {
+    let tracesPeptides = getCategoriesPeptides2D(json, colors);
+    let tracesChains = getCategoriesChains2D(json, colors);
     let tracesStructure = getCategoriesStructure2D(json);
 
     let buttonVisiblePeptide2D = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(false));
@@ -457,10 +457,10 @@ const getDataPCA2D = (json) => {
     }
 };
 
-const getDataPCA3D = (json) => {
-    let tracesPeptides = getCategoriesPeptides3D(json);
-    let tracesChains = getCategoriesChains3D(json);
-    let tracesStructure = getCategoriesStructure3D(json);
+const getDataPCA3D = (json, colors) => {
+    let tracesPeptides = getCategoriesPeptides3D(json, colors);
+    let tracesChains = getCategoriesChains3D(json, colors);
+    let tracesStructure = getCategoriesStructure3D(json, colors);
 
 
     let buttonVisiblePeptide3D = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(false));
