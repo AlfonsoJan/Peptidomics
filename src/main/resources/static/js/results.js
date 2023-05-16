@@ -19,6 +19,29 @@ toastr.options = {
     "hideMethod": "fadeOut"
 }
 
+const aminoAcidCodes = [
+    "ALA", // Alanine
+    "ARG", // Arginine
+    "ASN", // Asparagine
+    "ASP", // Aspartic Acid
+    "CYS", // Cysteine
+    "GLN", // Glutamine
+    "GLU", // Glutamic Acid
+    "GLY", // Glycine
+    "HIS", // Histidine
+    "ILE", // Isoleucine
+    "LEU", // Leucine
+    "LYS", // Lysine
+    "MET", // Methionine
+    "PHE", // Phenylalanine
+    "PRO", // Proline
+    "SER", // Serine
+    "THR", // Threonine
+    "TRP", // Tryptophan
+    "TYR", // Tyrosine
+    "VAL", // Valine
+];
+
 let atomMin = 0;
 let atomMax = 0;
 let hidden = false;
@@ -35,24 +58,17 @@ const HSLToRGB = (h, s, l) => {
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
 
-/* FOR RAINBOW COLORS LATER
-let colorArray = [];
-for (let i = 0; i < 26; i++) {
-    let hsl_value = 255 / 26 * i;
-    let rgb = HSLToRGB(hsl_value, 100, 80);
-    colorArray.push(rgb)
- }*/
+function createColors(keys) {
 
-colorArray = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'];
-/*for (let i = colorArray.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [colorArray[i], colorArray[j]] = [colorArray[j], colorArray[i]];
-}*/
+    let colorArray = [];
+    for (let i = 0; i < keys.length; i++) {
+        let hsl_value = 255 / keys.length * i;
+        let rgb = HSLToRGB(hsl_value, 100, 70);
+        colorArray.push(rgb)
+    }
 
-let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
-chain_dict = letters.map((x, i) => ({ x, y: colorArray[i] }));
+    return keys.map((x, i) => ({x, y: colorArray[i]}));
+}
 
 // Function that create the 2d scatter plotly plot for the dimension
 function createDimPlot(result) {
@@ -90,12 +106,12 @@ function createDimPlot(result) {
     Plotly.newPlot('placeholder-pca',data,layout,config);
 }
 // Function that create the 3d scatter plotly plot
-function create3dPlot(result) {
+function create3dPlot(result, colors) {
     let elem = document.getElementById("spinner-scatter-3d");
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter-3d").style.display= '';
-    let { data, initialView, secondaryView } = getDataPCA3D(result);
-    let updateMenus = initializePlotlyButtons(initialView, secondaryView);
+    let { data, initialView, secondaryView, thirdView } = getDataPCA3D(result, colors);
+    let updateMenus = initializePlotlyButtons(initialView, secondaryView, thirdView);
     let layout = setLayoutPlotly3D(updateMenus);
     let config = {responsive: true};
     Plotly.newPlot("placeholder-scatter-3d", data, layout, config);
@@ -128,12 +144,12 @@ function create3dPlot(result) {
     });
 }
 // Function that create the 2d scatter plotly plot for the PCA results
-function create2dPlot(result) {
+function create2dPlot(result, colors) {
     let elem = document.getElementById("spinner-scatter");
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter").style.display= '';
-    let { data, initialView, secondaryView } = getDataPCA2D(result);
-    let updateMenus = initializePlotlyButtons(initialView, secondaryView);
+    let { data, initialView, secondaryView, thirdView } = getDataPCA2D(result, colors);
+    let updateMenus = initializePlotlyButtons(initialView, secondaryView, thirdView);
     let layout = setLayoutPlotly2D(updateMenus);
     let config = {responsive: true};
     Plotly.newPlot('placeholder-scatter', data, layout, config);
@@ -167,7 +183,7 @@ function create2dPlot(result) {
     });
 }
 // Function that set the chains on the site
-function setChain(chains) {
+function setChain(chains, colors) {
     // The size for how many chains per row
     const chunkSize = 4
     const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
@@ -199,11 +215,11 @@ function setChain(chains) {
             card.appendChild(cardContent);
 
             // Loops rainbow colors to get best colors that the plot will late be using
-            let hex = chain_dict.filter(word => word.x === c[0])[0]["y"];
+            let rgb = colors.filter(word => word.x === c[0])[0]["y"];
             const chainId = document.createElement("p");
             chainId.className = "is-size-5 has-text-weight-bold";
             chainId.textContent = `Chain: ${c[0]}`;
-            chainId.style.backgroundColor = `${hex}`;
+            chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
             cardContent.appendChild(chainId);
 
             const atomLength = document.createElement("p");
@@ -255,9 +271,10 @@ function hideGlobal() {
     a.click();
 }
 
-const getCategoriesPepties2D = (data) => {
+const getCategoriesPeptides2D = (data) => {
     let traces = [];
     let categories = [];
+    let colors = createColors(aminoAcidCodes);
     for (let i = 0; i < Object.keys(data).length; i ++) {
         if (categories.indexOf(data[i].peptide) === -1) {
             traces.push({
@@ -266,22 +283,24 @@ const getCategoriesPepties2D = (data) => {
                 y: [],
                 freetext: [],
                 mode: "markers",
-                marker: {size: 10},
+                marker: {size: 10, color: []},
                 text: `Peptide: ${data[i].peptide}`,
                 name: data[i].peptide,
             });
             categories.push(data[i].peptide);
-        } else {
-            traces[categories.indexOf(data[i].peptide)].x.push(data[i].x);
-            traces[categories.indexOf(data[i].peptide)].y.push(data[i].y);
-            traces[categories.indexOf(data[i].peptide)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
-        }
+        } 
+        traces[categories.indexOf(data[i].peptide)].x.push(data[i].x);
+        traces[categories.indexOf(data[i].peptide)].y.push(data[i].y);
+        traces[categories.indexOf(data[i].peptide)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+        let rgb = colors.filter(c => c.x === data[i].peptide)[0].y;
+        traces[categories.indexOf(data[i].peptide)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
     }
     return traces
 };
-const getCategoriesPepties3D = (data) => {
+const getCategoriesPeptides3D = (data) => {
     let traces = [];
     let categories = [];
+    let colors = createColors(aminoAcidCodes);
     for (let i = 0; i < Object.keys(data).length; i ++) {
         if (categories.indexOf(data[i].peptide) === -1) {
             traces.push({
@@ -291,22 +310,24 @@ const getCategoriesPepties3D = (data) => {
                 z: [],
                 freetext: [],
                 mode: "markers",
-                marker: {size: 2},
+                marker: {size: 2, color: []},
                 text: `Peptide: ${data[i].peptide}`,
                 name: data[i].peptide,
             });
             categories.push(data[i].peptide);
-        } else {
-            traces[categories.indexOf(data[i].peptide)].x.push(data[i].x);
-            traces[categories.indexOf(data[i].peptide)].y.push(data[i].y);
-            traces[categories.indexOf(data[i].peptide)].z.push(data[i].z);
-            traces[categories.indexOf(data[i].peptide)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+
         }
+        traces[categories.indexOf(data[i].peptide)].x.push(data[i].x);
+        traces[categories.indexOf(data[i].peptide)].y.push(data[i].y);
+        traces[categories.indexOf(data[i].peptide)].z.push(data[i].z);
+        traces[categories.indexOf(data[i].peptide)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+        let rgb = colors.filter(c => c.x === data[i].peptide)[0].y;
+        traces[categories.indexOf(data[i].peptide)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
     }
     return traces
 };
 
-const getCategoriesChains2D = (data) => {
+const getCategoriesChains2D = (data, colors) => {
     let traces = [];
     let categories = [];
     for (let i = 0; i < Object.keys(data).length; i ++) {
@@ -317,78 +338,143 @@ const getCategoriesChains2D = (data) => {
                 y: [],
                 freetext: [],
                 mode: "markers",
-                marker: {size: 10},
-                text: `Chain: ${data[i].chain}`,
-                name: data[i].chain,
-                visible: false,
-            });
-            categories.push(data[i].chain);
-        } else {
-            traces[categories.indexOf(data[i].chain)].x.push(data[i].x);
-            traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
-            traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
-        }
-    }
-    return traces;
-};
-const getCategoriesChains3D = (data) => {
-    let traces = [];
-    let categories = [];
-    for (let i = 0; i < Object.keys(data).length; i ++) {
-        if (categories.indexOf(data[i].chain) === -1) {
-            traces.push({
-                type: "scatter3d",
-                x: [],
-                y: [],
-                z: [],
-                freetext: [],
-                mode: "markers",
-                marker: {size: 2},
+                marker: {size: 10,
                 color: [],
+                opacity: 1},
                 text: `Chain: ${data[i].chain}`,
                 name: data[i].chain,
                 visible: false,
             });
             categories.push(data[i].chain);
-        } else {
-            traces[categories.indexOf(data[i].chain)].x.push(data[i].x);
-            traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
-            traces[categories.indexOf(data[i].chain)].z.push(data[i].z);
-            traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
-            let hex = chain_dict.filter(c => c.x === data[i].chain)[0]['y'];
-            traces[categories.indexOf(data[i].chain)].color.push(`${hex}`);
-        }
+
+        } 
+        traces[categories.indexOf(data[i].chain)].x.push(data[i].x);
+        traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
+        traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+        let rgb = colors.filter(c => c.x === data[i].chain)[0].y;
+        traces[categories.indexOf(data[i].chain)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
     }
-    console.log(traces);
     return traces;
 };
-const getDataPCA2D = (json) => {
-    let tracesPeptides = getCategoriesPepties2D(json);
-    let tracesChains = getCategoriesChains2D(json);
+const getCategoriesChains3D = (data, colors) => {
+    let traces = [];
+    let categories = [];
+    for (let i = 0; i < Object.keys(data).length; i ++) {
+        if (categories.indexOf(data[i].chain) === -1) {
+            traces.push({
+                type: "scatter3d",
+                x: [],
+                y: [],
+                z: [],
+                freetext: [],
+                mode: "markers",
+                marker: {size: 2,
+                    opacity: 1,
+                color: []
+                },
+                text: `Chain: ${data[i].chain}`,
+                name: data[i].chain,
+                visible: false,
+            });
+            categories.push(data[i].chain);
+        } 
+        traces[categories.indexOf(data[i].chain)].x.push(data[i].x);
+        traces[categories.indexOf(data[i].chain)].y.push(data[i].y);
+        traces[categories.indexOf(data[i].chain)].z.push(data[i].z);
+        traces[categories.indexOf(data[i].chain)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+        let rgb = colors.filter(c => c.x === data[i].chain)[0].y;
+        traces[categories.indexOf(data[i].chain)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
+    }
+    return traces;
+};
 
-    let buttonVisible = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false));
-    let buttonVisibleReverse = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true));
+const getCategoriesStructure2D = (data) => {
+    let traces = [];
+    let categories = [];
+    for (let i = 0; i < Object.keys(data).length; i ++) {
+        if (categories.indexOf(data[i].structure) === -1) {
+            traces.push({
+                type: "scatter",
+                x: [],
+                y: [],
+                freetext: [],
+                mode: "markers",
+                marker: {size: 10},
+                text: `Structure: ${data[i].structure}`,
+                name: data[i].structure,
+                visible: false,
+            });
+            categories.push(data[i].structure);
+        }
+        traces[categories.indexOf(data[i].structure)].x.push(data[i].x);
+        traces[categories.indexOf(data[i].structure)].y.push(data[i].y);
+        traces[categories.indexOf(data[i].structure)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+    }
+    return traces;
+}
+
+const getCategoriesStructure3D = (data) => {
+    let traces = [];
+    let categories = [];
+    for (let i = 0; i < Object.keys(data).length; i ++) {
+        if (categories.indexOf(data[i].structure) === -1) {
+            traces.push({
+                type: "scatter3d",
+                x: [],
+                y: [],
+                z: [],
+                freetext: [],
+                mode: "markers",
+                marker: {size: 2},
+                text: `Structure: ${data[i].structure}`,
+                name: data[i].structure,
+                visible: false,
+            });
+            categories.push(data[i].structure);
+        }
+        traces[categories.indexOf(data[i].structure)].x.push(data[i].x);
+        traces[categories.indexOf(data[i].structure)].y.push(data[i].y);
+        traces[categories.indexOf(data[i].structure)].z.push(data[i].z);
+        traces[categories.indexOf(data[i].structure)].freetext.push([data[i].atomnos.min, data[i].atomnos.max]);
+    }
+    return traces;
+}
+
+const getDataPCA2D = (json, colors) => {
+    let tracesPeptides = getCategoriesPeptides2D(json, colors);
+    let tracesChains = getCategoriesChains2D(json, colors);
+    let tracesStructure = getCategoriesStructure2D(json);
+
+    let buttonVisiblePeptide2D = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(false));
+    let buttonVisibleChain2D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true)).concat(Array(tracesStructure.length).fill(false));
+    let buttonVisibleStrucutre2D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(true));
 
     return {
-        "data": tracesPeptides.concat(tracesChains),
-        "initialView": buttonVisible,
-        "secondaryView": buttonVisibleReverse,
+        "data": tracesPeptides.concat(tracesChains, tracesStructure),
+        "initialView": buttonVisiblePeptide2D,
+        "secondaryView": buttonVisibleChain2D,
+        "thirdView": buttonVisibleStrucutre2D
     }
 };
-const getDataPCA3D = (json) => {
-    let tracesPeptides = getCategoriesPepties3D(json);
-    let tracesChains = getCategoriesChains3D(json);
 
-    let buttonVisible = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false));
-    let buttonVisibleReverse = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true));
+const getDataPCA3D = (json, colors) => {
+    let tracesPeptides = getCategoriesPeptides3D(json, colors);
+    let tracesChains = getCategoriesChains3D(json, colors);
+    let tracesStructure = getCategoriesStructure3D(json, colors);
+
+
+    let buttonVisiblePeptide3D = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(false));
+    let buttonVisibleChain3D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true)).concat(Array(tracesStructure.length).fill(false));
+    let buttonVisibleStrucutre3D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(true));
 
     return {
-        "data": tracesPeptides.concat(tracesChains),
-        "initialView": buttonVisible,
-        "secondaryView": buttonVisibleReverse,
+        "data": tracesPeptides.concat(tracesChains, tracesStructure),
+        "initialView": buttonVisiblePeptide3D,
+        "secondaryView": buttonVisibleChain3D,
+        "thirdView": buttonVisibleStrucutre3D
     }
 };
-const initializePlotlyButtons = (initialView, secondaryView) => {
+const initializePlotlyButtons = (initialView, secondaryView, thirdView) => {
     return [{
         buttons: [
             {
@@ -405,6 +491,14 @@ const initializePlotlyButtons = (initialView, secondaryView) => {
                     {"title": "Chains", "showlegend": secondaryView}
                 ],
                 label: "Chains",
+                method: "update"
+            },
+            {
+                args: [
+                    {"visible": thirdView},
+                    {"title": "Structures", "showlegend": thirdView}
+                ],
+                label: "Structures",
                 method: "update"
             }
         ],
@@ -484,7 +578,6 @@ const setLayoutPlotly3D = (updatemenus) => {
                 size: 10,
             },
         },
-        colorway: colorArray
     }
 };
 const getInfoProtein3d = (pdb) => {
@@ -516,22 +609,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (response.ok) {
             const chainResponse = await fetch("/get_chains", fetchParameters);
             const chainResult = await chainResponse.json();
-            let value = document.getElementById("pdb-structure").textContent;
-            value = value.slice(value.indexOf(":") + 2, value.length);
+            
             if (chainResult["bytes"].length > 2) {
-                console.log(chainResult["bytes"])
-                setChain(chainResult)
-
+                let colors = createColors(Object.keys(JSON.parse(chainResult["bytes"])));
+                setChain(chainResult, colors);
+              
                 // Functionality for the 3D protein plot
+                let value = document.getElementById("pdb-structure").textContent;
+                value = value.slice(value.indexOf(":") + 2, value.length);
                 if (value != null) {
                     let Info = getInfoProtein3d(value);
                     $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
                 }
+              
                 const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
                 let dataResult = await dataResponse.json();
                 dataResult = JSON.parse(dataResult["bytes"]);
-                create3dPlot(dataResult)
-                create2dPlot(dataResult)
+                create3dPlot(dataResult, colors)
+                create2dPlot(dataResult, colors)
             } else {
                 window.location.href = `/pdb_error?code=${value}`
             }

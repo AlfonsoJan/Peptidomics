@@ -5,7 +5,7 @@ author: Wouter Zeevat
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" data-theme="light">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <title>Peptodomics</title>
+  <title>Peptidomics</title>
   <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
   <link rel="stylesheet" th:href="@{css/results.css}" href="../static/css/index.css"/>
   <link rel="stylesheet" th:href="@{css/general.css}" href="../static/css/general.css"/>
@@ -21,7 +21,7 @@ author: Wouter Zeevat
 
 <section class="section">
   <div class="container has-text-centered" id="stats-pdb">
-    <p id="pdb-structure" class="is-size-2" th:utext="${fileName}">__FILENAME__</p>
+    <p id="pdb-structure" class="is-size-2" th:inline="text"><strong>Results of:</strong> [[${fileName}]]</p>
     <div id="skeleton-loader" style="padding-bottom: 2rem">
       <p id="pdb-title" class="is-size-4 has-text-weight-bold">Title</p>
       <p id="pdb-subtitle" class="is-size-4 ">Subtitle</p>

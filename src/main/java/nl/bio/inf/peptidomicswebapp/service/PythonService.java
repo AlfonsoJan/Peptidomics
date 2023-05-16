@@ -28,13 +28,13 @@ public class PythonService implements PythonConstructor{
     /**
      * Calls the python script to get the chains of the pdb file
      * @param pythonPath
-     * @param pdbID
+     * @param pdbPath
      * @return
      */
     @Override
-    public String getChainsPBD(String pythonPath, String pdbID) {
+    public String getChainsPBD(String pythonPath, String pdbPath) {
         try {
-            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID);
+            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbPath);
             Process p = pb.start();
             BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
@@ -55,13 +55,13 @@ public class PythonService implements PythonConstructor{
     /**
      * Calls the python script to perform PCA analysis and retrieve the result
      * @param pythonPath
-     * @param pdbID
+     * @param pdbPath
      * @return
      */
     @Override
-    public String PDBAnalyse(String pythonPath, String pdbID, String param) {
+    public String PDBAnalyse(String pythonPath, String pdbPath, String param, String pdbCode) {
         try {
-            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbID, param);
+            ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbPath, param, pdbCode);
             Process p = pb.start();
             BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;

@@ -68,7 +68,6 @@ public class UploadController {
     public String resultFromFiles(@RequestParam("pdb-file") MultipartFile file,
                                   String oligoParam,
                                   HttpSession session) {
-        System.out.println(session);
         try {
             // Creates PDB instance and redirects to page
             PDB pdb = new PDB(file.getBytes(), file.getOriginalFilename());
@@ -99,7 +98,7 @@ public class UploadController {
                 LOGGER.warning(String.format("PDB structure of %s is null", request.getSession().getId()));
                 return "redirect:/upload";
             }
-            model.addAttribute("fileName", "<strong>Results of: </strong>" + pdb.getStructureId());
+            model.addAttribute("fileName", pdb.getStructureId());
             return "results";
         } catch (ClassCastException ex) {
             LOGGER.warning("Error while class casting to PDB, message=" + ex.getMessage());
@@ -120,7 +119,7 @@ public class UploadController {
                 Files.delete(Path.of(tempLocation));
                 LOGGER.info("Deleted session files of: " + session.getId());
             } catch (IOException e) {
-                LOGGER.warning("Could not delete the files!!");
+                LOGGER.warning("Could not delete the files of session: " + session.getId());
                 throw new RuntimeException(e);
             }
             session.removeAttribute("chains");
