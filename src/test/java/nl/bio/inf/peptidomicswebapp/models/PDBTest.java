@@ -1,16 +1,15 @@
 package nl.bio.inf.peptidomicswebapp.models;
 
+import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,12 +30,14 @@ class PDBTest {
     static List<String> tempPaths = new ArrayList<>();
 
     @BeforeAll
+    @DisplayName("Setting the source directory!")
     static void setup() {
         Path resourceDirectory = Paths.get("src","test","resources");
         path = resourceDirectory.toFile().getAbsolutePath();
     }
 
     @AfterAll
+    @DisplayName("Deletes the temporary files created in the tests!")
     static void deleteTemp() throws IOException {
         for (String tempPath : tempPaths) {
             Files.deleteIfExists(Path.of(tempPath));
@@ -44,12 +45,14 @@ class PDBTest {
     }
 
     @Test
-    void createPDBFromCode() throws IOException {
+    @DisplayName("Creates a pdb object from a code!")
+    void createPDBFromCode() throws IOException, InvalidPDBCodeException {
         PDB pdb = new PDB("6zdh");
         assertEquals(pdb.getFileName(), "6zdh.pdb");
     }
 
     @Test
+    @DisplayName("Creates a pdb object from a file!")
     void createPDBFromFile() throws IOException {
         Path p = Paths.get(path + "/6zdh.pdb");
         String name = "6zdh.pdb";
@@ -68,12 +71,43 @@ class PDBTest {
     }
 
     @Test
-    void getStructureFromInputstream() {
+    @DisplayName("Creates a pdb object from a null object!")
+    void testPDBWithNull() {
+        try {
+            new PDB(null);
+        } catch (Exception exception) {
+            assertEquals(exception.getClass(), NullPointerException.class);
+        }
+    }
+
+    @Test
+    @DisplayName("Creates a pdb object from an empty string!")
+    void testPDBWithEmptyString() {
+        assertThrows(InvalidPDBCodeException.class, () -> new PDB(""));
+    }
+
+    @Test
+    @DisplayName("Creates a pdb object from a code that's too long!")
+    void testPDBWithLongerCode() {
+        assertThrows(InvalidPDBCodeException.class, () -> new PDB("ABCDE"));
+    }
+
+    @Test
+    @DisplayName("Creates a pdb object from a code that's too short!")
+    void testPDBWithInvalidCode() {
+        assertThrows(InvalidPDBCodeException.class, () -> new PDB("ABCD"));
+    }
+
+    @Test
+    @DisplayName("Testing the pdb with a shorter code than allowed!")
+    void testPDBWithShorterCode() {
+        assertThrows(InvalidPDBCodeException.class, () -> new PDB("ABC"));
     }
 
     @Disabled
     @Test
-    void getBytes() throws IOException {
+    @DisplayName("Tests the getBytes function!")
+    void getBytes() throws IOException, InvalidPDBCodeException {
         PDB pdb = new PDB("1b58");
 
         Path p = Paths.get(path + "/output/1b58_generated.pdb");
@@ -86,21 +120,24 @@ class PDBTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"6zdh", "1b58"})
-    void getFileName(String code) throws IOException {
+    @DisplayName("Tests the get file name function!")
+    void getFileName(String code) throws IOException, InvalidPDBCodeException {
         PDB pdb = new PDB(code);
         assertEquals(pdb.getFileName(), code + ".pdb");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"6zdh", "1b58"})
-    void getStructureId(String code) throws IOException {
+    @DisplayName("Test the get id function!")
+    void getStructureId(String code) throws IOException, InvalidPDBCodeException {
         PDB pdb = new PDB(code);
         assertEquals(code, pdb.getStructureId());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"6zdh", "1b58"})
-    void testGetStructureFromInputstream(String code) throws IOException {
+    @DisplayName("Tests the get structure function separately!")
+    void testGetStructureFromInputstream(String code) throws IOException, InvalidPDBCodeException {
         PDB pdb = new PDB(code);
         String resultCode = PDB.getStructureFromInputStream(pdb.getBytes());
         assert(resultCode.equalsIgnoreCase(code));
@@ -108,7 +145,8 @@ class PDBTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"6zdh", "1b58"})
-    void testCreateTempFile(String code) throws IOException {
+    @DisplayName("Tests the create temp file separately!")
+    void testCreateTempFile(String code) throws IOException, InvalidPDBCodeException {
         PDB pdb = new PDB(code);
         String path = pdb.createTempFile();
         tempPaths.add(path);
@@ -116,24 +154,12 @@ class PDBTest {
         assertTrue(file.exists());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"6zdh", "1b58"})
-    void testGetStructureId(String code) throws IOException {
-        PDB pdb = new PDB(code);
-        assert(pdb.getStructureId().equalsIgnoreCase(code));
-    }
-
     @Disabled
     @Test // Memory heap ?
-    void testGetBytes() throws IOException {
+    @DisplayName("Tests the get bytes function separately!")
+    void testGetBytes() throws IOException, InvalidPDBCodeException {
         PDB pdb = new PDB("1b58");
         byte[] bytes = Files.readAllBytes(Paths.get(path + "/1b58.pdb"));
         assertEquals(pdb.getBytes(), bytes);
-    }
-
-    @Test
-    void testGetFileName() throws IOException {
-        PDB pdb = new PDB("1b58");
-        System.out.println(pdb.getFileName());
     }
 }

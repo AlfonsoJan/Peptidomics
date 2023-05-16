@@ -3,6 +3,7 @@ package nl.bio.inf.peptidomicswebapp.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
+import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.Plot;
 import nl.bio.inf.peptidomicswebapp.service.PythonService;
@@ -82,7 +83,7 @@ public class ResultController {
             File fullPath = null;
             // Get the location for the python file
             for (File f: folderScripts.listFiles()) {
-                if("PDBAnalyse.py".equals(f.getName())) {
+                if("pdb_analysis.py".equals(f.getName())) {
                     fullPath = f;
                 }
             }
@@ -96,7 +97,7 @@ public class ResultController {
             Plot plot = new Plot(bytes);
             request.getSession().setAttribute("analysis", plot);
             return plot;
-        } catch (IOException ex) {
+        } catch (IOException | InvalidPDBCodeException ex) {
             LOGGER.warning("Error while performing the script on the data, message=" + ex.getMessage());
             throw new RuntimeException(ex);
         }
