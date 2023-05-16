@@ -10,6 +10,10 @@ Wouter Zeevat
     padding: 5rem 0;
 }
 
+.column {
+    display: flex;
+}
+
 .card-image > .fa {
     font-size: 8rem;
     padding-top: 2rem;
@@ -42,6 +46,7 @@ Wouter Zeevat
     position: relative;
     transition: all .2s ease-in-out;
 }
+
 .is-shady:hover {
     box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
 }
