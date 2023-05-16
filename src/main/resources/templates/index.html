@@ -11,6 +11,7 @@ author: Wouter Zeevat
     <link rel="stylesheet" th:href="@{css/general.css}" href="../static/css/general.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/ico" th:href="@{../static/images/favicon.ico}">
+    <link href="https://cdn.jsdelivr.net/npm/bulma-extensions@4.0.1/bulma-timeline/dist/css/bulma-timeline.min.css" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{fragments :: navbar}"></div>
@@ -23,43 +24,45 @@ author: Wouter Zeevat
         </div>
     </div>
 </section>
-<section class="container">
-    <div class="columns features">
-        <div class="column is-4">
-            <div class="card is-shady" onclick="click_information()">
-                <div class="card-image has-text-centered">
-                    <i class="fa fa-info-circle"></i>
-                </div>
-                <div class="card-content">
-                    <div class="content">
-                        <h3>Information</h3>
-                        <p>In order to get more information about Oligopeptides, this application was made. It reads PDB files and analyses and visualizes the Oligopeptides!</p>
+<section class="section" style="padding-top: 0">
+    <div class="container">
+        <div class="columns features">
+            <div class="column is-4">
+                <div class="card is-shady" onclick="click_information()">
+                    <div class="card-image has-text-centered">
+                        <i class="fa fa-info-circle"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="content">
+                            <h3>Information</h3>
+                            <p>In order to get more information about peptide and how they operate in the 3D space, this application was made. It reads PDB files and analyses and visualizes oligopeptides with the given length!</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="column is-4">
-            <div class="card is-shady" onclick="location.href = '/upload';">
-                <div class="card-image has-text-centered">
-                    <i class="fa fa-upload"></i>
-                </div>
-                <div class="card-content">
-                    <div class="content">
-                        <h3>Upload Protein</h3>
-                        <p>Click here to <a href="upload">upload</a> a protein file (PDB) and start the process. The page will tell you more about what to do exactly!</p>
+            <div class="column is-4">
+                <div class="card is-shady" onclick="location.href = '/upload';" style="cursor: pointer;">
+                    <div class="card-image has-text-centered">
+                        <i class="fa fa-upload"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="content">
+                            <h3>Upload Protein</h3>
+                            <p>Click here to <a href="upload">upload</a> a protein file (PDB) and start the process. The page will tell you more about what to do exactly!</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="column is-4">
-            <div class="card is-shady">
-                <div class="card-image has-text-centered">
-                    <i class="fa fa-code"></i>
-                </div>
-                <div class="card-content">
-                    <div class="content">
-                        <h3>Code and Papers</h3>
-                        <p>The code of this project is located within the <a href="https://github.com/AlfonsoJan/Peptidomics">github</a>. Papers linked to this project are <a href="https://somepaper.com">paper1</a>, <a href="https://otherpaper.com"> paper2</a> and <a href="https://morepaper.com"> paper3</a>!</p>
+            <div class="column is-4">
+                <div class="card is-shady">
+                    <div class="card-image has-text-centered">
+                        <i class="fa fa-code"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="content">
+                            <h3>Code and Papers</h3>
+                            <p>The code for this project is on <a href="https://github.com/AlfonsoJan/Peptidomics">github</a>. Want to know more about this project topic? Structural Alphabet: <a href="http://3d-blast.life.nctu.edu.tw/sa.php">paper 1</a> and <a href="https://bioserv.rpbs.univ-paris-diderot.fr/help/SAHelp.html"> paper2</a>!</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,13 +74,68 @@ author: Wouter Zeevat
         <div class="tile is-parent is-shady">
             <article class="tile is-child notification is-white">
                 <p class="title">Workflow</p>
-                <p class="subtitle">The workflow will be explained in this tab.. first some things needed to be done in order to create a good description</p>
+                <div class="timeline is-centered">
+                    <header class="timeline-header">
+                        <span class="tag is-medium is-info">Start</span>
+                    </header>
+                    <div class="timeline-item">
+                        <div class="timeline-marker is-info"></div>
+                        <div class="timeline-content">
+                            <p>Retrieve the coordinates and other information like peptide from the PDB file</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker is-info"></div>
+                        <div class="timeline-content">
+                            <p>Use the XSSP api to get the secondary structures</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker is-info"></div>
+                        <div class="timeline-content">
+                            <p>Split the coordinates on breaks/chains</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker is-info"></div>
+                        <div class="timeline-content">
+                            <p>Get the internal distance between the coordinates</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker is-info"></div>
+                        <div class="timeline-content">
+                            <p>Get the cov matrix of the distances</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker is-info"></div>
+                        <div class="timeline-content">
+                            <p>Perform PCA on the cov matrix and retrieve the eigenvectors</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker is-info"></div>
+                        <div class="timeline-content">
+                            <p>Perform matrix multiplication on the distance and eigenvectors</p>
+                        </div>
+                    </div>
+                    <div class="timeline-header">
+                        <span class="tag is-medium is-info">End</span>
+                    </div>
+                </div>
             </article>
         </div>
         <div class="tile is-parent is-shady">
-            <article class="tile is-child notification is-white">
+            <article class="tile is-child notification is-white" style="display: flex; flex-flow: column">
                 <p class="title" id="more_info">The Project</p>
-                <p class="subtitle">Relatively little is known about the broader scope of such peptides, which may be dubbed the 'peptidome'. Mapping the peptidome consists of two parts: First there are the sequences to be mapped with metadata about occurrences as native oligopeptides, as part of proteins, and with experimental data. Second, there are the configurational properties; the three- dimensional shapes the oligopeptide can adopt, the corresponding secondary structure annotations and the conformational flexibility (how and how much does it move). The latter aspect was difficult to characterize, because 1. for flexible molecules analysis of the data space and data reduction by means of PCA is very hard to apply and 2. the data are hard to cluster because of the amount and the complexity. A solution to the latter problem was recently developed that consists in essence of a combination of multidimensional scaling and multilinear regression to obtain a mapping between the actual configurations and a low-dimensional abstract data space.</p>
+                <p class="subtitle" style="white-space: pre-line; padding-top: 5px" th:text="${infoText}">__INFO__</p>
             </article>
         </div>
     </div>
