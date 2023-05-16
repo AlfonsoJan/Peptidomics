@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.config.SessionDestroyer;
+import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.http.HttpRequest;
@@ -51,7 +52,7 @@ public class UploadController {
             session.setAttribute("parameter", oligoParam);
             session.setAttribute("PDBFiles", pdb);
             return "redirect:/result";
-        } catch (IOException ex) {
+        } catch (IOException | InvalidPDBCodeException ex) {
             LOGGER.warning("Error while reading creating PDB class with pdb code, message=" + ex.getMessage());
             throw new RuntimeException(ex);
         }

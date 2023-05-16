@@ -1,6 +1,10 @@
 package nl.bio.inf.peptidomicswebapp.models;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
+
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +27,9 @@ public class PDB {
      * @param structureId
      * @throws IOException
      */
-    public PDB(String structureId) throws IOException {
+    public PDB(String structureId) throws IOException, InvalidPDBCodeException {
+        if (structureId == null) throw new NullPointerException();
+        if (structureId.length() != 4) throw new InvalidPDBCodeException();
         this.structureId = structureId;
         this.bytes = getBytesConnection();
         this.fileName = structureId + ".pdb";
@@ -46,10 +52,16 @@ public class PDB {
      * @return
      * @throws IOException
      */
-    private InputStream getInputStream() throws IOException {
-        URL url = new URL(String.format(DOWNLOAD_BY_ID_URL, this.structureId));
-        URLConnection connection = url.openConnection();
-        return connection.getInputStream();
+    private InputStream getInputStream() throws InvalidPDBCodeException {
+        URL url;
+        URLConnection connection;
+        try {
+            url = new URL(String.format(DOWNLOAD_BY_ID_URL, this.structureId));
+            connection = url.openConnection();
+            return connection.getInputStream();
+        } catch (IOException e) {
+            throw new InvalidPDBCodeException();
+        }
     }
 
 
@@ -58,7 +70,7 @@ public class PDB {
      * @return
      * @throws IOException
      */
-    private byte[] getBytesConnection() throws IOException {
+    private byte[] getBytesConnection() throws IOException, InvalidPDBCodeException {
         return getInputStream().readAllBytes();
     }
 
