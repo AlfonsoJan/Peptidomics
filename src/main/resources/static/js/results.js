@@ -610,14 +610,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (response.ok) {
             const chainResponse = await fetch("/get_chains", fetchParameters);
             const chainResult = await chainResponse.json();
-            
+
+            let value = document.getElementById("pdb-structure").textContent;
+            value = value.slice(value.indexOf(":") + 2, value.length);
             if (chainResult["bytes"].length > 2) {
                 let colors = createColors(Object.keys(JSON.parse(chainResult["bytes"])));
                 setChain(chainResult, colors);
               
                 // Functionality for the 3D protein plot
-                let value = document.getElementById("pdb-structure").textContent;
-                value = value.slice(value.indexOf(":") + 2, value.length);
                 if (value != null) {
                     let Info = getInfoProtein3d(value);
                     $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
