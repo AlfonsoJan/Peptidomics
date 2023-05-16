@@ -70,6 +70,32 @@ function createColors(keys) {
     return keys.map((x, i) => ({x, y: colorArray[i]}));
 }
 
+function selectView(datapoints) {
+    // Unhides and rehides the selected after BUG FIX QUICK FIX
+    let was_hidden = false;
+    if (hidden) {
+        hideGlobal();
+        was_hidden = true;
+    }
+
+    const data = datapoints.points[0].data.freetext[datapoints.points[0].pointNumber];
+    atomMin = parseInt(data[0]);
+    atomMax = parseInt(data[1]);
+    let a = document.createElement("a");
+    let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; cartoons; color [10,0,255];"`
+    a.href = `javascript:Jmol.script(jmol1, ${script})`
+    a.click();
+    document.getElementById("zoom-btn").classList.remove("is-hidden");
+
+    if (was_hidden) {
+        hideGlobal();
+        script = `"zoom 0"`;
+        a.href = `javascript:Jmol.script(jmol1, ${script})`
+        a.click();
+    }
+    reset = false;
+}
+
 // Function that create the 2d scatter plotly plot for the dimension
 function createDimPlot(result) {
     let elem = document.getElementById("spinner-pca");
@@ -118,28 +144,7 @@ function create3dPlot(result, colors) {
     let myPlot = document.getElementById("placeholder-scatter-3d");
     myPlot.on("plotly_click", function(datapoints){
 
-        // Unhides and rehides the selected after BUG FIX QUICK FIX
-        let was_hidden = false;
-        if (hidden) {
-            hideGlobal();
-            was_hidden = true;
-        }
-
-        const data = datapoints.points[0].data.freetext[datapoints.points[0].pointNumber];
-        atomMin = parseInt(data[0]);
-        atomMax = parseInt(data[1]);
-        let a = document.createElement("a");
-        let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; cartoons; color [10,0,255];"`
-        a.href = `javascript:Jmol.script(jmol1, ${script})`
-        a.click();
-
-        if (was_hidden) {
-            hideGlobal();
-            script = `"zoom 0"`;
-            a.href = `javascript:Jmol.script(jmol1, ${script})`
-            a.click();
-        }
-        reset = false;
+        selectView(datapoints);
 
     });
 }
@@ -156,29 +161,7 @@ function create2dPlot(result, colors) {
     let myPlot = document.getElementById("placeholder-scatter");
     myPlot.on("plotly_click", function(datapoints){
 
-        // Unhides and rehides the selected after BUG FIX QUICK FIX
-        let was_hidden = false;
-        if (hidden) {
-            hideGlobal();
-            was_hidden = true;
-        }
-
-        const data = datapoints.points[0].data.freetext[datapoints.points[0].pointNumber];
-        atomMin = parseInt(data[0]);
-        atomMax = parseInt(data[1]);
-        let a = document.createElement("a");
-        let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; cartoons; color [10,0,255]; zoom 0"`
-        a.href = `javascript:Jmol.script(jmol1, ${script})`
-        a.click();
-
-        if (was_hidden) {
-            hideGlobal();
-
-            script = `"zoom 0"`;
-            a.href = `javascript:Jmol.script(jmol1, ${script})`
-            a.click();
-        }
-        reset = false;
+        selectView(datapoints)
 
     });
 }
@@ -207,7 +190,8 @@ function setChain(chains, colors) {
             columns.appendChild(column);
 
             const card = document.createElement("div");
-            card.className = "card";
+            card.className = "card clickable";
+            card.onclick = clickChain;
             column.appendChild(card);
 
             const cardContent = document.createElement("div");
@@ -231,10 +215,28 @@ function setChain(chains, colors) {
     }
 }
 
+function clickChain(item) {
+    let ele = item.target;
+    while (!ele.parentElement.classList.contains("card")) {
+        ele = ele.parentElement;
+    }
+    let chain = ele.children[0].textContent.charAt(ele.children[0].textContent.length - 1);
+    let color = ele.children[0].style.backgroundColor.replace("rgb(", "").replace(")", "").replace(" ", "");
+    resetScript();
+
+    let a = document.createElement("a");
+    let script = `"select all; color [90,90,90]; select chain=${chain}; cartoons only; color [${color}]; background white; zoom 0"`;
+    a.href = `javascript:Jmol.script(jmol1, ${script})`
+    a.click();
+    reset = true;
+
+}
+
 function resetScript() {
     if (hidden) {
         hideGlobal();
     }
+    document.getElementById("zoom-btn").classList.add("is-hidden");
     console.log("Reset the 3D viewer!")
     let a = document.createElement("a");
     let script = `"select all; cartoons only; color structure; background white; zoom 0"`;
@@ -265,7 +267,6 @@ function hideGlobal() {
         a.href = `javascript:Jmol.script(jmol1, ${script})`
         a.click();
     }
-
     script = `"zoom 0"`;
     a.href = `javascript:Jmol.script(jmol1, ${script})`
     a.click();

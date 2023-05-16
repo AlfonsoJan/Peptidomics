@@ -73,3 +73,12 @@ Wouter Zeevat
     justify-content: center;
     align-items: center;
 }
+
+.clickable {
+    transition: 0.5s ease;
+}
+
+.clickable:hover {
+    cursor: pointer;
+    opacity: 60%;
+}
