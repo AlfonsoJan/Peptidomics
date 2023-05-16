@@ -14,6 +14,7 @@ author: Wouter Zeevat
   <script type="text/javascript" th:src="@{js/toastr.min.js}" src="../static/js/toastr.min.js"></script>
   <link rel="stylesheet" th:href="@{css/toastr.min.css}" href="../static/css/toastr.min.css"/>
   <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin = "anonymous" referrerpolicy = "no-referrer"> </script>
   <link rel="icon" type="image/ico" th:href="@{../static/images/favicon.ico}">
 </head>
 <body>
@@ -27,6 +28,7 @@ author: Wouter Zeevat
       <p id="pdb-subtitle" class="is-size-4 ">Subtitle</p>
       <p id="pdb-link" class="is-size-5 is-underlined">PDB Website</p>
       <p id="paper-link" class="is-size-5">Paper Link</p>
+      <p id="download-link" style="cursor: pointer;">Download result</p>
     </div>
 
     <div class="columns is-centered"  id="pdb-stats">
