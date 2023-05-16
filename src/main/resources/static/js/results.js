@@ -627,6 +627,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dataResult = JSON.parse(dataResult["bytes"]);
                 create3dPlot(dataResult, colors)
                 create2dPlot(dataResult, colors)
+
+                document.getElementById("download-link").onclick = function () {
+                    let blob = new Blob([JSON.stringify(dataResult, null, 4)], {type: "text/json"})
+                    saveAs(blob, "result.json");
+                }
+
             } else {
                 window.location.href = `/pdb_error?code=${value}`
             }
