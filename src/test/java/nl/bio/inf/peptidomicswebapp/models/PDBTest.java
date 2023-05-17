@@ -154,12 +154,48 @@ class PDBTest {
         assertTrue(file.exists());
     }
 
-    @Disabled
-    @Test // Memory heap ?
-    @DisplayName("Tests the get bytes function separately!")
-    void testGetBytes() throws IOException, InvalidPDBCodeException {
+    @Test
+    @DisplayName("Tests the is valid on a normal pdb file from a code")
+    void testIsValidCode() throws InvalidPDBCodeException, IOException {
         PDB pdb = new PDB("1b58");
-        byte[] bytes = Files.readAllBytes(Paths.get(path + "/1b58.pdb"));
-        assertEquals(pdb.getBytes(), bytes);
+        assertTrue(pdb.isValid());
+    }
+
+    @Test
+    @DisplayName("Tests the is valid on a normal pdb file from a file")
+    void testIsValidFile() throws IOException {
+        Path p = Paths.get(path + "/6zdh.pdb");
+        String name = "6zdh.pdb";
+        String originalFileName = "6zdh.pdb";
+        String contentType = "text/plain";
+        byte[] content = null;
+        try {
+            content = Files.readAllBytes(p);
+        } catch (final IOException e) {
+        }
+        MultipartFile result = new MockMultipartFile(name,
+                originalFileName, contentType, content);
+
+        PDB pdb = new PDB(result.getBytes(), name);
+        assertTrue(pdb.isValid());
+    }
+
+    @Test
+    @DisplayName("Tests the is valid on an invalid pdb file from a file")
+    void testIsValidFileIsInvalid() throws IOException {
+        Path p = Paths.get(path + "/invalid.pdb");
+        String name = "invalid.pdb";
+        String originalFileName = "invalid.pdb";
+        String contentType = "text/plain";
+        byte[] content = null;
+        try {
+            content = Files.readAllBytes(p);
+        } catch (final IOException e) {
+        }
+        MultipartFile result = new MockMultipartFile(name,
+                originalFileName, contentType, content);
+
+        PDB pdb = new PDB(result.getBytes(), name);
+        assertFalse(pdb.isValid());
     }
 }
