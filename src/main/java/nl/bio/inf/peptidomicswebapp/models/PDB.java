@@ -101,6 +101,21 @@ public class PDB {
     }
 
     /**
+     * Checks if PDB file is valid by searching for an ATOM line!
+     * @return
+     */
+    public boolean isValid() {
+        String fileContent = new String(this.getBytes(), StandardCharsets.UTF_8);
+        String[] lines = fileContent.split("\\r?\\n");
+
+        boolean valid = false;
+        for (String line : lines) {
+            if (line.strip().startsWith("ATOM")) valid = true;
+        }
+        return valid;
+    }
+
+    /**
      * Get the structure id of the pdb file that is uploaded
      * @param fileBytes
      * @return

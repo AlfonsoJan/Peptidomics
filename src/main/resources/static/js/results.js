@@ -237,7 +237,6 @@ function resetScript() {
         hideGlobal();
     }
     document.getElementById("zoom-btn").classList.add("is-hidden");
-    console.log("Reset the 3D viewer!")
     let a = document.createElement("a");
     let script = `"select all; cartoons only; color structure; background white; zoom 0"`;
     a.href = `javascript:Jmol.script(jmol1, ${script})`
@@ -622,10 +621,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     let Info = getInfoProtein3d(value);
                     $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
                 }
-              
                 const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
                 let dataResult = await dataResponse.json();
                 dataResult = JSON.parse(dataResult["bytes"]);
+
+                if (dataResult["error"] !== undefined) {
+                    window.location.href = `/pdb_error?code=${value}&message=${dataResult["error"]}`
+                    return;
+                }
+
                 create3dPlot(dataResult, colors)
                 create2dPlot(dataResult, colors)
 

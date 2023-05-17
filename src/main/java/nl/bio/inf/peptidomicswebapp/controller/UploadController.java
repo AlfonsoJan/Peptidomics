@@ -49,6 +49,11 @@ public class UploadController {
         try {
             PDB pdb = new PDB(pdbCode);
             deletePreviousSession(session);
+
+            if (!pdb.isValid()) {
+                return ("redirect:/pdb_error?code=" + pdb.getFileName());
+            }
+
             session.setAttribute("parameter", oligoParam);
             session.setAttribute("PDBFiles", pdb);
             return "redirect:/result";
@@ -73,6 +78,11 @@ public class UploadController {
             // Creates PDB instance and redirects to page
             PDB pdb = new PDB(file.getBytes(), file.getOriginalFilename());
             deletePreviousSession(session);
+
+            if (!pdb.isValid()) {
+                return ("redirect:/pdb_error?code=1f6e");
+            }
+
             session.setAttribute("parameter", oligoParam);
             session.setAttribute("PDBFiles", pdb);
             return "redirect:/result";
