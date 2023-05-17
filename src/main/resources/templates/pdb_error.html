@@ -25,7 +25,8 @@ author: Wouter Zeevat
             </svg>
             <h1 class="error-code">Invalid PDB File</h1>
             <h1 th:text="'There was an error with code ' + ${code}" class="error-message">_Code_</h1>
-            <h1 class="error-message">This code is not a protein PDB file!</h1>
+            <h1 class="error-message">Invalid PDB file!</h1>
+            <p class="error-message" th:text="${message}"></p>
             <button type="button" class="button is-info is-large" id="back-button" onclick="window.location.href = 'upload'">Back to upload</button>
         </div>
     </div>

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 /**
  *  This class handles the errors and what message to show on the page.
- * @author Jan Alfonso Busker
+ * @author Wouter Zeevat
  */
 
 @Controller
@@ -56,7 +56,9 @@ public class CustomErrorController implements ErrorController {
     @RequestMapping(value = "/pdb_error")
     public String renderPDBErrorPage(Model model, final HttpServletRequest request) {
         final String error = request.getParameter("code");
+        final String message = request.getParameter("message");
         model.addAttribute("code", error);
+        model.addAttribute("message", message);
         return "pdb_error";
     }
 

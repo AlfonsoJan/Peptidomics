@@ -160,7 +160,7 @@ def dist_function(coordinates):
     return distances
 
 def parse_to_json(scores, peptide_information):
-    print(json.dumps({
+    data = {
         idx: {
             "peptide": val[0],
             "atomnos": {"min": val[1][0], "max": val[1][1]},
@@ -168,10 +168,11 @@ def parse_to_json(scores, peptide_information):
             "x": scores[:, 0][idx],
             "y": scores[:, 1][idx],
             "z": scores[:, 2][idx],
-            "structure": val[3],
+            "structure": val[3]
         }
         for idx, val in enumerate(peptide_information)
-    }))
+    }
+    print(json.dumps(data))
 
 """
 Main function that calls everything
@@ -180,9 +181,12 @@ def main(args):
     filename = args[1]
     oligo_length = int(args[2])
     pdb_code = args[3]
-    peptide_information, pepcoords = peptidize(filename, oligo_length, pdb_code)
-    scores = princana(pepcoords)
-    parse_to_json(scores, peptide_information)
+    try:
+        peptide_information, pepcoords = peptidize(filename, oligo_length, pdb_code)
+        scores = princana(pepcoords)
+        parse_to_json(scores, peptide_information)
+    except Exception as e:
+        print(json.dumps({"error": "Untracked error: " + str(e)}))
 
 
 if __name__ == "__main__":
