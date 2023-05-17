@@ -81,4 +81,5 @@ Wouter Zeevat
 .clickable:hover {
     cursor: pointer;
     opacity: 60%;
+    box-shadow: 3px 3px 5px;
 }
