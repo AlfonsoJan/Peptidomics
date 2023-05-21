@@ -132,11 +132,11 @@ function createDimPlot(result) {
     Plotly.newPlot('placeholder-pca',data,layout,config);
 }
 // Function that create the 3d scatter plotly plot
-function create3dPlot(result, colors) {
+function create3dPlot(result, colors, scores) {
     let elem = document.getElementById("spinner-scatter-3d");
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter-3d").style.display= '';
-    let { data, initialView, secondaryView, thirdView } = getDataPCA3D(result, colors);
+    let { data, initialView, secondaryView, thirdView } = getDataPCA3D(result, colors, scores);
     let updateMenus = initializePlotlyButtons(initialView, secondaryView, thirdView);
     let layout = setLayoutPlotly3D(updateMenus);
     let config = {responsive: true};
@@ -149,11 +149,11 @@ function create3dPlot(result, colors) {
     });
 }
 // Function that create the 2d scatter plotly plot for the PCA results
-function create2dPlot(result, colors) {
+function create2dPlot(result, colors, scores) {
     let elem = document.getElementById("spinner-scatter");
     elem.parentNode.removeChild(elem);
     document.getElementById("placeholder-scatter").style.display= '';
-    let { data, initialView, secondaryView, thirdView } = getDataPCA2D(result, colors);
+    let { data, initialView, secondaryView, thirdView } = getDataPCA2D(result, colors, scores);
     let updateMenus = initializePlotlyButtons(initialView, secondaryView, thirdView);
     let layout = setLayoutPlotly2D(updateMenus);
     let config = {responsive: true};
@@ -440,35 +440,62 @@ const getCategoriesStructure3D = (data) => {
     return traces;
 }
 
-const getDataPCA2D = (json, colors) => {
+const getCategoriesStandard2D = (data) => {
+    return [{
+        type: "scatter",
+        x: data.x,
+        y: data.y,
+        mode: "markers",
+        marker: {size: 8, color: 'rgb(110, 110, 110)', opacity: 0.1},
+        text: `Standard`,
+        name: `Standard`
+    }];
+}
+
+const getCategoriesStandard3D = (data) => {
+    return [{
+        type: "scatter3d",
+        x: data.x,
+        y: data.y,
+        z: data.z,
+        mode: "markers",
+        marker: {size: 2, color: 'rgb(110, 110, 110)', opacity: 0.1},
+        text: `Standard`,
+        name: `Standard`
+    }];
+}
+
+const getDataPCA2D = (json, colors, scores) => {
     let tracesPeptides = getCategoriesPeptides2D(json, colors);
     let tracesChains = getCategoriesChains2D(json, colors);
     let tracesStructure = getCategoriesStructure2D(json);
+    let standard = getCategoriesStandard2D(scores);
 
-    let buttonVisiblePeptide2D = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(false));
-    let buttonVisibleChain2D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true)).concat(Array(tracesStructure.length).fill(false));
-    let buttonVisibleStrucutre2D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(true));
+
+    let buttonVisiblePeptide2D = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(false), true);
+    let buttonVisibleChain2D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true)).concat(Array(tracesStructure.length).fill(false), true);
+    let buttonVisibleStrucutre2D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(true), true);
 
     return {
-        "data": tracesPeptides.concat(tracesChains, tracesStructure),
-        "initialView": buttonVisiblePeptide2D,
-        "secondaryView": buttonVisibleChain2D,
-        "thirdView": buttonVisibleStrucutre2D
+        "data": tracesPeptides.concat(tracesChains, tracesStructure, standard).reverse(),
+        "initialView": buttonVisiblePeptide2D.reverse(),
+        "secondaryView": buttonVisibleChain2D.reverse(),
+        "thirdView": buttonVisibleStrucutre2D.reverse()
     }
 };
 
-const getDataPCA3D = (json, colors) => {
+const getDataPCA3D = (json, colors, scores) => {
     let tracesPeptides = getCategoriesPeptides3D(json, colors);
     let tracesChains = getCategoriesChains3D(json, colors);
     let tracesStructure = getCategoriesStructure3D(json, colors);
+    let standard = getCategoriesStandard3D(scores);
 
-
-    let buttonVisiblePeptide3D = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(false));
-    let buttonVisibleChain3D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true)).concat(Array(tracesStructure.length).fill(false));
-    let buttonVisibleStrucutre3D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(true));
+    let buttonVisiblePeptide3D = Array(tracesPeptides.length).fill(true).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(false), true);
+    let buttonVisibleChain3D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(true)).concat(Array(tracesStructure.length).fill(false), true);
+    let buttonVisibleStrucutre3D = Array(tracesPeptides.length).fill(false).concat(Array(tracesChains.length).fill(false)).concat(Array(tracesStructure.length).fill(true), true);
 
     return {
-        "data": tracesPeptides.concat(tracesChains, tracesStructure),
+        "data": tracesPeptides.concat(tracesChains, tracesStructure, standard),
         "initialView": buttonVisiblePeptide3D,
         "secondaryView": buttonVisibleChain3D,
         "thirdView": buttonVisibleStrucutre3D
@@ -616,25 +643,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 let colors = createColors(Object.keys(JSON.parse(chainResult["bytes"])));
                 setChain(chainResult, colors);
               
-                // Functionality for the 3D protein plot
-                if (value != null) {
-                    let Info = getInfoProtein3d(value);
-                    $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
-                }
+                // // Functionality for the 3D protein plot
+                // if (value != null) {
+                //     let Info = getInfoProtein3d(value);
+                //     $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
+                // }
                 const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
                 let dataResult = await dataResponse.json();
                 dataResult = JSON.parse(dataResult["bytes"]);
-
-                if (dataResult["error"] !== undefined) {
-                    window.location.href = `/pdb_error?code=${value}&message=${dataResult["error"]}`
+                let scores = dataResult.scores;
+                let {scores: _, ...result} = dataResult;
+                if (result["error"] !== undefined) {
+                    window.location.href = `/pdb_error?code=${value}&message=${result["error"]}`
                     return;
                 }
 
-                create3dPlot(dataResult, colors)
-                create2dPlot(dataResult, colors)
+                create3dPlot(result, colors, scores)
+                create2dPlot(result, colors, scores)
 
                 document.getElementById("download-link").onclick = function () {
-                    let blob = new Blob([JSON.stringify(dataResult, null, 4)], {type: "text/json"})
+                    let blob = new Blob([JSON.stringify(result, null, 4)], {type: "text/json"})
                     saveAs(blob, "result.json");
                 }
 
