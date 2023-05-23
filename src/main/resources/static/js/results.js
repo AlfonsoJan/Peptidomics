@@ -42,8 +42,7 @@ const aminoAcidCodes = [
     "VAL", // Valine
 ];
 
-let atomMin = 0;
-let atomMax = 0;
+let points = [];
 let hidden = false;
 let reset = true;
 
@@ -78,11 +77,14 @@ function selectView(datapoints) {
         was_hidden = true;
     }
 
-    const data = datapoints.points[0].data.freetext[datapoints.points[0].pointNumber];
-    atomMin = parseInt(data[0]);
-    atomMax = parseInt(data[1]);
     let a = document.createElement("a");
-    let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; select atomno>${atomMin - 1} and atomno<${atomMax + 1}; cartoons; color [10,0,255];"`
+    let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; `
+
+    points = datapoints;
+    points.forEach(point => {
+        script += `select atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}; cartoons; color [10,0,255]; `;
+    })
+    script += "\"";
     a.href = `javascript:Jmol.script(jmol1, ${script})`
     a.click();
     document.getElementById("zoom-btn").classList.remove("is-hidden");
@@ -90,46 +92,11 @@ function selectView(datapoints) {
     if (was_hidden) {
         hideGlobal();
         script = `"zoom 0"`;
-        a.href = `javascript:Jmol.script(jmol1, ${script})`
-        a.click();
+        //a.href = `javascript:Jmol.script(jmol1, ${script})`
+        //a.click();
     }
     reset = false;
-}
 
-// Function that create the 2d scatter plotly plot for the dimension
-function createDimPlot(result) {
-    let elem = document.getElementById("spinner-pca");
-    elem.parentNode.removeChild(elem);
-    document.getElementById("placeholder-pca").style.display= '';
-    let trace1 = {
-        type: 'scatter',
-        x: JSON.parse(result["bytes"])["dim"].x,
-        y: JSON.parse(result["bytes"])["dim"].y,
-        mode: 'markers',
-        marker: {
-            color: 'rgb(17, 157, 255)',
-            size: 10
-        }
-    };
-    let data = [ trace1 ];
-    let layout = {
-        autosize: true,
-        margin: {
-            l: 0,
-            r: 0,
-            b: 0,
-            t: 0,
-            pad: 4
-
-        },
-        xaxis: {
-            range: [0, 10],
-        },
-        paper_bgcolor:"white",
-        plot_bgcolor:"#FFFFFF",
-    };
-    let config = {responsive: true}
-    Plotly.newPlot('placeholder-pca',data,layout,config);
 }
 // Function that create the 3d scatter plotly plot
 function create3dPlot(result, colors, scores) {
@@ -143,8 +110,8 @@ function create3dPlot(result, colors, scores) {
     Plotly.newPlot("placeholder-scatter-3d", data, layout, config);
     let myPlot = document.getElementById("placeholder-scatter-3d");
     myPlot.on("plotly_click", function(datapoints){
-
-        selectView(datapoints);
+        if (!datapoints.points[0].data.hasOwnProperty("freetext")) return;
+        selectView([datapoints.points[0].data.freetext[datapoints.points[0].pointNumber]]);
 
     });
 }
@@ -160,9 +127,24 @@ function create2dPlot(result, colors, scores) {
     Plotly.newPlot('placeholder-scatter', data, layout, config);
     let myPlot = document.getElementById("placeholder-scatter");
     myPlot.on("plotly_click", function(datapoints){
+        console.log(datapoints)
+        if (!datapoints.points[0].data.hasOwnProperty("freetext")) return;
+        selectView([datapoints.points[0].data.freetext[datapoints.points[0].pointNumber]])
 
-        selectView(datapoints)
+    });
+    myPlot.on("plotly_selected", function(datapoints){
+        if (datapoints.points.length < 1) {
+            return;
+        }
 
+        let points = [];
+        datapoints.points.forEach(data => {
+            let index = data.pointIndex;
+            if (!data.data.hasOwnProperty("freetext")) return;
+            let point = [data.data.freetext[index][0], data.data.freetext[index][1]]
+            points.push(point);
+        });
+        selectView(points);
     });
 }
 // Function that set the chains on the site
@@ -254,7 +236,13 @@ function hideGlobal() {
     let script;
     if (!hidden) {
         console.log("Hidden the global protein!")
-        script = `"hide all; display atomno>${atomMin - 1} and atomno<${atomMax + 1}; color [10,0,255];"`
+        script = `"hide all; display `
+
+        scriptParts = []
+        points.forEach(point => {
+           scriptParts.push(`atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}`);
+        });
+        script += `${scriptParts.join(", ")}; color [10,0,255]"`;
         a.href = `javascript:Jmol.script(jmol1, ${script})`
         hidden = true;
         a.click()

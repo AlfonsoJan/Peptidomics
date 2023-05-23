@@ -90,7 +90,7 @@ public class ResultController {
             String bytes = pythonService.PDBAnalyse(
                     String.valueOf(filePath),
                     request.getSession().getAttribute("tempLocation").toString(),
-                    request.getSession().getAttribute("parameter").toString(),
+                    request.getSession().getAttribute("pepSize").toString(),
                     pdb.getStructureId()
             );
             Plot plot = new Plot(bytes);

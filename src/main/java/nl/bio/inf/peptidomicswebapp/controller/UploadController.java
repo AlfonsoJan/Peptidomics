@@ -54,7 +54,7 @@ public class UploadController {
                 return ("redirect:/pdb_error?code=" + pdb.getFileName());
             }
 
-            session.setAttribute("parameter", oligoParam);
+            session.setAttribute("pepSize", oligoParam);
             session.setAttribute("PDBFiles", pdb);
             return "redirect:/result";
         } catch (IOException | InvalidPDBCodeException ex) {
@@ -83,7 +83,7 @@ public class UploadController {
                 return ("redirect:/pdb_error?code=1f6e");
             }
 
-            session.setAttribute("parameter", oligoParam);
+            session.setAttribute("pepSize", oligoParam);
             session.setAttribute("PDBFiles", pdb);
             return "redirect:/result";
         } catch (IOException ex) {
@@ -110,6 +110,7 @@ public class UploadController {
                 return "redirect:/upload";
             }
             model.addAttribute("fileName", pdb.getStructureId());
+            model.addAttribute("pepSize", request.getSession().getAttribute("pepSize"));
             return "results";
         } catch (ClassCastException ex) {
             LOGGER.warning("Error while class casting to PDB, message=" + ex.getMessage());
