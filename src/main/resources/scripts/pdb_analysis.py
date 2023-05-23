@@ -5,7 +5,9 @@ import numpy as np
 from collections import Counter
 import json
 import requests
+import pandas as pd
 import time
+import os
 
 __author__ = "Wouter Zeevat"
 
@@ -15,6 +17,12 @@ AA321 = dict(zip(AA3, AA1))
 LETTERS = 'H B E G I T S P None'.split()
 MEANING = 'ALPHA-HELIX BETA-BRIDGE BETA-LADDER 3-HELIX 5-HELIX HYDROGEN-BONDED-TURN BEND PLOY-PROLINE-HELICES LOOP/IRREGULAR'.split()
 LETTERS_DICT = dict(zip(LETTERS, MEANING))
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 def start_job(pdb_code):
     form_data = {'data': pdb_code}
@@ -144,13 +152,11 @@ def peptidize(pdbfile, pepsize, pdb_code):
     pep_information = list(zip(peptides, atomnos, chainsnos, pep_structures))
     return pep_information, pepcoords
 
-def princana(coordinates):
+def princana(coordinates, vectors):
     distances = dist_function(coordinates)
-    values, vectors = np.linalg.eigh(np.cov(distances.T))
     # These are the characteristic structure values for each peptide
-    scores = distances @ vectors[:, ::-1][:, :3]
-
-    return scores
+    projected_data = distances @ vectors
+    return projected_data
 
 def dist_function(coordinates):
     distances = ((coordinates[:, :, None] - coordinates[:, None, :]) ** 2).sum(axis=3)
@@ -159,20 +165,25 @@ def dist_function(coordinates):
     distances -= distances.mean(axis=0)
     return distances
 
-def parse_to_json(scores, peptide_information):
+def parse_to_json(projected_data, peptide_information, scores):
     data = {
         idx: {
             "peptide": val[0],
             "atomnos": {"min": val[1][0], "max": val[1][1]},
             "chain": val[2][0],
-            "x": scores[:, 0][idx],
-            "y": scores[:, 1][idx],
-            "z": scores[:, 2][idx],
+            "x": projected_data[:, 0][idx],
+            "y": projected_data[:, 1][idx],
+            "z": projected_data[:, 2][idx],
             "structure": val[3]
         }
         for idx, val in enumerate(peptide_information)
     }
-    print(json.dumps(data))
+    data["scores"] = {
+        "x": scores[:, 0],
+        "y": scores[:, 1],
+        "z": scores[:, 2]
+    }
+    print(json.dumps(data, cls=NumpyEncoder))
 
 """
 Main function that calls everything
@@ -183,8 +194,11 @@ def main(args):
     pdb_code = args[3]
     try:
         peptide_information, pepcoords = peptidize(filename, oligo_length, pdb_code)
-        scores = princana(pepcoords)
-        parse_to_json(scores, peptide_information)
+        script_dir = os.path.dirname(__file__)
+        vectors = pd.read_csv(f'{script_dir}/vectors/vectors_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
+        scores = pd.read_csv(f'{script_dir}/scores/scores_downsampled_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
+        projected_data = princana(pepcoords, vectors)
+        parse_to_json(projected_data, peptide_information, scores)
     except Exception as e:
         print(json.dumps({"error": "Untracked error: " + str(e)}))
 
