@@ -135,12 +135,11 @@ author: Wouter Zeevat
         <div class="tile is-parent is-shady">
             <article class="tile is-child notification is-white" style="display: flex; flex-flow: column">
                 <p class="title" id="more_info">The Project</p>
-                <p class="subtitle" style="white-space: pre-line; padding-top: 5px" th:text="${infoText}">__INFO__</p>
+                <p class="subtitle" style="white-space: pre-line; padding-top: 5px" th:text="${infoTxt}">__INFO__</p>
             </article>
         </div>
     </div>
 </section>
-
 <div th:replace="~{fragments :: footer}"></div>
 
 <script type="text/javascript" src="../static/js/index.js" th:src="@{js/index.js}"></script>
