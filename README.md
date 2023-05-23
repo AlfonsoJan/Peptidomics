@@ -1,4 +1,19 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Peptidomics Spring Boot Project
+
+Welcome to the Peptidomics repository! This project focuses on the analysis and exploration of peptide data using advanced computational techniques.
+
+## Table of Contents
+
+* Introduction
+* Installation
+* Usage
+* Features
+* Contributing
+* License
+
+## Introduction
 
 The majority of the biological machinery is made up of proteins, which are just lengthy chains of connected amino acids. Although this relationship is exceedingly difficult to assess, in theory, the structure, dynamics, and function of such proteins follow from the individual building pieces.
 
@@ -9,12 +24,18 @@ This software is the creation of something that essentially combines PCA and mul
 ## Requirements
 ````
 Java (min. version 8)
+    Gradle (version 7.4)
     Spring (version 3.0.2)
     Spring Security (version 2.0.4-RELEASE)
+    Spring Security Config
+    Spring Thymeleaf
+    Commons IO (version 2.11.0)
 
 Python (min. version 3.9)
     Numpy (version 1.23.1)
     MDAnalysis (version 2.4.2)
+    Pandas (version 2.0.1)
+    Scikit-Learn (version 0.23.2)
 
 JavaScript
     Toastr (version 2.1.4)
@@ -22,26 +43,53 @@ JavaScript
     JQuery (version 3.6.3)
     Bulma Tooltip (version 1.2.0)
     Plotly (version 2.20.0)
+    FileSaver (version 2.0.0)
+    JSmolMin2
 ````
 ## Installation
-````
 Clone this repository to your local machine:
-    git clone https://github.com/AlfonsoJan/Peptidomics.git
+````
+git clone https://github.com/AlfonsoJan/Peptidomics.git
 ````
 
 Install the required Python dependencies:
+````
+pip install -r requirements.txt
+````
 
-    pip install -r requirements.txt
+Extract the folders scores, scripts and vectors and it content from the data directory. Copy these directories on the server.
+Change the attribute python.executable.folder in application.properties to the location of these directories.
+```
+python.executable.folder=parent directory/
+```
+
+They need to be in the same parent directory.
+
+```
+parent directory/
+├── scores
+├── scripts
+├── vectors
+```
+
+Create the .jar file with the following command:
+```
+gradle bootjar
+```
+Or use the bootjar build option in IntelliJ.
+
 
 ## Usage
 
-For now open the project in IntelliJ
-
 Set in the application.properties the python.path-name to your python3 shortcurt (eg, py, python, python3)
 
-And run the main in the class: PeptidomicsWebAppApplication.
+Open a terminal and move to the location of the jar file. And run the jar file:
+```
+java -jar PeptidomicsWebApp.jar
+```
 
 ## Contributors
-
-    John Busker (j.a.busker@st.hanze.nl)
-    Wouter Zeevat (w.h.zeevat@st.hanze.nl)
+```
+John Busker (j.a.busker@st.hanze.nl)
+Wouter Zeevat (w.h.zeevat@st.hanze.nl)
+```
