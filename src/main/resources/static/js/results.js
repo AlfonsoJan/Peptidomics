@@ -446,7 +446,7 @@ const getCategoriesStandard2D = (data) => {
         x: data.x,
         y: data.y,
         mode: "markers",
-        marker: {size: 8, color: 'rgb(110, 110, 110)', opacity: 0.1},
+        marker: {size: 10, color: 'rgb(110, 110, 110)', opacity: 0.5},
         text: `Standard`,
         name: `Standard`
     }];
@@ -459,7 +459,7 @@ const getCategoriesStandard3D = (data) => {
         y: data.y,
         z: data.z,
         mode: "markers",
-        marker: {size: 2, color: 'rgb(110, 110, 110)', opacity: 0.1},
+        marker: {size: 2, color: 'rgb(110, 110, 110)', opacity: 0.4},
         text: `Standard`,
         name: `Standard`
     }];
@@ -644,10 +644,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 setChain(chainResult, colors);
               
                 // // Functionality for the 3D protein plot
-                // if (value != null) {
-                //     let Info = getInfoProtein3d(value);
-                //     $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
-                // }
+                if (value != null) {
+                    let Info = getInfoProtein3d(value);
+                    $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
+                }
                 const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
                 let dataResult = await dataResponse.json();
                 dataResult = JSON.parse(dataResult["bytes"]);

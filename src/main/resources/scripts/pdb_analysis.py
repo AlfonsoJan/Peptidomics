@@ -196,7 +196,7 @@ def main(args):
         peptide_information, pepcoords = peptidize(filename, oligo_length, pdb_code)
         script_dir = os.path.dirname(__file__)
         vectors = pd.read_csv(f'{script_dir}/vectors/vectors_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
-        scores = pd.read_csv(f'{script_dir}/scores/scores_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
+        scores = pd.read_csv(f'{script_dir}/scores/scores_downsampled_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
         projected_data = princana(pepcoords, vectors)
         parse_to_json(projected_data, peptide_information, scores)
     except Exception as e:
