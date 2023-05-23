@@ -1,47 +1,63 @@
 #!/usr/bin/env python3
 
-import sys
-import numpy as np
+"""Performs the analysis creating the JSON coordinates together with the metadata"""
+
 from collections import Counter
 import json
+import time
+from pathlib import Path
+import sys
+import numpy as np
 import requests
 import pandas as pd
-import time
-import os
-from pathlib import Path
 
 __author__ = "Wouter Zeevat"
 
 AA1 = 'A C D E F G H I K L M N P Q R S T V W Y'.split()
-AA3 = 'ALA CYS ASP GLU PHE GLY HIS ILE LYS LEU MET ASN PRO GLN ARG SER THR VAL TRP TYR'.split()
+AA3 = 'ALA CYS ASP GLU PHE GLY HIS ILE LYS LEU MET ASN ' \
+      'PRO GLN ARG SER THR VAL TRP TYR'.split()
 AA321 = dict(zip(AA3, AA1))
 LETTERS = 'H B E G I T S P None'.split()
-MEANING = 'ALPHA-HELIX BETA-BRIDGE BETA-LADDER 3-HELIX 5-HELIX HYDROGEN-BONDED-TURN BEND PLOY-PROLINE-HELICES LOOP/IRREGULAR'.split()
+MEANING = 'ALPHA-HELIX BETA-BRIDGE BETA-LADDER 3-HELIX 5-HELIX HYDROGEN-BONDED-TURN ' \
+          'BEND PLOY-PROLINE-HELICES LOOP/IRREGULAR'.split()
 LETTERS_DICT = dict(zip(LETTERS, MEANING))
 
 class NumpyEncoder(json.JSONEncoder):
+    """
+    Encoder for JSON data
+    """
     def default(self, obj):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
 def start_job(pdb_code):
+    """
+    Starts the job and creates a json object
+    :param pdb_code:
+    :return:
+    """
     form_data = {'data': pdb_code}
-    url_create_code = f"https://www3.cmbi.umcn.nl/xssp/api/create/pdb_id/dssp/"
-    r = requests.post(url_create_code, data=form_data)
-    r.raise_for_status()
-    job_id = json.loads(r.text)['id']
+    url_create_code = "https://www3.cmbi.umcn.nl/xssp/api/create/pdb_id/dssp/"
+    request = requests.post(url_create_code, data=form_data)
+    request.raise_for_status()
+    job_id = json.loads(request.text)['id']
     return job_id
 
 def get_secondary_structure(pdb_code):
+    """
+    Gets the pdb file from a code and saves the important data
+    :param pdb_code:
+    :return:
+    """
     job_id = start_job(pdb_code)
     ready = False
     error = False
     while not ready:
         url_check_status = f"https://www3.cmbi.umcn.nl/xssp/api/status/pdb_id/dssp/{job_id}"
-        r = requests.get(url_check_status)
-        r.raise_for_status()
-        status = json.loads(r.text)['status']
+        request = requests.get(url_check_status)
+        request.raise_for_status()
+        status = json.loads(request.text)['status']
         if status == 'SUCCESS':
             ready = True
         elif status in ['FAILURE', 'REVOKED']:
@@ -52,9 +68,9 @@ def get_secondary_structure(pdb_code):
     if error:
         return []
     url_result = f"https://www3.cmbi.umcn.nl/xssp/api/result/pdb_id/dssp/{job_id}"
-    r = requests.get(url_result)
-    r.raise_for_status()
-    result = json.loads(r.text)['result']
+    request = requests.get(url_result)
+    request.raise_for_status()
+    result = json.loads(request.text)['result']
     result = result.split("\n")[:-1]
     chains = []
     res_numbers = []
@@ -73,18 +89,30 @@ def get_secondary_structure(pdb_code):
     return list(zip(chains, res_numbers, codes))
 
 def structure_parser(chainsnos, res_number, result_dssp):
+    """
+    Parses the structure by using the chain number and the res number.
+
+    :param chainsnos:
+    :param res_number:
+    :param result_dssp:
+    :return:
+    """
     if result_dssp.size == 0:
         return ["undefined"] * len(res_number)
     structures = []
-    t = np.array(list(zip(chainsnos, res_number)))
-    for index in range(0, t.shape[0]):
-        chain = t[index][0]
-        res_num = int(t[index][1])
-        result_index = np.where((result_dssp[:,:-1] == t[index]).all(axis=1))[0][0]
+    pep_info = np.array(list(zip(chainsnos, res_number)))
+    for index in range(0, pep_info.shape[0]):
+        result_index = np.where((result_dssp[:,:-1] == pep_info[index]).all(axis=1))[0][0]
         structures.append(result_dssp[result_index][2])
     return np.array(structures)
 
 def read_pdb_backbone(pdbfile, pdb_code):
+    """
+    Reads the backbone from the pdb structure
+    :param pdbfile:
+    :param pdb_code:
+    :return:
+    """
     with open(pdbfile) as pdb:
         backbone = [
             line.strip() for line in pdb
@@ -97,20 +125,23 @@ def read_pdb_backbone(pdbfile, pdb_code):
     coordinates = np.loadtxt([ atom[30:54] for atom in backbone ])
     atomnos = [ atom[4:12].strip() for atom in backbone ]
     residues_number = [ atom[22:27].strip() for atom in backbone ]
-    structures = structure_parser(chainsnos, residues_number, np.array(get_secondary_structure(pdb_code)))
-    return residues, coordinates, atomnos, atomnames, chainsnos, structures
+    structures = structure_parser(chainsnos, residues_number,
+                                  np.array(get_secondary_structure(pdb_code)))
+    return residues, coordinates, atomnos, chainsnos, structures
 
 def peptidize(pdbfile, pepsize, pdb_code):
-    '''
+    """
     Read peptides from given size from PDB file
-    '''
-    sequence, coordinates, atomnos, atomnames, chainsnos, structures = read_pdb_backbone(pdbfile, pdb_code)
+    """
+    sequence, coordinates, atomnos, chainsnos, structures = \
+        read_pdb_backbone(pdbfile, pdb_code)
 
     # Because each residue has three atoms
     pepsize *= 3
 
     # Separate parts of chains
-    breaks = np.where(((coordinates[1:] - coordinates[:-1]) ** 2).sum(axis=1) > 4)[0] + 1
+    breaks = np.where(((coordinates[1:] - coordinates[:-1]) ** 2)
+                      .sum(axis=1) > 4)[0] + 1
     # For the coordinates
     parts = np.split(coordinates, breaks)
     # For the atom numbers, peptides and chain letters
@@ -154,12 +185,23 @@ def peptidize(pdbfile, pepsize, pdb_code):
     return pep_information, pepcoords
 
 def princana(coordinates, vectors):
+    """
+    Performs principal component analysis!
+    :param coordinates:
+    :param vectors:
+    :return:
+    """
     distances = dist_function(coordinates)
     # These are the characteristic structure values for each peptide
     projected_data = distances @ vectors
     return projected_data
 
 def dist_function(coordinates):
+    """
+    Makes distance matrices
+    :param coordinates:
+    :return:
+    """
     distances = ((coordinates[:, :, None] - coordinates[:, None, :]) ** 2).sum(axis=3)
     rows, columns = np.triu_indices_from(distances[0], 1)
     distances = distances[:, rows, columns].reshape((len(distances), -1))
@@ -167,6 +209,13 @@ def dist_function(coordinates):
     return distances
 
 def parse_to_json(projected_data, peptide_information, scores):
+    """
+    Parses all the data to JSON for exporting
+    :param projected_data:
+    :param peptide_information:
+    :param scores:
+    :return:
+    """
     data = {
         idx: {
             "peptide": val[0],
@@ -186,10 +235,10 @@ def parse_to_json(projected_data, peptide_information, scores):
     }
     print(json.dumps(data, cls=NumpyEncoder))
 
-"""
-Main function that calls everything
-"""
 def main(args):
+    """
+    Main function that calls everything
+    """
     filename = args[1]
     oligo_length = int(args[2])
     pdb_code = args[3]
@@ -197,12 +246,15 @@ def main(args):
     try:
         peptide_information, pepcoords = peptidize(filename, oligo_length, pdb_code)
 
-        vectors = pd.read_csv(f'{Path(__file__).parent.parent}/vectors/vectors_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
-        scores = pd.read_csv(f'{Path(__file__).parent.parent}/scores/scores_downsampled_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
+        vectors = pd.read_csv(f'{Path(__file__).parent.parent}/vectors/vectors_{oligo_length}.csv',
+                              sep=",", header=0, comment='#').to_numpy()
+        scores = pd.read_csv(f'{Path(__file__).parent.parent}'
+                             f'/scores/scores_downsampled_{oligo_length}.csv',
+                             sep=",", header=0, comment='#').to_numpy()
         projected_data = princana(pepcoords, vectors)
         parse_to_json(projected_data, peptide_information, scores)
-    except Exception as e:
-        print(json.dumps({"error": "Untracked error: " + str(e)}))
+    except Exception as exception:
+        print(json.dumps({"error": "Untracked error: " + str(exception)}))
 
 
 if __name__ == "__main__":
