@@ -7,12 +7,16 @@ import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.Plot;
 import nl.bio.inf.peptidomicswebapp.service.PythonService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 /**
@@ -26,6 +30,8 @@ public class ResultController {
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
     private final PythonService pythonService;
+    @Value("${python.executable.folder}")
+    private String pythonFolder;
 
     public ResultController(PythonService pythonService) {
         this.pythonService = pythonService;
@@ -79,17 +85,10 @@ public class ResultController {
         }
         try {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
-            File folderScripts = new ClassPathResource("scripts").getFile();
-            File fullPath = null;
-            // Get the location for the python file
-            for (File f: folderScripts.listFiles()) {
-                if("pdb_analysis.py".equals(f.getName())) {
-                    fullPath = f;
-                }
-            }
+            Path filePath = Paths.get(pythonFolder, "scripts", "pdb_analysis.py");
             // Call the python script
             String bytes = pythonService.PDBAnalyse(
-                    fullPath.toString(),
+                    String.valueOf(filePath),
                     request.getSession().getAttribute("tempLocation").toString(),
                     request.getSession().getAttribute("parameter").toString(),
                     pdb.getStructureId()
@@ -97,7 +96,7 @@ public class ResultController {
             Plot plot = new Plot(bytes);
             request.getSession().setAttribute("analysis", plot);
             return plot;
-        } catch (IOException | InvalidPDBCodeException ex) {
+        } catch (InvalidPDBCodeException ex) {
             LOGGER.warning("Error while performing the script on the data, message=" + ex.getMessage());
             throw new RuntimeException(ex);
         }
@@ -114,26 +113,13 @@ public class ResultController {
         if (request.getSession().getAttribute("chains") != null) {
             return (Plot) request.getSession().getAttribute("chains");
         }
-        try {
-            File folderScripts  = new ClassPathResource("scripts").getFile();
-            File fullPath = null;
-            // Get the location for the python file
-            for (File f: folderScripts.listFiles()) {
-                if("retrieve_chains_pdb.py".equals(f.getName())) {
-                    fullPath = f;
-                }
-            }
-
-            // Call the python script
-            String chain = pythonService.getChainsPBD(
-                    String.valueOf(fullPath),
-                    request.getSession().getAttribute("tempLocation").toString());
-            Plot plot = new Plot(chain);
-            request.getSession().setAttribute("chains", plot);
-            return plot;
-        } catch (IOException ex) {
-            LOGGER.warning("Error while retrieving the chains from the data, message=" + ex.getMessage());
-            throw new RuntimeException(ex);
-        }
+        Path filePath = Paths.get(pythonFolder, "scripts", "retrieve_chains_pdb.py");
+        // Call the python script
+        String chain = pythonService.getChainsPBD(
+                String.valueOf(filePath),
+                request.getSession().getAttribute("tempLocation").toString());
+        Plot plot = new Plot(chain);
+        request.getSession().setAttribute("chains", plot);
+        return plot;
     }
 }

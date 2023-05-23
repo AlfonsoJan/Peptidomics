@@ -8,6 +8,7 @@ import requests
 import pandas as pd
 import time
 import os
+from pathlib import Path
 
 __author__ = "Wouter Zeevat"
 
@@ -192,11 +193,12 @@ def main(args):
     filename = args[1]
     oligo_length = int(args[2])
     pdb_code = args[3]
+
     try:
         peptide_information, pepcoords = peptidize(filename, oligo_length, pdb_code)
-        script_dir = os.path.dirname(__file__)
-        vectors = pd.read_csv(f'{script_dir}/vectors/vectors_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
-        scores = pd.read_csv(f'{script_dir}/scores/scores_downsampled_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
+
+        vectors = pd.read_csv(f'{Path(__file__).parent.parent}/vectors/vectors_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
+        scores = pd.read_csv(f'{Path(__file__).parent.parent}/scores/scores_downsampled_{oligo_length}.csv', sep=",", header=0, comment='#').to_numpy()
         projected_data = princana(pepcoords, vectors)
         parse_to_json(projected_data, peptide_information, scores)
     except Exception as e:
