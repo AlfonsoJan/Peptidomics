@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
 
-import MDAnalysis as mda
-import numpy as np
+"""
+Module that retrieves the chains from a pdb file AS JSON data
+"""
+
 import json
 import sys
+import MDAnalysis as mda
+import numpy as np
 
 __author__ = "Wouter Zeevat"
 
-"""
-This function returns the chains if the pdb file
-"""
 def get_chains(path):
-    u = mda.Universe(path)
+    """
+    This function returns the chains of the pdb file
+    """
+
+    protein = mda.Universe(path)
     selection = 'protein and (name N or name CA or name C or name O)'
-    proteins = u.select_atoms(selection)
+    proteins = protein.select_atoms(selection)
     prev = count = {protein:0 for protein in np.unique(proteins.segids)}
 
-    """
-    Counts all the unique residues count
-    """
+    # Counts all the unique residues count
     for protein in proteins:
         chain = protein.segid
         if prev[chain] != protein.resid:
@@ -26,10 +29,10 @@ def get_chains(path):
             count[chain] += 1
     print(json.dumps({p:str(count[p]) for p in count}))
 
-"""
-Main function that calls everything
-"""
 def main(args):
+    """
+    Main function that calls everything
+    """
     get_chains(args[1])
 
 
