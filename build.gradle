@@ -28,18 +28,8 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    manifest {
-        attributes "Main-Class": "nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication"
-    }
-}
-
-shadowJar {
-    archiveBaseName.set("Peptidomics")
+tasks.named("bootJar") {
+    archiveBaseName.set('PeptidomicsWebApp')
     archiveClassifier.set('')
     archiveVersion.set('')
-    manifest {
-        attributes "Main-Class": "nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication"
-    }
-    configurations = [project.configurations.implementation]
 }
