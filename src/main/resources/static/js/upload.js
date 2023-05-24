@@ -17,10 +17,6 @@ toastr.options = {
     "hideMethod": "fadeOut"
 }
 
-function getFileName(el) {
-    document.getElementById("file-selected").textContent = el.files[0].name;
-}
-
 // Function that checks if it is valid pdb code
 async function checkPDBCode(value) {
     const response = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, { method: 'GET' })
@@ -32,6 +28,11 @@ async function checkPDBSize(value) {
     const response = fetch(`https://files.rcsb.org/download/${value}.pdb`)
     return response;
 }
+
+document.getElementById("selected").addEventListener('change', (element) => {
+    document.getElementById("file-selected").textContent = element.files[0].name;
+});
+
 document.addEventListener('DOMContentLoaded', (event) => {
     // Function that checks every thing before submitting the pdb code form
     document.getElementById('pdb-input-form').addEventListener('submit', async function (event) {
