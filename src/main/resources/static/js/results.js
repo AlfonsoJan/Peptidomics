@@ -18,36 +18,37 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+let resultJS = {
+    aminoAcidCodes: [
+        "ALA", // Alanine
+        "ARG", // Arginine
+        "ASN", // Asparagine
+        "ASP", // Aspartic Acid
+        "CYS", // Cysteine
+        "GLN", // Glutamine
+        "GLU", // Glutamic Acid
+        "GLY", // Glycine
+        "HIS", // Histidine
+        "ILE", // Isoleucine
+        "LEU", // Leucine
+        "LYS", // Lysine
+        "MET", // Methionine
+        "PHE", // Phenylalanine
+        "PRO", // Proline
+        "SER", // Serine
+        "THR", // Threonine
+        "TRP", // Tryptophan
+        "TYR", // Tyrosine
+        "VAL", // Valine
+    ],
 
-const aminoAcidCodes = [
-    "ALA", // Alanine
-    "ARG", // Arginine
-    "ASN", // Asparagine
-    "ASP", // Aspartic Acid
-    "CYS", // Cysteine
-    "GLN", // Glutamine
-    "GLU", // Glutamic Acid
-    "GLY", // Glycine
-    "HIS", // Histidine
-    "ILE", // Isoleucine
-    "LEU", // Leucine
-    "LYS", // Lysine
-    "MET", // Methionine
-    "PHE", // Phenylalanine
-    "PRO", // Proline
-    "SER", // Serine
-    "THR", // Threonine
-    "TRP", // Tryptophan
-    "TYR", // Tyrosine
-    "VAL", // Valine
-];
-
-let points = [];
-let hidden = false;
-let reset = true;
+    points: [],
+    hidden: false,
+    reset: true,
+}
 
 // Function that converts hue to RGB
-const HSLToRGB = (h, s, l) => {
+function HSLToRGB (h, s, l) {
     s /= 100;
     l /= 100;
     const k = n => (n + h / 30) % 12;
@@ -57,6 +58,8 @@ const HSLToRGB = (h, s, l) => {
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 };
 
+// Function that creates perfectly distanced colors that follow the rainbow pattern
+// according to an array of keys, creates {"A": red, "B": green, "C": pink}
 function createColors(keys) {
 
     let colorArray = [];
@@ -69,10 +72,12 @@ function createColors(keys) {
     return keys.map((x, i) => ({x, y: colorArray[i]}));
 }
 
+// Selects a certain part of the JSMOL
 function selectView(datapoints) {
-    // Unhides and rehides the selected after BUG FIX QUICK FIX
+
+    // Unhides the JMOL to rehide it after! BUG FIX
     let was_hidden = false;
-    if (hidden) {
+    if (resultJS.hidden) {
         hideGlobal();
         was_hidden = true;
     }
@@ -80,23 +85,23 @@ function selectView(datapoints) {
     let a = document.createElement("a");
     let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; `
 
-    points = datapoints;
-    points.forEach(point => {
+    // Select each amino acid for all positions
+    resultJS.points = datapoints;
+    resultJS.points.forEach(point => {
         script += `select atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}; cartoons; color [10,0,255]; `;
     })
     script += "\"";
     a.href = `javascript:Jmol.script(jmol1, ${script})`
     a.click();
     document.getElementById("zoom-btn").classList.remove("is-hidden");
+    document.getElementById("3d-text").innerText = `${resultJS.points.length} selected`;
 
+    // Rehides
     if (was_hidden) {
         hideGlobal();
         script = `"zoom 0"`;
-        //a.href = `javascript:Jmol.script(jmol1, ${script})`
-        //a.click();
     }
-    reset = false;
-
+    resultJS.reset = false;
 }
 // Function that create the 3d scatter plotly plot
 function create3dPlot(result, colors, scores) {
@@ -109,8 +114,11 @@ function create3dPlot(result, colors, scores) {
     let config = {responsive: true};
     Plotly.newPlot("placeholder-scatter-3d", data, layout, config);
     let myPlot = document.getElementById("placeholder-scatter-3d");
+
+    // Click event
     myPlot.on("plotly_click", function(datapoints){
-        if (!datapoints.points[0].data.hasOwnProperty("freetext")) return;
+        if (datapoints === undefined) return;
+        if (!datapoints.points[0].data.hasOwnProperty("freetext")) return; // If its a gray dot AKA background data
         selectView([datapoints.points[0].data.freetext[datapoints.points[0].pointNumber]]);
 
     });
@@ -126,13 +134,18 @@ function create2dPlot(result, colors, scores) {
     let config = {responsive: true};
     Plotly.newPlot('placeholder-scatter', data, layout, config);
     let myPlot = document.getElementById("placeholder-scatter");
+
+    // Click event
     myPlot.on("plotly_click", function(datapoints){
         console.log(datapoints)
-        if (!datapoints.points[0].data.hasOwnProperty("freetext")) return;
+        if (!datapoints.points[0].data.hasOwnProperty("freetext")) return; // If its a gray dot AKA background data
         selectView([datapoints.points[0].data.freetext[datapoints.points[0].pointNumber]])
 
     });
+
+    // Select multiple with lasso or box select event
     myPlot.on("plotly_selected", function(datapoints){
+        if (datapoints === undefined) return;
         if (datapoints.points.length < 1) {
             return;
         }
@@ -140,7 +153,7 @@ function create2dPlot(result, colors, scores) {
         let points = [];
         datapoints.points.forEach(data => {
             let index = data.pointIndex;
-            if (!data.data.hasOwnProperty("freetext")) return;
+            if (!data.data.hasOwnProperty("freetext")) return; // If its a gray dot AKA background data
             let point = [data.data.freetext[index][0], data.data.freetext[index][1]]
             points.push(point);
         });
@@ -210,12 +223,15 @@ function clickChain(item) {
     let script = `"select all; color [90,90,90]; select chain=${chain}; cartoons only; color [${color}]; background white; zoom 0"`;
     a.href = `javascript:Jmol.script(jmol1, ${script})`
     a.click();
-    reset = true;
+    resultJS.reset = true;
 
 }
 
+// Resets the JSMOL view
 function resetScript() {
-    if (hidden) {
+
+    // Unhides if it was hidden to prevent bugs
+    if (resultJS.hidden) {
         hideGlobal();
     }
     document.getElementById("zoom-btn").classList.add("is-hidden");
@@ -223,33 +239,38 @@ function resetScript() {
     let script = `"select all; cartoons only; color structure; background white; zoom 0"`;
     a.href = `javascript:Jmol.script(jmol1, ${script})`
     a.click();
-    reset = true;
+    document.getElementById("3d-text").innerText = "0 selected";
+    resultJS.reset = true;
 }
 
+// Zooms in on the selected part and hides the other parts in JSMOL
 function hideGlobal() {
 
     let a = document.createElement("a");
 
-    if (reset) {
+    // Don't go through if nothing is selected
+    if (resultJS.reset) {
         return;
     }
+
     let script;
-    if (!hidden) {
+    if (!resultJS.hidden) {
         console.log("Hidden the global protein!")
         script = `"hide all; display `
 
+        // Adds selected part each time because JSMOL does not allow you to do it once
         scriptParts = []
-        points.forEach(point => {
-           scriptParts.push(`atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}`);
+        resultJS.points.forEach(point => {
+            scriptParts.push(`atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}`);
         });
         script += `${scriptParts.join(", ")}; color [10,0,255]"`;
         a.href = `javascript:Jmol.script(jmol1, ${script})`
-        hidden = true;
+        resultJS.hidden = true;
         a.click()
 
     } else {
         console.log("Unhidden the global protein!")
-        hidden = false;
+        resultJS.hidden = false;
         script = '"hide none"'
         a.href = `javascript:Jmol.script(jmol1, ${script})`
         a.click();
@@ -259,10 +280,12 @@ function hideGlobal() {
     a.click();
 }
 
-const getCategoriesPeptides2D = (data) => {
+// Function that sets the data for the 2D categories plot
+// Sets PDB positions for later usage and colors for each peptide
+function getCategoriesPeptides2D(data) {
     let traces = [];
     let categories = [];
-    let colors = createColors(aminoAcidCodes);
+    let colors = createColors(resultJS.aminoAcidCodes); // Generates colors for each amino acid
     for (let i = 0; i < Object.keys(data).length; i ++) {
         if (categories.indexOf(data[i].peptide) === -1) {
             traces.push({
@@ -285,10 +308,13 @@ const getCategoriesPeptides2D = (data) => {
     }
     return traces
 };
-const getCategoriesPeptides3D = (data) => {
+
+// Function that sets the data for the 3D categories plot
+// Sets PDB positions for later usage and colors for each peptide
+function getCategoriesPeptides3D(data) {
     let traces = [];
     let categories = [];
-    let colors = createColors(aminoAcidCodes);
+    let colors = createColors(resultJS.aminoAcidCodes);
     for (let i = 0; i < Object.keys(data).length; i ++) {
         if (categories.indexOf(data[i].peptide) === -1) {
             traces.push({
@@ -315,7 +341,9 @@ const getCategoriesPeptides3D = (data) => {
     return traces
 };
 
-const getCategoriesChains2D = (data, colors) => {
+// Function that sets the data for the 2D categories plot
+// Sets PDB positions for later usage and colors for each chain
+function getCategoriesChains2D(data, colors) {
     let traces = [];
     let categories = [];
     for (let i = 0; i < Object.keys(data).length; i ++) {
@@ -344,7 +372,10 @@ const getCategoriesChains2D = (data, colors) => {
     }
     return traces;
 };
-const getCategoriesChains3D = (data, colors) => {
+
+// Function that sets the data for the 3D categories plot
+// Sets PDB positions for later usage and colors for each chain
+function getCategoriesChains3D(data, colors) {
     let traces = [];
     let categories = [];
     for (let i = 0; i < Object.keys(data).length; i ++) {
@@ -376,7 +407,9 @@ const getCategoriesChains3D = (data, colors) => {
     return traces;
 };
 
-const getCategoriesStructure2D = (data) => {
+// Function that sets the data for the 2D categories plot
+// Sets PDB positions for later usage and colors for each secundary structure
+function getCategoriesStructure2D(data) {
     let traces = [];
     let categories = [];
     for (let i = 0; i < Object.keys(data).length; i ++) {
@@ -401,7 +434,9 @@ const getCategoriesStructure2D = (data) => {
     return traces;
 }
 
-const getCategoriesStructure3D = (data) => {
+// Function that sets the data for the 3D categories plot
+// Sets PDB positions for later usage and colors for each secundary structure
+function getCategoriesStructure3D(data) {
     let traces = [];
     let categories = [];
     for (let i = 0; i < Object.keys(data).length; i ++) {
@@ -428,7 +463,7 @@ const getCategoriesStructure3D = (data) => {
     return traces;
 }
 
-const getCategoriesStandard2D = (data) => {
+function getCategoriesStandard2D(data) {
     return [{
         type: "scatter",
         x: data.x,
@@ -440,7 +475,7 @@ const getCategoriesStandard2D = (data) => {
     }];
 }
 
-const getCategoriesStandard3D = (data) => {
+function getCategoriesStandard3D(data) {
     return [{
         type: "scatter3d",
         x: data.x,
@@ -453,7 +488,8 @@ const getCategoriesStandard3D = (data) => {
     }];
 }
 
-const getDataPCA2D = (json, colors, scores) => {
+// Gets all data for the 2D plot
+function getDataPCA2D(json, colors, scores) {
     let tracesPeptides = getCategoriesPeptides2D(json, colors);
     let tracesChains = getCategoriesChains2D(json, colors);
     let tracesStructure = getCategoriesStructure2D(json);
@@ -472,7 +508,8 @@ const getDataPCA2D = (json, colors, scores) => {
     }
 };
 
-const getDataPCA3D = (json, colors, scores) => {
+// Gets all data for the 3D plot
+function getDataPCA3D(json, colors, scores) {
     let tracesPeptides = getCategoriesPeptides3D(json, colors);
     let tracesChains = getCategoriesChains3D(json, colors);
     let tracesStructure = getCategoriesStructure3D(json, colors);
@@ -489,7 +526,9 @@ const getDataPCA3D = (json, colors, scores) => {
         "thirdView": buttonVisibleStrucutre3D
     }
 };
-const initializePlotlyButtons = (initialView, secondaryView, thirdView) => {
+
+// Initialized the plotly buttons
+function initializePlotlyButtons(initialView, secondaryView, thirdView) {
     return [{
         buttons: [
             {
@@ -527,7 +566,9 @@ const initializePlotlyButtons = (initialView, secondaryView, thirdView) => {
         yanchor: "top"
     }]
 };
-const setLayoutPlotly2D = (updatemenus) => {
+
+// Default layout for the 2D plot
+function setLayoutPlotly2D(updatemenus) {
     return  {
         autosize: true,
         title: "Peptides",
@@ -552,7 +593,9 @@ const setLayoutPlotly2D = (updatemenus) => {
         }
     }
 };
-const setLayoutPlotly3D = (updatemenus) => {
+
+// Default layout for the 3D plot
+function setLayoutPlotly3D(updatemenus) {
     return {
         autosize: true,
         title: "Peptides",
@@ -595,7 +638,9 @@ const setLayoutPlotly3D = (updatemenus) => {
         },
     }
 };
-const getInfoProtein3d = (pdb) => {
+
+// Default JSMOL script
+function getInfoProtein3d(pdb) {
     return {
         width: 400,
         height: 292,
@@ -611,6 +656,15 @@ const getInfoProtein3d = (pdb) => {
         script: `load "=${pdb}"; cartoons only; color structure; background white; zoom 100`
     }
 };
+
+document.getElementById('zoom-btn').addEventListener('click', () => {
+    hideGlobal();
+})
+
+document.getElementById('reset').addEventListener('click', () => {
+    resetScript();
+})
+
 document.getElementById("placeholder-scatter").style.display= 'none';
 document.getElementById("placeholder-scatter-3d").style.display= 'none';
 document.getElementById("place-text").style.display= 'none';

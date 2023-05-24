@@ -83,3 +83,7 @@ Wouter Zeevat
     opacity: 60%;
     box-shadow: 3px 3px 5px;
 }
+
+#3d-text {
+    font-weight: normal;
+}

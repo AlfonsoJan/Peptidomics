@@ -1,7 +1,7 @@
 // author: Wouter Zeevat
 
-function click_information() {
+document.getElementById("information-card").addEventListener("click", () => {
     let el = document.getElementById('more_info');
     el.scrollIntoView({behavior: "smooth"});
-}
+})
 
