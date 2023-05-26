@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-
-"""Standardizes all the pdb files for all vector data"""
-
 import sys
 import csv
 import re
@@ -19,6 +15,7 @@ def get_files():
     np.random.seed(14)
     np.random.shuffle(files_list)
     return files_list
+
 
 def get_pdb_codes(file_list):
     """
@@ -44,7 +41,6 @@ def read_pdb_backbone(pdbfile):
         ]
     coordinates = np.loadtxt([ atom[30:54] for atom in backbone ])
     return coordinates
-
 
 def dist_function(coordinates):
     """
@@ -76,7 +72,7 @@ def peptidize(pdbfile, pepsize):
     pepcoords = np.array([
         part[i:i + pepsize]
         for part in parts
-        for i in range(len(part) - pepsize)
+        for i in range(0, len(part) - pepsize, 3)
     ])
     return pepcoords
 
@@ -141,7 +137,7 @@ def main():
     Main function
     :return:
     """
-    total_files = 15
+    total_files = 50
     file_list = get_files()[:total_files]
     pdb_codes = get_pdb_codes(file_list)
     for pepsize in range(30, 0, -1):

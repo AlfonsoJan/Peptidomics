@@ -88,6 +88,15 @@ def get_secondary_structure(pdb_code):
             header = True
     return list(zip(chains, res_numbers, codes))
 
+def get_middle_peptide(cords, pepsize):
+    index = int((len(cords) - 1)/2)
+    if pepsize / 3 == 1:
+        return cords
+    elif ((pepsize / 3) % 2) == 0:
+        return cords[index: index+2]
+    else:
+        return cords[index-1:index+2]
+
 def structure_parser(chainsnos, res_number, result_dssp):
     """
     Parses the structure by using the chain number and the res number.
@@ -133,7 +142,7 @@ def peptidize(pdbfile, pepsize, pdb_code):
     """
     Read peptides from given size from PDB file
     """
-    sequence, coordinates, atomnos, chainsnos, structures = \
+    residues, coordinates, atomnos, chainsnos, structures = \
         read_pdb_backbone(pdbfile, pdb_code)
 
     # Because each residue has three atoms
@@ -147,41 +156,41 @@ def peptidize(pdbfile, pepsize, pdb_code):
     # For the atom numbers, peptides and chain letters
     breaks = [0, *breaks.tolist(), None]
     partatomnos = [ atomnos[a:b] for a, b in zip(breaks[:-1], breaks[1:]) ]
-    partseq = [ sequence[a:b] for a, b in zip(breaks[:-1], breaks[1:]) ]
+    partres = [ residues[a:b] for a, b in zip(breaks[:-1], breaks[1:]) ]
     partchains = [ chainsnos[a:b] for a, b in zip(breaks[:-1], breaks[1:]) ]
     partstructure = [ structures[a:b] for a, b in zip(breaks[:-1], breaks[1:]) ]
     # Coordinates per part
     pepcoords = np.array([
         part[i:i + pepsize]
         for part in parts
-        for i in range(len(part) - pepsize)
+        for i in range(0, len(part) - pepsize, 3)
     ])
     pepcoords -= pepcoords.mean(axis=1)[:,None,:]
     # Peptides per part
-    peptides = [
-        Counter(part[i:i+pepsize:3]).most_common()[0][0]
-        for part in partseq
-        for i in range(len(part) - pepsize)
+    pepresidues = [
+        get_middle_peptide(part[i:i + pepsize:3], pepsize)
+        for part in partres
+        for i in range(0, len(part) - pepsize, 3)
     ]
     # Atom numbers per part
     atomnos = [
         [min(part[i:i + pepsize], key=int), max(part[i:i + pepsize], key=int)]
         for part in partatomnos
-        for i in range(len(part) - pepsize)
+        for i in range(0, len(part) - pepsize, 3)
     ]
     # Chain letters per part
-    chainsnos = [
-        Counter(part[i:i+pepsize:3]).most_common()[0][0]
+    chainsnos = np.array([
+        get_middle_peptide(part[i:i + pepsize:3], pepsize)
         for part in partchains
-        for i in range(len(part) - pepsize)
-    ]
+        for i in range(0, len(part) - pepsize, 3)
+    ])
     # Structure per part
     pep_structures = np.array([
-        Counter(part[i:i+pepsize]).most_common()[0][0]
+        get_middle_peptide(part[i:i + pepsize:3], pepsize)
         for part in partstructure
-        for i in range(len(part) - pepsize)
+        for i in range(0, len(part) - pepsize, 3)
     ])
-    pep_information = list(zip(peptides, atomnos, chainsnos, pep_structures))
+    pep_information = list(zip(pepresidues, atomnos, chainsnos, pep_structures))
     return pep_information, pepcoords
 
 def princana(coordinates, vectors):
@@ -220,7 +229,7 @@ def parse_to_json(projected_data, peptide_information, scores):
         idx: {
             "peptide": val[0],
             "atomnos": {"min": val[1][0], "max": val[1][1]},
-            "chain": val[2][0],
+            "chain": val[2],
             "x": projected_data[:, 0][idx],
             "y": projected_data[:, 1][idx],
             "z": projected_data[:, 2][idx],

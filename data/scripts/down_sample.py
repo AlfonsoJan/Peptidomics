@@ -5,7 +5,6 @@
 import csv
 import numpy as np
 import pandas as pd
-from sklearn.cluster import KMeans
 
 
 __author__ = "Jan Alfonso Busker"
@@ -23,21 +22,14 @@ def main():
         scores = pd.read_csv(f'./scores/scores_{pepsize}.csv', sep=",",
                              header=0, comment='#').to_numpy()
 
-        # Apply K-means clustering
-        kmeans = KMeans(n_clusters=NUM_CLUSTERS)
-        kmeans.fit(scores)
+        # Get the number of points in the original array
+        num_points_original = scores.shape[0]
 
-        # Get the cluster labels for each data point
-        cluster_labels = kmeans.labels_
+        # Randomly select indices of the downsampled points
+        downsampled_indices = np.random.choice(num_points_original, size=NUM_CLUSTERS, replace=False)
 
-        # # Initialize an array to store the downsized coordinates
-        downsampled_coordinates = np.zeros((NUM_CLUSTERS, 3))
-
-        for cluster in range(NUM_CLUSTERS):
-            cluster_indices = np.where(cluster_labels == cluster)[0]
-            cluster_coordinates = scores[cluster_indices]
-            representative_coordinate = np.mean(cluster_coordinates, axis=0)
-            downsampled_coordinates[cluster] = representative_coordinate
+        # Select the corresponding coordinates based on the indices
+        downsampled_coordinates = scores[downsampled_indices]
 
         with open(f"scores/scores_downsampled_{pepsize}.csv", "w", newline='') as my_csv:
             my_csv.write(f"# Down sampled to {NUM_CLUSTERS} coordinates\n")
