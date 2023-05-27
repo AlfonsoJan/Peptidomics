@@ -47,277 +47,305 @@ let resultJS = {
     reset: true,
 }
 
-// Function that converts hue to RGB
-function HSLToRGB (h, s, l) {
-    s /= 100;
-    l /= 100;
-    const k = n => (n + h / 30) % 12;
-    const a = s * Math.min(l, 1 - l);
-    const f = n =>
-        l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-    return [255 * f(0), 255 * f(8), 255 * f(4)];
-};
+let helperFunctions = {
+    // Hides all the things on page load
+    setPage() {
+        document.getElementById("middle-selector").style.display= 'none';
+        document.getElementById("left-selector").style.display= 'none';
+        document.getElementById("right-selector").style.display= 'none';
+        document.getElementById("placeholder-scatter").style.display= 'none';
+        document.getElementById("placeholder-scatter-3d").style.display= 'none';
+        document.getElementById("place-text").style.display= 'none';
+    },
+    // Function that converts hue to RGB
+    HSLToRGB (h, s, l) {
+        s /= 100;
+        l /= 100;
+        const k = n => (n + h / 30) % 12;
+        const a = s * Math.min(l, 1 - l);
+        const f = n =>
+            l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+        return [255 * f(0), 255 * f(8), 255 * f(4)];
+    },
+    // Function that creates perfectly distanced colors that follow the rainbow pattern
+    // according to an array of keys, creates {"A": red, "B": green, "C": pink}
+    createColors(keys) {
+        let colorArray = [];
+        for (let i = 0; i < keys.length; i++) {
+            let hsl_value = 255 / keys.length * i;
+            let rgb = this.HSLToRGB(hsl_value, 100, 70);
+            colorArray.push(rgb)
+        }
 
-// Function that creates perfectly distanced colors that follow the rainbow pattern
-// according to an array of keys, creates {"A": red, "B": green, "C": pink}
-function createColors(keys) {
+        return keys.map((x, i) => ({x, y: colorArray[i]}));
+    },
+    // Function that will shuffle an array
+    shuffle(array, seed) {                // <-- ADDED ARGUMENT
+        let m = array.length, t, i;
+        // While there remain elements to shuffle…
+        while (m) {
+            // Pick a remaining element…
+            i = Math.floor(this.random(seed) * m--);        // <-- MODIFIED LINE
+            // And swap it with the current element.
+            t = array[m];
+            array[m] = array[i];
+            array[i] = t;
+            ++seed                                     // <-- ADDED LINE
+        }
+        return array;
+    },
+    // Random function for the shuffle
+    random(seed) {
+        let x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
+    },
+    // GET UNIQUE VALUES FROM ARR
+    onlyUnique(value, index, array) {
+        return array.indexOf(value) === index;
+    },
+    // Function that set the chains on the site
+    setChain(chains, colors) {
+        // Function for the click action
+        let clickChain = function (item) {
+            let ele = item.target;
+            while (!ele.parentElement.classList.contains("card")) {
+                ele = ele.parentElement;
+            }
+            let chain = ele.children[0].textContent.charAt(ele.children[0].textContent.length - 1);
+            let color = ele.children[0].style.backgroundColor.replace("rgb(", "").replace(")", "").replace(" ", "");
+            jMOLHelpers.resetScript();
 
-    let colorArray = [];
-    for (let i = 0; i < keys.length; i++) {
-        let hsl_value = 255 / keys.length * i;
-        let rgb = HSLToRGB(hsl_value, 100, 70);
-        colorArray.push(rgb)
+            let a = document.createElement("a");
+            let script = `"select all; color [90,90,90]; select chain=${chain}; cartoons only; color [${color}]; background white; zoom 0"`;
+            a.href = `javascript:Jmol.script(jmol1, ${script})`
+            a.click();
+            resultJS.reset = true;
+        }
+        // The size for how many chains per row
+        const chunkSize = 4
+        const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
+        if (chain.length < 1) {
+            let element = document.getElementById("stats-spinner");
+            element.parentElement.removeChild(element);
+            document.getElementById("place-text").style.display = '';
+            return;
+        }
+        let elem = document.getElementById("pdb-stats");
+        elem.parentElement.removeChild(elem);
+        for (let i = 0; i < chain.length; i += chunkSize) {
+            const chunk = chain.slice(i, i + chunkSize);
+            const columns = document.createElement("div");
+            columns.className = "columns";
+
+            // Creates element for each chain
+            chunk.forEach(function (c) {
+                const column = document.createElement("div");
+                column.className = "column";
+                columns.appendChild(column);
+
+                const card = document.createElement("div");
+                card.className = "card clickable";
+                card.onclick = clickChain;
+                column.appendChild(card);
+
+                const cardContent = document.createElement("div");
+                cardContent.className = "chain-content card-content";
+                card.appendChild(cardContent);
+
+                // Loops rainbow colors to get best colors that the plot will late be using
+                let rgb = colors.filter(word => word.x === c[0])[0]["y"];
+                const chainId = document.createElement("p");
+                chainId.className = "is-size-5 has-text-weight-bold";
+                chainId.textContent = `Chain: ${c[0]}`;
+                chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+                cardContent.appendChild(chainId);
+
+                const atomLength = document.createElement("p");
+                atomLength.className = "is-size-5";
+                atomLength.textContent = `ATOM: ${c[1]} residues`;
+                cardContent.appendChild(atomLength);
+            });
+            document.getElementById("stats-pdb").appendChild(columns);
+        }
     }
-
-    return keys.map((x, i) => ({x, y: colorArray[i]}));
 }
 
-// Selects a certain part of the JSMOL
-function selectView(datapoints) {
+// // Function that set the chains on the site
+// function setChain(chains, colors) {
+//     // The size for how many chains per row
+//     const chunkSize = 4
+//     const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
+//     if (chain.length < 1) {
+//         let element = document.getElementById("stats-spinner");
+//         element.parentElement.removeChild(element);
+//         document.getElementById("place-text").style.display = '';
+//         return;
+//     }
+//     let elem = document.getElementById("pdb-stats");
+//     elem.parentElement.removeChild(elem);
+//     for (let i = 0; i < chain.length; i += chunkSize) {
+//         const chunk = chain.slice(i, i + chunkSize);
+//         const columns = document.createElement("div");
+//         columns.className = "columns";
+//
+//         // Creates element for each chain
+//         chunk.forEach(function (c) {
+//             const column = document.createElement("div");
+//             column.className = "column";
+//             columns.appendChild(column);
+//
+//             const card = document.createElement("div");
+//             card.className = "card clickable";
+//             card.onclick = helperFunctions.clickChain;
+//             column.appendChild(card);
+//
+//             const cardContent = document.createElement("div");
+//             cardContent.className = "chain-content card-content";
+//             card.appendChild(cardContent);
+//
+//             // Loops rainbow colors to get best colors that the plot will late be using
+//             let rgb = colors.filter(word => word.x === c[0])[0]["y"];
+//             const chainId = document.createElement("p");
+//             chainId.className = "is-size-5 has-text-weight-bold";
+//             chainId.textContent = `Chain: ${c[0]}`;
+//             chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+//             cardContent.appendChild(chainId);
+//
+//             const atomLength = document.createElement("p");
+//             atomLength.className = "is-size-5";
+//             atomLength.textContent = `ATOM: ${c[1]} residues`;
+//             cardContent.appendChild(atomLength);
+//         });
+//         document.getElementById("stats-pdb").appendChild(columns);
+//     }
+// }
 
-    // Unhides the JMOL to rehide it after! BUG FIX
-    let was_hidden = false;
-    if (resultJS.hidden) {
-        hideGlobal();
-        was_hidden = true;
-    }
+// function clickChain(item) {
+//     let ele = item.target;
+//     while (!ele.parentElement.classList.contains("card")) {
+//         ele = ele.parentElement;
+//     }
+//     let chain = ele.children[0].textContent.charAt(ele.children[0].textContent.length - 1);
+//     let color = ele.children[0].style.backgroundColor.replace("rgb(", "").replace(")", "").replace(" ", "");
+//     jMOLHelpers.resetScript();
+//
+//     let a = document.createElement("a");
+//     let script = `"select all; color [90,90,90]; select chain=${chain}; cartoons only; color [${color}]; background white; zoom 0"`;
+//     a.href = `javascript:Jmol.script(jmol1, ${script})`
+//     a.click();
+//     resultJS.reset = true;
+//
+// }
 
-    let a = document.createElement("a");
-    let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; `
+let jMOLHelpers = {
+    // Selects a certain part of the JSMOL
+    selectView(datapoints) {
 
-    // Select each amino acid for all positions
-    resultJS.points = datapoints;
-    resultJS.points.forEach(point => {
-        script += `select atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}; cartoons; color [10,0,255]; `;
-    })
-    script += "\"";
-    a.href = `javascript:Jmol.script(jmol1, ${script})`
-    a.click();
-    document.getElementById("zoom-btn").classList.remove("is-hidden");
-    document.getElementById("3d-text").innerText = `${resultJS.points.length} selected`;
+        // Unhides the JMOL to rehide it after! BUG FIX
+        let was_hidden = false;
+        if (resultJS.hidden) {
+            this.hideGlobal();
+            was_hidden = true;
+        }
 
-    // Rehides
-    if (was_hidden) {
-        hideGlobal();
-        script = `"zoom 0"`;
-    }
-    resultJS.reset = false;
-}
+        let a = document.createElement("a");
+        let script = `"spacefill off; select all; wireframe 0.05; cartoons off; color [84,84,84]; `
 
-// Function that set the chains on the site
-function setChain(chains, colors) {
-    // The size for how many chains per row
-    const chunkSize = 4
-    const chain = Object.keys(JSON.parse(chains["bytes"])).map((key) => [key, JSON.parse(chains["bytes"])[key]]);
-    if (chain.length < 1) {
-        let element = document.getElementById("stats-spinner");
-        element.parentElement.removeChild(element);
-        document.getElementById("place-text").style.display = '';
-        return;
-    }
-    let elem = document.getElementById("pdb-stats");
-    elem.parentElement.removeChild(elem);
-    for (let i = 0; i < chain.length; i += chunkSize) {
-        const chunk = chain.slice(i, i + chunkSize);
-        const columns = document.createElement("div");
-        columns.className = "columns";
-
-        // Creates element for each chain
-        chunk.forEach(function (c) {
-            const column = document.createElement("div");
-            column.className = "column";
-            columns.appendChild(column);
-
-            const card = document.createElement("div");
-            card.className = "card clickable";
-            card.onclick = clickChain;
-            column.appendChild(card);
-
-            const cardContent = document.createElement("div");
-            cardContent.className = "chain-content card-content";
-            card.appendChild(cardContent);
-
-            // Loops rainbow colors to get best colors that the plot will late be using
-            let rgb = colors.filter(word => word.x === c[0])[0]["y"];
-            const chainId = document.createElement("p");
-            chainId.className = "is-size-5 has-text-weight-bold";
-            chainId.textContent = `Chain: ${c[0]}`;
-            chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-            cardContent.appendChild(chainId);
-
-            const atomLength = document.createElement("p");
-            atomLength.className = "is-size-5";
-            atomLength.textContent = `ATOM: ${c[1]} residues`;
-            cardContent.appendChild(atomLength);
-        });
-        document.getElementById("stats-pdb").appendChild(columns);
-    }
-}
-
-function clickChain(item) {
-    let ele = item.target;
-    while (!ele.parentElement.classList.contains("card")) {
-        ele = ele.parentElement;
-    }
-    let chain = ele.children[0].textContent.charAt(ele.children[0].textContent.length - 1);
-    let color = ele.children[0].style.backgroundColor.replace("rgb(", "").replace(")", "").replace(" ", "");
-    resetScript();
-
-    let a = document.createElement("a");
-    let script = `"select all; color [90,90,90]; select chain=${chain}; cartoons only; color [${color}]; background white; zoom 0"`;
-    a.href = `javascript:Jmol.script(jmol1, ${script})`
-    a.click();
-    resultJS.reset = true;
-
-}
-
-// Resets the JSMOL view
-function resetScript() {
-
-    // Unhides if it was hidden to prevent bugs
-    if (resultJS.hidden) {
-        hideGlobal();
-    }
-    document.getElementById("zoom-btn").classList.add("is-hidden");
-    let a = document.createElement("a");
-    let script = `"select all; cartoons only; color structure; background white; zoom 0"`;
-    a.href = `javascript:Jmol.script(jmol1, ${script})`
-    a.click();
-    document.getElementById("3d-text").innerText = "0 selected";
-    resultJS.reset = true;
-}
-
-// Zooms in on the selected part and hides the other parts in JSMOL
-function hideGlobal() {
-
-    let a = document.createElement("a");
-
-    // Don't go through if nothing is selected
-    if (resultJS.reset) {
-        return;
-    }
-
-    let script;
-    if (!resultJS.hidden) {
-        console.log("Hidden the global protein!")
-        script = `"hide all; display `
-
-        // Adds selected part each time because JSMOL does not allow you to do it once
-        scriptParts = []
+        // Select each amino acid for all positions
+        resultJS.points = datapoints;
         resultJS.points.forEach(point => {
-            scriptParts.push(`atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}`);
-        });
-        script += `${scriptParts.join(", ")}; color [10,0,255]"`;
-        a.href = `javascript:Jmol.script(jmol1, ${script})`
-        resultJS.hidden = true;
-        a.click()
-
-    } else {
-        console.log("Unhidden the global protein!")
-        resultJS.hidden = false;
-        script = '"hide none"'
+            script += `select atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}; cartoons; color [10,0,255]; `;
+        })
+        script += "\"";
         a.href = `javascript:Jmol.script(jmol1, ${script})`
         a.click();
+        document.getElementById("zoom-btn").classList.remove("is-hidden");
+        document.getElementById("3d-text").innerText = `${resultJS.points.length} selected`;
+
+        // Rehides
+        if (was_hidden) {
+            this.hideGlobal();
+            script = `"zoom 0"`;
+        }
+        resultJS.reset = false;
+    },
+    // Default JSMOL script
+    getInfoProtein3d(pdb) {
+        return {
+            width: 400,
+            height: 292,
+            debug: false,
+            j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
+            color: "0xC0C0C0",
+            disableJ2SLoadMonitor: true,
+            disableInitialConsole: true,
+            addSelectionOptions: false,
+            serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+            use: "HTML5",
+            readyFunction: null,
+            script: `load "=${pdb}"; cartoons only; color structure; background white; zoom 100`
+        }
+    },
+    // Zooms in on the selected part and hides the other parts in JSMOL
+    hideGlobal() {
+        let a = document.createElement("a");
+
+        // Don't go through if nothing is selected
+        if (resultJS.reset) {
+            return;
+        }
+
+        let script;
+        if (!resultJS.hidden) {
+            console.log("Hidden the global protein!")
+            script = `"hide all; display `
+
+            // Adds selected part each time because JSMOL does not allow you to do it once
+            let scriptParts = []
+            resultJS.points.forEach(point => {
+                scriptParts.push(`atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}`);
+            });
+            script += `${scriptParts.join(", ")}; color [10,0,255]"`;
+            a.href = `javascript:Jmol.script(jmol1, ${script})`
+            resultJS.hidden = true;
+            a.click()
+
+        } else {
+            console.log("Unhidden the global protein!")
+            resultJS.hidden = false;
+            script = '"hide none"'
+            a.href = `javascript:Jmol.script(jmol1, ${script})`
+            a.click();
+        }
+        script = `"zoom 0"`;
+        a.href = `javascript:Jmol.script(jmol1, ${script})`
+        a.click();
+    },
+    // Resets the JSMOL view
+    resetScript() {
+        // Unhides if it was hidden to prevent bugs
+        if (resultJS.hidden) {
+            this.hideGlobal();
+        }
+        document.getElementById("zoom-btn").classList.add("is-hidden");
+        let a = document.createElement("a");
+        let script = `"select all; cartoons only; color structure; background white; zoom 0"`;
+        a.href = `javascript:Jmol.script(jmol1, ${script})`
+        a.click();
+        document.getElementById("3d-text").innerText = "0 selected";
+        resultJS.reset = true;
     }
-    script = `"zoom 0"`;
-    a.href = `javascript:Jmol.script(jmol1, ${script})`
-    a.click();
 }
 
 
-
-
-// Initialized the plotly buttons
-function initializePlotlyButtons(initialView, secondaryView, thirdView) {
-    return [{
-        buttons: [
-            {
-                args: [
-                    {"visible": initialView},
-                    {"title": "Peptides", "showlegend": initialView}
-                ],
-                label: "Peptides",
-                method: "update"
-            },
-            {
-                args: [
-                    {"visible": secondaryView},
-                    {"title": "Chains", "showlegend": secondaryView}
-                ],
-                label: "Chains",
-                method: "update"
-            },
-            {
-                args: [
-                    {"visible": thirdView},
-                    {"title": "Structures", "showlegend": thirdView}
-                ],
-                label: "Structures",
-                method: "update"
-            }
-        ],
-        direction: "left",
-        pad: {"r": 10, "t": 10},
-        showactive: true,
-        type: "buttons",
-        x: 0.1,
-        xanchor: "left",
-        y: 1.1,
-        yanchor: "top"
-    }]
-};
-
-
-
-// Default JSMOL script
-function getInfoProtein3d(pdb) {
-    return {
-        width: 400,
-        height: 292,
-        debug: false,
-        j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
-        color: "0xC0C0C0",
-        disableJ2SLoadMonitor: true,
-        disableInitialConsole: true,
-        addSelectionOptions: false,
-        serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
-        use: "HTML5",
-        readyFunction: null,
-        script: `load "=${pdb}"; cartoons only; color structure; background white; zoom 100`
-    }
-};
-
 document.getElementById('zoom-btn').addEventListener('click', () => {
-    hideGlobal();
+    jMOLHelpers.hideGlobal();
 })
 
 document.getElementById('reset').addEventListener('click', () => {
-    resetScript();
+    jMOLHelpers.resetScript();
 })
 
-function onlyUnique(value, index, array) {
-    return array.indexOf(value) === index;
-}
-
-function shuffle(array, seed) {                // <-- ADDED ARGUMENT
-    let m = array.length, t, i;
-    // While there remain elements to shuffle…
-    while (m) {
-        // Pick a remaining element…
-        i = Math.floor(random(seed) * m--);        // <-- MODIFIED LINE
-        // And swap it with the current element.
-        t = array[m];
-        array[m] = array[i];
-        array[i] = t;
-        ++seed                                     // <-- ADDED LINE
-    }
-    return array;
-}
-
-function random(seed) {
-    let x = Math.sin(seed++) * 10000;
-    return x - Math.floor(x);
-}
 
 
 document.getElementById('right').addEventListener('change', function() {
@@ -342,6 +370,8 @@ document.getElementById('left').addEventListener('change', function() {
 })
 
 let PlotContainer = {
+    seed: 3,
+    colorsPeptides: helperFunctions.createColors(resultJS.aminoAcidCodes),
     div2D: "placeholder-scatter",
     div3D: "placeholder-scatter-3d",
     config: {responsive: true},
@@ -350,6 +380,44 @@ let PlotContainer = {
     },
     set colorArr(colArr) {
         this.colors = colArr;
+    },
+    initializePlotlyButtons(initialView, secondaryView, thirdView) {
+        return [{
+            buttons: [
+                {
+                    args: [
+                        {"visible": initialView},
+                        {"title": "Peptides", "showlegend": initialView}
+                    ],
+                    label: "Peptides",
+                    method: "update"
+                },
+                {
+                    args: [
+                        {"visible": secondaryView},
+                        {"title": "Chains", "showlegend": secondaryView}
+                    ],
+                    label: "Chains",
+                    method: "update"
+                },
+                {
+                    args: [
+                        {"visible": thirdView},
+                        {"title": "Structures", "showlegend": thirdView}
+                    ],
+                    label: "Structures",
+                    method: "update"
+                }
+            ],
+            direction: "left",
+            pad: {"r": 10, "t": 10},
+            showactive: true,
+            type: "buttons",
+            x: 0.1,
+            xanchor: "left",
+            y: 1.1,
+            yanchor: "top"
+        }]
     },
     getStandardTraces2D() {
         return [{
@@ -379,7 +447,7 @@ let PlotContainer = {
         this.data = data
     },
     getMetadata() {
-        let metaData = Object.keys(this.data).map(key => {
+        return Object.keys(this.data).map(key => {
             let data = this.data[key]
             return {
                 "atomnos": [data.atomnos.min, data.atomnos.max],
@@ -387,8 +455,7 @@ let PlotContainer = {
                 "peptide": data.peptide,
                 "structure": data.structure
             }
-        })
-        return metaData;
+        });
     },
     setUniqueCat() {
         let selectRight = document.getElementById('right');
@@ -396,13 +463,13 @@ let PlotContainer = {
         let selectLeft = document.getElementById('left');
         let uniqueChains = [].concat.apply([], Object.keys(this.data).map(key => {
             return this.data[key].chain
-        })).filter(onlyUnique);
+        })).filter(helperFunctions.onlyUnique);
         let uniquePeptides = [].concat.apply([], Object.keys(this.data).map(key => {
             return this.data[key].peptide
-        })).filter(onlyUnique);
+        })).filter(helperFunctions.onlyUnique);
         let uniqueStructure= [].concat.apply([], Object.keys(this.data).map(key => {
             return this.data[key].structure
-        })).filter(onlyUnique);
+        })).filter(helperFunctions.onlyUnique);
         let uniqueDataList = uniqueChains.concat(uniquePeptides, uniqueStructure);
         let amount = this.data[0].chain.length;
         if (amount === 1) {
@@ -434,9 +501,9 @@ let PlotContainer = {
     },
     getViews(dataPeptides, dataChains, dataStructure) {
         return [
-            shuffle(Array(dataPeptides.length).fill(true).concat(Array(dataChains.length).fill(false)).concat(Array(dataStructure.length).fill(false)), 3).concat(true),
-            shuffle(Array(dataPeptides.length).fill(false).concat(Array(dataChains.length).fill(true)).concat(Array(dataStructure.length).fill(false)), 3).concat(true),
-            shuffle(Array(dataPeptides.length).fill(false).concat(Array(dataChains.length).fill(false)).concat(Array(dataStructure.length).fill(true)), 3).concat(true)
+            helperFunctions.shuffle(Array(dataPeptides.length).fill(true).concat(Array(dataChains.length).fill(false)).concat(Array(dataStructure.length).fill(false)), this.seed).concat(true),
+            helperFunctions.shuffle(Array(dataPeptides.length).fill(false).concat(Array(dataChains.length).fill(true)).concat(Array(dataStructure.length).fill(false)), this.seed).concat(true),
+            helperFunctions.shuffle(Array(dataPeptides.length).fill(false).concat(Array(dataChains.length).fill(false)).concat(Array(dataStructure.length).fill(true)), this.seed).concat(true)
         ]
 
     },
@@ -450,28 +517,18 @@ let PlotContainer = {
         document.getElementById(this.div2D).style.display= '';
     },
     setInitialPlots() {
-        // 2D DATA
-        let tracesPeptides2D = this.getCategoriesDATA(this.data, "peptide", true, "2D");
-        let tracesChains2D = this.getCategoriesDATA(this.data, "chain", false, "2D");
-        let tracesStructure2D = this.getCategoriesDATA(this.data, "structure", false, "2D");
-        // 3D DATA
-        let tracesPeptides3D = this.getCategoriesDATA(this.data, "peptide", true, "3D");
-        let tracesChains3D = this.getCategoriesDATA(this.data, "chain", false, "3D")
-        let tracesStructure3D = this.getCategoriesDATA(this.data, "structure", false, "3D");
-        // STANDARD
-        let standard2D = this.getStandardTraces2D();
-        let standard3D = this.getStandardTraces3D();
-        // 2D en 3D data
-        let data2D = shuffle(tracesPeptides2D.concat(tracesChains2D, tracesStructure2D), 3).concat(standard2D).reverse();
-        let data3D = shuffle(tracesPeptides3D.concat(tracesChains3D, tracesStructure3D), 3).concat(standard3D);
+        let [tracesPeptides2D, tracesChains2D, tracesStructure2D, tracesPeptides3D, tracesChains3D, tracesStructure3D, standard2D, standard3D] = this.getAllData(this.data);
+        // 2D and 3D shuffled data
+        let data2D = helperFunctions.shuffle(tracesPeptides2D.concat(tracesChains2D, tracesStructure2D), this.seed).concat(standard2D).reverse();
+        let data3D = helperFunctions.shuffle(tracesPeptides3D.concat(tracesChains3D, tracesStructure3D), this.seed).concat(standard3D);
         // 2D VIEWS
         let [initialView2D, secondaryView2D, thirdView2D] = this.getViews(tracesPeptides2D.reverse(), tracesChains2D.reverse(), tracesStructure2D.reverse());
         let [initialView3D, secondaryView3D, thirdView3D] = this.getViews(tracesPeptides3D, tracesChains3D, tracesStructure3D);
         // REMOVE SPINNERS
         this.removeSpinners();
         // BUTTONS
-        let updateMenus2D = initializePlotlyButtons(initialView2D.reverse(), secondaryView2D.reverse(), thirdView2D.reverse());
-        let updateMenus3D = initializePlotlyButtons(initialView3D, secondaryView3D, thirdView3D);
+        let updateMenus2D = this.initializePlotlyButtons(initialView2D.reverse(), secondaryView2D.reverse(), thirdView2D.reverse());
+        let updateMenus3D = this.initializePlotlyButtons(initialView3D, secondaryView3D, thirdView3D);
         // 2D Plot
         Plotly.newPlot(this.div2D, data2D, this.get2DLayout(updateMenus2D), this.config);
         // 3D PLOT
@@ -487,15 +544,15 @@ let PlotContainer = {
         let points = [];
         datapoints.points.forEach(data => {
             let index = data.pointIndex;
-            if (!data.data.hasOwnProperty("freetext")) return; // If its a gray dot AKA background data
+            if (!data.data.hasOwnProperty("freetext")) return; // If it's a gray dot AKA background data
             let point = data.data.freetext[index][0].atomnos
             points.push(point);
         });
-        selectView(points);
+        jMOLHelpers.selectView(points);
     },
     clickPoints(datapoints) {
         if (!datapoints.points[0].data.hasOwnProperty("freetext")) return;
-        selectView([datapoints.points[0].data.freetext[datapoints.points[0].pointNumber][0].atomnos])
+        jMOLHelpers.selectView([datapoints.points[0].data.freetext[datapoints.points[0].pointNumber][0].atomnos])
     },
     get3DLayout(updatemenus) {
         return {
@@ -566,6 +623,7 @@ let PlotContainer = {
         }
     },
     updatePlots(left, middle, right) {
+        jMOLHelpers.resetScript();
         let metaData = this.getMetadata();
         let newDataIndex = Object.keys(metaData).map(key => {
             return metaData[key]
@@ -596,26 +654,16 @@ let PlotContainer = {
             toastr.info("This combination does not exist in this plot!");
             return;
         }
-        // 2D DATA
-        let tracesPeptides2D = this.getCategoriesDATA(newJson, "peptide", true, "2D");
-        let tracesChains2D = this.getCategoriesDATA(newJson, "chain", false, "2D");
-        let tracesStructure2D = this.getCategoriesDATA(newJson, "structure", false, "2D");
-        // 3D DATA
-        let tracesPeptides3D = this.getCategoriesDATA(newJson, "peptide", true, "3D");
-        let tracesChains3D = this.getCategoriesDATA(newJson, "chain", false, "3D")
-        let tracesStructure3D = this.getCategoriesDATA(newJson, "structure", false, "3D");
-        // STANDARD
-        let standard2D = this.getStandardTraces2D();
-        let standard3D = this.getStandardTraces3D();
-        // 2D and 3D data
-        let data2D = shuffle(tracesPeptides2D.concat(tracesChains2D, tracesStructure2D), 3).concat(standard2D).reverse();
-        let data3D = shuffle(tracesPeptides3D.concat(tracesChains3D, tracesStructure3D), 3).concat(standard3D);
+        let [tracesPeptides2D, tracesChains2D, tracesStructure2D, tracesPeptides3D, tracesChains3D, tracesStructure3D, standard2D, standard3D] = this.getAllData(newJson);
+        // 2D and 3D shuffled data
+        let data2D = helperFunctions.shuffle(tracesPeptides2D.concat(tracesChains2D, tracesStructure2D), this.seed).concat(standard2D).reverse();
+        let data3D = helperFunctions.shuffle(tracesPeptides3D.concat(tracesChains3D, tracesStructure3D), this.seed).concat(standard3D);
         // 2D and 3D VIEWS
         let [initialView2D, secondaryView2D, thirdView2D] = this.getViews(tracesPeptides2D, tracesChains2D, tracesStructure2D);
         let [initialView3D, secondaryView3D, thirdView3D] = this.getViews(tracesPeptides3D, tracesChains3D, tracesStructure3D);
         // BUTTONS
-        let updateMenus2D = initializePlotlyButtons(initialView2D.reverse(), secondaryView2D.reverse(), thirdView2D.reverse());
-        let updateMenus3D = initializePlotlyButtons(initialView3D, secondaryView3D, thirdView3D);
+        let updateMenus2D = this.initializePlotlyButtons(initialView2D.reverse(), secondaryView2D.reverse(), thirdView2D.reverse());
+        let updateMenus3D = this.initializePlotlyButtons(initialView3D, secondaryView3D, thirdView3D);
         // 2D Plot
         Plotly.react(this.div2D, data2D, this.get2DLayout(updateMenus2D), this.config);
         // 3D PLOT
@@ -627,6 +675,20 @@ let PlotContainer = {
         let myPlot3D = document.getElementById(this.div3D);
         myPlot3D.on("plotly_click", this.clickPoints)
     },
+    getAllData(data) {
+        // 2D DATA
+        let tracesPeptides2D = this.getCategoriesDATA(data, "peptide", true, "2D");
+        let tracesChains2D = this.getCategoriesDATA(data, "chain", false, "2D");
+        let tracesStructure2D = this.getCategoriesDATA(data, "structure", false, "2D");
+        // 3D DATA
+        let tracesPeptides3D = this.getCategoriesDATA(data, "peptide", true, "3D");
+        let tracesChains3D = this.getCategoriesDATA(data, "chain", false, "3D")
+        let tracesStructure3D = this.getCategoriesDATA(data, "structure", false, "3D");
+        // STANDARD
+        let standard2D = this.getStandardTraces2D();
+        let standard3D = this.getStandardTraces3D();
+        return [tracesPeptides2D, tracesChains2D, tracesStructure2D, tracesPeptides3D, tracesChains3D, tracesStructure3D, standard2D, standard3D];
+    },
     getCategoriesDATA(data, select, visible, view) {
         let metaData = Object.keys(data).map(key => {
             return {
@@ -636,7 +698,6 @@ let PlotContainer = {
                 "structure": data[key].structure
             }
         })
-        let colorsPeptides = createColors(resultJS.aminoAcidCodes);
         let traces = [];
         let categories = [];
         for (let i = 0; i < Object.keys(data).length; i ++) {
@@ -679,7 +740,7 @@ let PlotContainer = {
                 let rgb = this.colors.filter(c => c.x === cat)[0].y;
                 traces[categories.indexOf(cat)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
             } else if (select === "peptide"){
-                let rgb = colorsPeptides.filter(c => c.x === cat)[0].y
+                let rgb = this.colorsPeptides.filter(c => c.x === cat)[0].y
                 traces[categories.indexOf(cat)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
             }
 
@@ -689,12 +750,7 @@ let PlotContainer = {
     },
 }
 
-document.getElementById("middle-selector").style.display= 'none';
-document.getElementById("left-selector").style.display= 'none';
-document.getElementById("right-selector").style.display= 'none';
-document.getElementById("placeholder-scatter").style.display= 'none';
-document.getElementById("placeholder-scatter-3d").style.display= 'none';
-document.getElementById("place-text").style.display= 'none';
+helperFunctions.setPage();
 
 document.addEventListener('DOMContentLoaded', (event) => {
     // This function will call the function to create a temporary file and handles the response
@@ -710,13 +766,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
             let value = document.getElementById("pdb-structure").textContent;
             value = value.slice(value.indexOf(":") + 2, value.length);
             if (chainResult["bytes"].length > 2) {
-                let colors = createColors(Object.keys(JSON.parse(chainResult["bytes"])));
-                setChain(chainResult, colors);
+                let colors = helperFunctions.createColors(Object.keys(JSON.parse(chainResult["bytes"])));
+                helperFunctions.setChain(chainResult, colors);
               
                 // Functionality for the 3D protein plot
                 if (value != null) {
-                    let Info = getInfoProtein3d(value);
-                    $("#protein").html(Jmol.getAppletHtml("jmol1", Info))
+                    let info = jMOLHelpers.getInfoProtein3d(value);
+                    $("#protein").html(Jmol.getAppletHtml("jmol1", info))
                 }
                 const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
                 let dataResult = await dataResponse.json();
