@@ -40,6 +40,7 @@ let resultJS = {
         "TRP", // Tryptophan
         "TYR", // Tyrosine
         "VAL", // Valine
+        "UNK", // UNKNOWN
     ],
 
     points: [],
@@ -670,8 +671,12 @@ let PlotContainer = {
             traces[categories.indexOf(cat)].y.push(data[i].y);
             traces[categories.indexOf(cat)].z.push(data[i].z);
             if (select === "chain") {
-                let rgb = this.colors.filter(c => c.x === cat)[0].y;
-                traces[categories.indexOf(cat)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
+                if (cat !== "R") {
+                    let rgb = this.colors.filter(c => c.x === cat)[0].y;
+                    traces[categories.indexOf(cat)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
+                } else {
+                    traces[categories.indexOf(cat)].marker.color.push(`rgb(70, 70, 70)`);
+                }
             } else if (select === "peptide"){
                 let rgb = this.colorsPeptides.filter(c => c.x === cat)[0].y
                 traces[categories.indexOf(cat)].marker.color.push(`rgb(${Math.floor(rgb[0])}, ${Math.floor(rgb[1])}, ${Math.floor(rgb[2])})`);
