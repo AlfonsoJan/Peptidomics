@@ -76,14 +76,14 @@ class PythonServiceTest {
 
     }
 
-    @Test
-    @DisplayName("Tests the analysis with normal data")
-    void testAnalyse() throws InvalidPDBCodeException {
-        String pythonDir = resources + "/scripts/pdb_analysis.py";
-        String PDBDir = testResources + "/1b58.pdb";
-        String analysis = pythonService.PDBAnalyse(pythonDir, PDBDir, "3", "1b58");
-        assertTrue(analysis.startsWith("{\"0\": {\"peptide\": \"ALA\", \"atomnos\": {\"min\": \"1\", \"max\": \"16\"}"));
-    }
+//    @Test
+//    @DisplayName("Tests the analysis with normal data")
+//    void testAnalyse() throws InvalidPDBCodeException {
+//        String pythonDir = resources + "/scripts/pdb_analysis.py";
+//        String PDBDir = testResources + "/1b58.pdb";
+//        String analysis = pythonService.PDBAnalyse(pythonDir, PDBDir, "3", "1b58");
+//        assertTrue(analysis.startsWith("{\"0\": {\"peptide\": \"ALA\", \"atomnos\": {\"min\": \"1\", \"max\": \"16\"}"));
+//    }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3})

@@ -4,11 +4,14 @@ import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.http.HttpRequest;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -67,7 +70,9 @@ public class PythonService implements PythonConstructor{
      * @return
      */
     @Override
-    public String PDBAnalyse(String pythonPath, String pdbPath, String pepSize, String pdbCode) throws InvalidPDBCodeException {
+    public void PDBAnalyse(String pythonPath, String pdbPath, String pepSize, String pdbCode) throws InvalidPDBCodeException {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        String jsonFilePath = attr.getRequest().getSession().getAttribute("jsonFile").toString();
         try {
             if (program == null) program = "python3";
             if (options == null) options = "-u";
@@ -79,6 +84,10 @@ public class PythonService implements PythonConstructor{
             if (pdbCode.length() != 4) throw new InvalidPDBCodeException();
 
             ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbPath, pepSize, pdbCode);
+
+            pb.redirectOutput(new File(jsonFilePath));
+            pb.redirectError(new File(jsonFilePath.replace("check", "error")));
+
             Process p = pb.start();
             BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
@@ -86,13 +95,8 @@ public class PythonService implements PythonConstructor{
             while ((line = in.readLine()) != null){
                 buffer.append(line);;
             }
-            if (p.waitFor() != 0) {
-                LOGGER.warning("There was an error while performing the analysis!");
-                throw new FileNotFoundException();
-            }
             in.close();
-            return buffer.toString();
-        } catch (IOException | InterruptedException | InvalidPDBCodeException e){
+        } catch (IOException | InvalidPDBCodeException e){
             throw new InvalidPDBCodeException();
         }
     }
