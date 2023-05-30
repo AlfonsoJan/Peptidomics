@@ -263,7 +263,7 @@ def main(args):
         projected_data = princana(pepcoords, vectors)
         parse_to_json(projected_data, peptide_information, scores)
     except Exception as exception:
-        print(json.dumps({"error": "Untracked error: " + str(exception)}))
+        print(json.dumps({"error": "Untracked error: " + str(exception).replace("`", "\"")}))
 
 
 if __name__ == "__main__":

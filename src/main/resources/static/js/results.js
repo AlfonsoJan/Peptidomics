@@ -360,7 +360,7 @@ let PlotContainer = {
             y: this.standard.y,
             z: this.standard.z,
             mode: "markers",
-            marker: {size: 10, color: 'rgb(110, 110, 110)', opacity: 0.4},
+            marker: {size: 10, color: 'rgb(110, 110, 110)', opacity: 0.3},
             text: `Standard`,
             name: `Standard`
         }];
@@ -557,7 +557,6 @@ let PlotContainer = {
         }
     },
     updatePlots(left, middle, right) {
-        jMOLHelpers.resetScript();
         let metaData = this.getMetadata();
         let newDataIndex = Object.keys(metaData).map(key => {
             return metaData[key]
@@ -608,6 +607,7 @@ let PlotContainer = {
         myPlot2D.on("plotly_selected", this.selectMultiplePoints);
         let myPlot3D = document.getElementById(this.div3D);
         myPlot3D.on("plotly_click", this.clickPoints)
+        jMOLHelpers.resetScript();
     },
     getAllData(data) {
         // 2D DATA
@@ -637,7 +637,7 @@ let PlotContainer = {
         for (let i = 0; i < Object.keys(data).length; i ++) {
             let cat = data[i][select];
 
-            if (cat.length === 2) {
+            if (cat.length === 2 || cat.length === 1) {
                 cat = cat[0]
             } else if (cat.length === 3) {
                 cat = cat[1]
@@ -660,9 +660,11 @@ let PlotContainer = {
                 if (view === "3D") {
                     traces[traces.length - 1].type = "scatter3d"
                     traces[traces.length - 1].marker.size = 2
+                    traces[traces.length - 1].marker.opacity = 0.45
                 } else {
                     traces[traces.length - 1].type = "scatter"
                     traces[traces.length - 1].marker.size = 10
+                    traces[traces.length - 1].marker.opacity = 0.45
                 }
                 if (select === "chain" || select === "peptide") traces[traces.length - 1].marker.color = []
             }

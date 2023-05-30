@@ -4,10 +4,13 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.service.ErrorService;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.logging.Logger;
 
@@ -56,7 +59,8 @@ public class CustomErrorController implements ErrorController {
     @RequestMapping(value = "/pdb_error")
     public String renderPDBErrorPage(Model model, final HttpServletRequest request) {
         final String error = request.getParameter("code");
-        final String message = request.getParameter("message");
+        String message = request.getParameter("message");
+
         model.addAttribute("code", error);
         model.addAttribute("message", message);
         return "pdb_error";
