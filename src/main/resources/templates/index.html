@@ -100,6 +100,28 @@ author: Wouter Zeevat
         </div>
     </div>
 </section>
+
+<section class="container info">
+    <div class="columns is-shady">
+            <div class="column is-4">
+                <figure class="image">
+                    <img th:src="@{images/vectors.png}" src="../static/images/vectors.png" alt="placeholder image">
+                </figure>
+            </div>
+        <div class="card-content">
+            <div class="content">
+                <h3>Eigenvectoren of standardization</h3>
+                <div class="tags">
+                    <th:block th:each="vector: ${eigenVectors}">
+                        <span class="tag is-medium" th:text="${vector}">One</span>
+                    </th:block>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <div th:replace="~{fragments :: footer}"></div>
 
 <script type="text/javascript" src="../static/js/index.js" th:src="@{js/index.js}"></script>
