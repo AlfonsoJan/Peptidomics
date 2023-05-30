@@ -75,6 +75,12 @@ public class ResultController {
         }
     }
 
+    /**
+     * Checks if analysis is done by looking whether the JSON file is not empty
+     * @param request
+     * @param session
+     * @return
+     */
     @PostMapping(value = "/check_if_done")
     public @ResponseBody Plot checkJsonFiles(HttpServletRequest request, HttpSession session) {
         if (request.getSession().getAttribute("analysis") != null) {
