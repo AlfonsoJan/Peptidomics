@@ -475,6 +475,7 @@ let PlotContainer = {
         myPlot3D.on("plotly_click", this.clickPoints);
     },
     selectMultiplePoints(datapoints) {
+        if (datapoints === undefined) return;
         let points = [];
         datapoints.points.forEach(data => {
             let index = data.pointIndex;
@@ -482,6 +483,7 @@ let PlotContainer = {
             let point = data.data.freetext[index][0].atomnos
             points.push(point);
         });
+        if (points.length < 1) return;
         jMOLHelpers.selectView(points);
     },
     clickPoints(datapoints) {
