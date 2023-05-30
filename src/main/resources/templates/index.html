@@ -35,7 +35,7 @@ author: Wouter Zeevat
                     <div class="card-content">
                         <div class="content">
                             <h3>Information</h3>
-                            <p>In order to get more information about peptide and how they operate in the 3D space, this application was made. It reads PDB files and analyses and visualizes oligopeptides with the given length!</p>
+                            <p th:text="#{index.information}"></p>
                         </div>
                     </div>
                 </div>
@@ -78,54 +78,14 @@ author: Wouter Zeevat
                     <header class="timeline-header">
                         <span class="tag is-medium is-info">Start</span>
                     </header>
-                    <div class="timeline-item">
-                        <div class="timeline-marker is-info"></div>
-                        <div class="timeline-content">
-                            <p>Retrieve the coordinates and other information like peptide from the PDB file</p>
+                    <th:block th:each="workflow: ${workflowList}">
+                        <div class="timeline-item">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p th:text="${workflow}"></p>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker is-info"></div>
-                        <div class="timeline-content">
-                            <p>Use the XSSP api to get the secondary structures</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker is-info"></div>
-                        <div class="timeline-content">
-                            <p>Split the coordinates on breaks/chains</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker is-info"></div>
-                        <div class="timeline-content">
-                            <p>Get the internal distance between the coordinates</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker is-info"></div>
-                        <div class="timeline-content">
-                            <p>Get the cov matrix of the distances</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker is-info"></div>
-                        <div class="timeline-content">
-                            <p>Perform PCA on the cov matrix and retrieve the eigenvectors</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker is-info"></div>
-                        <div class="timeline-content">
-                            <p>Perform matrix multiplication on the distance and eigenvectors</p>
-                        </div>
-                    </div>
+                    </th:block>
                     <div class="timeline-header">
                         <span class="tag is-medium is-info">End</span>
                     </div>
@@ -135,7 +95,7 @@ author: Wouter Zeevat
         <div class="tile is-parent is-shady">
             <article class="tile is-child notification is-white" style="display: flex; flex-flow: column">
                 <p class="title" id="more_info">The Project</p>
-                <p class="subtitle" style="white-space: pre-line; padding-top: 5px" th:text="${infoTxt}">__INFO__</p>
+                <p class="subtitle" style="white-space: pre-line; padding-top: 5px" th:text="#{index.project.txt}">__INFO__</p>
             </article>
         </div>
     </div>

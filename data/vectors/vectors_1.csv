@@ -1,8 +1,11 @@
-# eigen vectors based on 37915 coordinates
-# eigen vectors based on 15 pdb files
-# 6cw5, 7juk, 3qo2, 4ylk, 2wef, 3v1f, 7xoc, 6njn
-# 3w00, 6fn1, 6eth, 3u9a, 8aop, 2ppv, 4qhs
+# eigen vectors based on 41509 coordinates
+# eigen vectors based on 50 pdb files
+# 6cw5, 7juk, 3qo2, 4ylk, 2wef, 3v1f, 7xoc, 6njn, 3w00, 6fn1
+# 6eth, 3u9a, 8aop, 2ppv, 4qhs, 3jr7, 4keq, 2x93, 5umf, 1nv1
+# 6ivy, 4pjm, 3v7b, 7sb5, 2fur, 5xur, 6utd, 7xix, 5z4o, 7k6w
+# 6vhh, 5pct, 5x1m, 4cug, 2qt6, 1ck6, 1igf, 5pt0, 7e7c, 3o0f
+# 1bcr, 6mri, 7koz, 6mr5, 6uki, 6bpp, 1zxi, 4dm0, 5w7e, 6rgj
 X,Y,Z
--0.41681713505747686,-0.6933552294372674,0.587811195652542
-0.505848929849626,-0.7142119890215997,-0.4837541678454028
-0.7552352852538506,0.09570663796103274,0.6484287959041691
+0.16634965131360321,-0.6391672533079448,-0.7508615157315095
+0.9318355692015018,-0.14715188094603837,0.33170588765494763
+0.3225062254883716,0.7548586266532431,-0.5711201172156547

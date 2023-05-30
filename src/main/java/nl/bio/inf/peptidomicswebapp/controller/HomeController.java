@@ -13,16 +13,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Jan Alfonso Busker
  */
 @Controller
-@PropertySource("classpath:index.properties")
 public class HomeController {
 
-    @Autowired
-    private Environment env;
-
+    private static final String[] WORKFLOWLIST = new String[]{
+            "Retrieve the coordinates and other information like peptide from the PDB file",
+            "Use the XSSP api to get the secondary structures",
+            "Split the coordinates on breaks/chains",
+            "Get the internal distance between the coordinates",
+            "Get the cov matrix of the distances",
+            "Perform PCA on the cov matrix and retrieve the eigenvectors",
+            "Perform matrix multiplication on the distance and eigenvectors"
+    };
 
     @RequestMapping(value = {"", "/", "/home"})
     public String landingPage(Model model){
-        model.addAttribute("infoTxt", env.getProperty("info.txt"));
+        model.addAttribute("workflowList", WORKFLOWLIST);
         return "index";
     }
 }

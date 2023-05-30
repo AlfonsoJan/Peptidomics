@@ -30,7 +30,7 @@ async function checkPDBSize(value) {
 }
 
 document.getElementById("selected").addEventListener('change', (element) => {
-    document.getElementById("file-selected").textContent = element.files[0].name;
+    document.getElementById("file-selected").textContent = element.target.files[0].name;
 });
 
 document.addEventListener('DOMContentLoaded', (event) => {
