@@ -60,6 +60,7 @@ public class UploadController {
                 return ("redirect:/pdb_error?code=" + pdb.getFileName());
             }
 
+            // If pdb file size is higher than the max amount
             if ((pdb.getBytes().length) / (1024 * 1024) > Integer.parseInt(maxMB.toLowerCase().replace("mb", ""))) {
                 LOGGER.severe("File too large!");
                 throw new SizeLimitExceededException("pdb code (" + pdb.getStructureId() + ") too large!", (pdb.getBytes().length) / (1024 * 1024), 10);

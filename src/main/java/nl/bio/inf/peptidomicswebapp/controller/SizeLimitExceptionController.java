@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class SizeLimitExceptionController {
 
+    /**
+     * This method redirects the user to the pdb error page when a sizeLimitExceedException occurs
+     *
+     * @param model
+     * @return
+     */
     @ExceptionHandler(SizeLimitExceededException.class)
     public String handleMaxFile(Model model) {
         model.addAttribute("code", "500");
