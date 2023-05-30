@@ -13,10 +13,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -30,8 +31,12 @@ public class ResultController {
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
     private final PythonService pythonService;
+
     @Value("${python.executable.folder}")
     private String pythonFolder;
+
+    @Value("${python.logging.folder}")
+    private String pythonLoggingFolder;
 
     public ResultController(PythonService pythonService) {
         this.pythonService = pythonService;
@@ -70,6 +75,26 @@ public class ResultController {
         }
     }
 
+    @PostMapping(value = "/check_if_done")
+    public @ResponseBody Plot checkJsonFiles(HttpServletRequest request, HttpSession session) {
+        if (request.getSession().getAttribute("analysis") != null) {
+            return (Plot) session.getAttribute("analysis");
+        }
+        String jsonFilePath = session.getAttribute("jsonFile").toString();
+        try {
+            String temp;
+            BufferedReader br = new BufferedReader(new FileReader(jsonFilePath));
+            if ((temp = br.readLine()) != null) {
+                Plot plot = new Plot(temp);
+                request.getSession().setAttribute("analysis", plot);
+                return plot;
+            }
+            return new Plot("False");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * This method will create a temp file of the compare pdb code and
      * call the script that will run the analysis and return to the site.
@@ -79,23 +104,23 @@ public class ResultController {
      * @throws IOException when the script can't be run correctly
      */
     @PostMapping(value = "/perform_pca_analysis")
-    public @ResponseBody Plot performPCAAnalysis(HttpServletRequest request, HttpSession session) {
+    public void performPCAAnalysis(HttpServletRequest request, HttpSession session) {
         if (request.getSession().getAttribute("analysis") != null) {
-            return (Plot) session.getAttribute("analysis");
+            return;
         }
         try {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             Path filePath = Paths.get(pythonFolder, "scripts", "pdb_analysis.py");
+
+            Path path = getRandomFile();
+            request.getSession().setAttribute("jsonFile", path.toString());
             // Call the python script
-            String bytes = pythonService.PDBAnalyse(
+            pythonService.PDBAnalyse(
                     String.valueOf(filePath),
                     request.getSession().getAttribute("tempLocation").toString(),
                     request.getSession().getAttribute("pepSize").toString(),
                     pdb.getStructureId()
             );
-            Plot plot = new Plot(bytes);
-            request.getSession().setAttribute("analysis", plot);
-            return plot;
         } catch (InvalidPDBCodeException ex) {
             LOGGER.warning("Error while performing the script on the data, message=" + ex.getMessage());
             throw new RuntimeException(ex);
@@ -121,5 +146,17 @@ public class ResultController {
         Plot plot = new Plot(chain);
         request.getSession().setAttribute("chains", plot);
         return plot;
+    }
+
+    public Path getRandomFile() {
+        Path path;
+        while (true) {
+            UUID randomID = UUID.randomUUID();
+            path = Path.of(pythonLoggingFolder, randomID + "_normal.json");
+            if (Files.notExists(path)) {
+                break;
+            }
+        }
+        return path;
     }
 }

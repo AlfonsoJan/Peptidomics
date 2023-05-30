@@ -10,5 +10,5 @@ public interface PythonConstructor {
 
     String getChainsPBD(String pythonPath, String pdbPath);
 
-    String PDBAnalyse(String pythonPath, String pdbPath, String param, String pdbCode) throws InvalidPDBCodeException;
+    void PDBAnalyse(String pythonPath, String pdbPath, String param, String pdbCode) throws InvalidPDBCodeException;
 }

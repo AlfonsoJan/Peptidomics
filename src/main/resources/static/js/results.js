@@ -168,7 +168,34 @@ let helperFunctions = {
             });
             document.getElementById("stats-pdb").appendChild(columns);
         }
-    }
+    },
+    sillRunning: true,
+    getData(fetchParameters, value, colors) {
+        fetch("/check_if_done", fetchParameters)
+            .then(res => res.json())
+            .then(result => {
+                if (result.bytes !== "False") {
+                    this.sillRunning = false;
+                    this.setData(result, value, colors)
+                }
+            })
+    },
+    setData(data, value, colors) {
+        let dataResult = JSON.parse(data["bytes"]);
+        let scores = dataResult.scores;
+        let {scores: _, ...result} = dataResult;
+        if (result["error"] !== undefined) {
+            window.location.href = `/pdb_error?code=${value}&message=${result["error"]}`;
+            return;
+        }
+        PlotContainer.dataPlot = result;
+        PlotContainer.standardData = scores;
+        PlotContainer.colorArr = colors;
+        PlotContainer.setUniqueCat();
+        PlotContainer.setInitialPlots();
+        let info = jMOLHelpers.getInfoProtein3d(value);
+        $("#protein").html(Jmol.getAppletHtml("jmol1", info))
+    },
 }
 
 let jMOLHelpers = {
@@ -280,13 +307,6 @@ document.getElementById('reset').addEventListener('click', () => {
     jMOLHelpers.resetScript();
 })
 
-document.getElementById('reset-plot2d').addEventListener('click', () => {
-    PlotContainer.resetPlots();
-})
-
-document.getElementById('reset-plot3d').addEventListener('click', () => {
-    PlotContainer.resetPlots();
-})
 
 
 document.getElementById('right').addEventListener('change', function() {
@@ -440,18 +460,6 @@ let PlotContainer = {
             selectRight.appendChild(optRight);
         });
     },
-    resetPlots() {
-        let left = document.getElementById("left");
-        let middle = document.getElementById("middle");
-        let right = document.getElementById("right");
-        if (!(left.value === '_' && middle.value === '_' && right.value === '_')) {
-            PlotContainer.updatePlots("_", "_", "_");
-            left.value = '_';
-            middle.value = '_';
-            right.value = '_';
-        }
-        jMOLHelpers.resetScript();
-    },
     getViews(dataPeptides, dataChains, dataStructure) {
         return [
             helperFunctions.shuffle(Array(dataPeptides.length).fill(true).concat(Array(dataChains.length).fill(false)).concat(Array(dataStructure.length).fill(false)), this.seed).concat(true),
@@ -477,6 +485,8 @@ let PlotContainer = {
         // 2D VIEWS
         let [initialView2D, secondaryView2D, thirdView2D] = this.getViews(tracesPeptides2D.reverse(), tracesChains2D.reverse(), tracesStructure2D.reverse());
         let [initialView3D, secondaryView3D, thirdView3D] = this.getViews(tracesPeptides3D, tracesChains3D, tracesStructure3D);
+        // REMOVE SPINNERS
+        this.removeSpinners();
         // BUTTONS
         let updateMenus2D = this.initializePlotlyButtons(initialView2D.reverse(), secondaryView2D.reverse(), thirdView2D.reverse());
         let updateMenus3D = this.initializePlotlyButtons(initialView3D, secondaryView3D, thirdView3D);
@@ -492,7 +502,6 @@ let PlotContainer = {
         myPlot3D.on("plotly_click", this.clickPoints);
     },
     selectMultiplePoints(datapoints) {
-        if (datapoints === undefined) return;
         let points = [];
         datapoints.points.forEach(data => {
             let index = data.pointIndex;
@@ -500,7 +509,6 @@ let PlotContainer = {
             let point = data.data.freetext[index][0].atomnos
             points.push(point);
         });
-        if (points.length < 1) return;
         jMOLHelpers.selectView(points);
     },
     clickPoints(datapoints) {
@@ -731,29 +739,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 // Functionality for the 3D protein plot
                 if (value != null) {
                     let info = jMOLHelpers.getInfoProtein3d(value);
-                    $("#protein").html(Jmol.getAppletHtml("jmol1", info))
+                    //$("#protein").html(Jmol.getAppletHtml("jmol1", info))
                 }
-                const dataResponse = await fetch("/perform_pca_analysis", fetchParameters);
-                let dataResult = await dataResponse.json();
-                dataResult = JSON.parse(dataResult["bytes"]);
-                let scores = dataResult.scores;
-                let {scores: _, ...result} = dataResult;
-                if (result["error"] !== undefined) {
-                    window.location.href = `/pdb_error?code=${value}&message=${result["error"]}`
-                    return;
-                }
-                PlotContainer.dataPlot = result;
-                PlotContainer.standardData = scores;
-                PlotContainer.colorArr = colors;
-                PlotContainer.removeSpinners();
-                PlotContainer.setUniqueCat();
-                PlotContainer.setInitialPlots();
+                await fetch("/perform_pca_analysis", fetchParameters);
+                window.setInterval(function (){
+                    if (helperFunctions.sillRunning) {
+                        helperFunctions.getData(fetchParameters, value, colors);
+                    }
+                }, 1000);
 
 
-                document.getElementById("download-link").onclick = function () {
-                    let blob = new Blob([JSON.stringify(result, null, 4)], {type: "text/json"})
-                    saveAs(blob, "result.json");
-                }
+                // document.getElementById("download-link").onclick = function () {
+                //     let blob = new Blob([JSON.stringify(result, null, 4)], {type: "text/json"})
+                //     saveAs(blob, "result.json");
+                // }
 
             } else {
                 window.location.href = `/pdb_error?code=${value}`
