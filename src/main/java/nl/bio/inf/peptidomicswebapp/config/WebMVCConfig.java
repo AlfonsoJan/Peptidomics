@@ -12,7 +12,7 @@ import java.util.Locale;
 /**
  * Java configuration file that is used for Spring MVC and Thymeleaf
  * configurations
- * @author Jan Alfonso Busker
+ * @author Wouter Zeevat
  */
 @Configuration
 public class WebMVCConfig {
