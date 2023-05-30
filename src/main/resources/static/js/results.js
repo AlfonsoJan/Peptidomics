@@ -280,6 +280,13 @@ document.getElementById('reset').addEventListener('click', () => {
     jMOLHelpers.resetScript();
 })
 
+document.getElementById('reset-plot2d').addEventListener('click', () => {
+    PlotContainer.resetPlots();
+})
+
+document.getElementById('reset-plot3d').addEventListener('click', () => {
+    PlotContainer.resetPlots();
+})
 
 
 document.getElementById('right').addEventListener('change', function() {
@@ -433,6 +440,18 @@ let PlotContainer = {
             selectRight.appendChild(optRight);
         });
     },
+    resetPlots() {
+        let left = document.getElementById("left");
+        let middle = document.getElementById("middle");
+        let right = document.getElementById("right");
+        if (!(left.value === '_' && middle.value === '_' && right.value === '_')) {
+            PlotContainer.updatePlots("_", "_", "_");
+            left.value = '_';
+            middle.value = '_';
+            right.value = '_';
+        }
+        jMOLHelpers.resetScript();
+    },
     getViews(dataPeptides, dataChains, dataStructure) {
         return [
             helperFunctions.shuffle(Array(dataPeptides.length).fill(true).concat(Array(dataChains.length).fill(false)).concat(Array(dataStructure.length).fill(false)), this.seed).concat(true),
@@ -458,8 +477,6 @@ let PlotContainer = {
         // 2D VIEWS
         let [initialView2D, secondaryView2D, thirdView2D] = this.getViews(tracesPeptides2D.reverse(), tracesChains2D.reverse(), tracesStructure2D.reverse());
         let [initialView3D, secondaryView3D, thirdView3D] = this.getViews(tracesPeptides3D, tracesChains3D, tracesStructure3D);
-        // REMOVE SPINNERS
-        this.removeSpinners();
         // BUTTONS
         let updateMenus2D = this.initializePlotlyButtons(initialView2D.reverse(), secondaryView2D.reverse(), thirdView2D.reverse());
         let updateMenus3D = this.initializePlotlyButtons(initialView3D, secondaryView3D, thirdView3D);
@@ -728,6 +745,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 PlotContainer.dataPlot = result;
                 PlotContainer.standardData = scores;
                 PlotContainer.colorArr = colors;
+                PlotContainer.removeSpinners();
                 PlotContainer.setUniqueCat();
                 PlotContainer.setInitialPlots();
 

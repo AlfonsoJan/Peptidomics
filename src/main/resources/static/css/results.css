@@ -15,6 +15,7 @@ Wouter Zeevat
 .option-icon {
     position: center; !important;
     padding-left: 1rem; !important;
+    cursor: pointer;
 }
 
 .option-icon:hover {
