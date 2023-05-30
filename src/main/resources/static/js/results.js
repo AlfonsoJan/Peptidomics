@@ -48,6 +48,7 @@ let resultJS = {
     reset: true,
 }
 
+// Object with functions that don't fit within the other categories of functions
 let helperFunctions = {
     // Hides all the things on page load
     setPage() {
@@ -74,7 +75,7 @@ let helperFunctions = {
         let colorArray = [];
         for (let i = 0; i < keys.length; i++) {
             let hsl_value = 255 / keys.length * i;
-            let rgb = this.HSLToRGB(hsl_value, 100, 70);
+            let rgb = this.HSLToRGB(hsl_value, 100, 65);
             colorArray.push(rgb)
         }
 
@@ -170,6 +171,7 @@ let helperFunctions = {
         }
     },
     sillRunning: true,
+    // Checks if JSON is there
     getData(fetchParameters, value, colors) {
         fetch("/check_if_done", fetchParameters)
             .then(res => res.json())
@@ -180,6 +182,7 @@ let helperFunctions = {
                 }
             })
     },
+    // Sets data after json is existent
     setData(data, value, colors) {
         let dataResult = JSON.parse(data["bytes"]);
         let scores = dataResult.scores;
@@ -195,9 +198,14 @@ let helperFunctions = {
         PlotContainer.setInitialPlots();
         let info = jMOLHelpers.getInfoProtein3d(value);
         $("#protein").html(Jmol.getAppletHtml("jmol1", info))
+        document.getElementById("download-link").onclick = function () {
+            let blob = new Blob([JSON.stringify(result, null, 4)], {type: "text/json"})
+            saveAs(blob, "result.json");
+        }
     },
 }
 
+// Object with functions that have something to do with the JMOL viewer
 let jMOLHelpers = {
     // Selects a certain part of the JSMOL
     selectView(datapoints) {
@@ -298,7 +306,7 @@ let jMOLHelpers = {
     }
 }
 
-
+// Listeners
 document.getElementById('zoom-btn').addEventListener('click', () => {
     jMOLHelpers.hideGlobal();
 })
@@ -307,7 +315,13 @@ document.getElementById('reset').addEventListener('click', () => {
     jMOLHelpers.resetScript();
 })
 
+document.getElementById('reset-plot2d').addEventListener('click', () => {
+    PlotContainer.resetPlots();
+})
 
+document.getElementById('reset-plot3d').addEventListener('click', () => {
+    PlotContainer.resetPlots();
+})
 
 document.getElementById('right').addEventListener('change', function() {
     let right = this.value;
@@ -330,6 +344,8 @@ document.getElementById('left').addEventListener('change', function() {
     PlotContainer.updatePlots(left, middle, right);
 })
 
+// Object with functions that have something to do with the
+// Plotly plots
 let PlotContainer = {
     seed: 3,
     colorsPeptides: helperFunctions.createColors(resultJS.aminoAcidCodes),
@@ -342,6 +358,20 @@ let PlotContainer = {
     set colorArr(colArr) {
         this.colors = colArr;
     },
+    // Resets plot by resetting the options and resetting the values within the plots
+    resetPlots() {
+        let left = document.getElementById("left");
+        let middle = document.getElementById("middle");
+        let right = document.getElementById("right");
+        if (!(left.value === '_' && middle.value === '_' && right.value === '_')) {
+            PlotContainer.updatePlots("_", "_", "_");
+            left.value = '_';
+            middle.value = '_';
+            right.value = '_';
+        }
+        jMOLHelpers.resetScript();
+    },
+    // Initializes the plotly buttons
     initializePlotlyButtons(initialView, secondaryView, thirdView) {
         return [{
             buttons: [
@@ -380,6 +410,8 @@ let PlotContainer = {
             yanchor: "top"
         }]
     },
+    standard_opacity: 0.25,
+    // Gets the standard options for the 2D plot's traces
     getStandardTraces2D() {
         return [{
             type: "scatter",
@@ -387,11 +419,12 @@ let PlotContainer = {
             y: this.standard.y,
             z: this.standard.z,
             mode: "markers",
-            marker: {size: 10, color: 'rgb(110, 110, 110)', opacity: 0.3},
+            marker: {size: 10, color: 'rgb(110, 110, 110)', opacity: this.standard_opacity},
             text: `Standard`,
             name: `Standard`
         }];
     },
+    // Gets the standard options for the 3D plot's traces
     getStandardTraces3D() {
         return [{
             type: "scatter3d",
@@ -399,7 +432,7 @@ let PlotContainer = {
             y: this.standard.y,
             z: this.standard.z,
             mode: "markers",
-            marker: {size: 2, color: 'rgb(110, 110, 110)', opacity: 0.4},
+            marker: {size: 2, color: 'rgb(110, 110, 110)', opacity: this.standard_opacity},
             text: `Standard`,
             name: `Standard`
         }];
@@ -407,6 +440,7 @@ let PlotContainer = {
     set dataPlot(data) {
         this.data = data
     },
+    // Sets the metadata for each scatter dot
     getMetadata() {
         return Object.keys(this.data).map(key => {
             let data = this.data[key]
@@ -418,6 +452,7 @@ let PlotContainer = {
             }
         });
     },
+    // Fetches all the select options and applies them
     setUniqueCat() {
         let selectRight = document.getElementById('right');
         let selectMiddle = document.getElementById('middle');
@@ -460,6 +495,7 @@ let PlotContainer = {
             selectRight.appendChild(optRight);
         });
     },
+    // Gets the views and shuffles them to prevent seeing false patterns (Not a good fix)
     getViews(dataPeptides, dataChains, dataStructure) {
         return [
             helperFunctions.shuffle(Array(dataPeptides.length).fill(true).concat(Array(dataChains.length).fill(false)).concat(Array(dataStructure.length).fill(false)), this.seed).concat(true),
@@ -468,6 +504,7 @@ let PlotContainer = {
         ]
 
     },
+    // Removes the loading icons
     removeSpinners() {
         let elem3D = document.getElementById("spinner-scatter-3d");
         elem3D.parentNode.removeChild(elem3D);
@@ -477,6 +514,7 @@ let PlotContainer = {
         elem2D.parentNode.removeChild(elem2D);
         document.getElementById(this.div2D).style.display= '';
     },
+    // Sets the initial plots with the data
     setInitialPlots() {
         let [tracesPeptides2D, tracesChains2D, tracesStructure2D, tracesPeptides3D, tracesChains3D, tracesStructure3D, standard2D, standard3D] = this.getAllData(this.data);
         // 2D and 3D shuffled data
@@ -501,6 +539,7 @@ let PlotContainer = {
         let myPlot3D = document.getElementById(this.div3D);
         myPlot3D.on("plotly_click", this.clickPoints);
     },
+    // Lasso or box select
     selectMultiplePoints(datapoints) {
         let points = [];
         datapoints.points.forEach(data => {
@@ -511,10 +550,13 @@ let PlotContainer = {
         });
         jMOLHelpers.selectView(points);
     },
+    // Click points
     clickPoints(datapoints) {
         if (!datapoints.points[0].data.hasOwnProperty("freetext")) return;
         jMOLHelpers.selectView([datapoints.points[0].data.freetext[datapoints.points[0].pointNumber][0].atomnos])
     },
+    // Gets the 3D layout of the plots
+    // Basicly the basic options such as the background
     get3DLayout(updatemenus) {
         return {
             autosize: true,
@@ -558,6 +600,8 @@ let PlotContainer = {
             }
         }
     },
+    // Gets the 2D layout of the plots
+    // Basicly the basic options such as the background
     get2DLayout(updatemenus) {
         return {
             autosize: true,
@@ -583,6 +627,7 @@ let PlotContainer = {
             }
         }
     },
+    // Update actual plots after selection is changed to view only certain parts
     updatePlots(left, middle, right) {
         let metaData = this.getMetadata();
         let newDataIndex = Object.keys(metaData).map(key => {
@@ -636,6 +681,7 @@ let PlotContainer = {
         myPlot3D.on("plotly_click", this.clickPoints)
         jMOLHelpers.resetScript();
     },
+    // Function that gets all the data from the different category functions
     getAllData(data) {
         // 2D DATA
         let tracesPeptides2D = this.getCategoriesDATA(data, "peptide", true, "2D");
@@ -650,6 +696,7 @@ let PlotContainer = {
         let standard3D = this.getStandardTraces3D();
         return [tracesPeptides2D, tracesChains2D, tracesStructure2D, tracesPeptides3D, tracesChains3D, tracesStructure3D, standard2D, standard3D];
     },
+    // Gets the categories for every data separately
     getCategoriesDATA(data, select, visible, view) {
         let metaData = Object.keys(data).map(key => {
             return {
@@ -746,13 +793,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     if (helperFunctions.sillRunning) {
                         helperFunctions.getData(fetchParameters, value, colors);
                     }
-                }, 1000);
-
-
-                // document.getElementById("download-link").onclick = function () {
-                //     let blob = new Blob([JSON.stringify(result, null, 4)], {type: "text/json"})
-                //     saveAs(blob, "result.json");
-                // }
+                }, 3000);
 
             } else {
                 window.location.href = `/pdb_error?code=${value}`
