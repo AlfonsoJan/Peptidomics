@@ -89,6 +89,12 @@ def get_secondary_structure(pdb_code):
     return list(zip(chains, res_numbers, codes))
 
 def get_middle_peptide(cords, pepsize):
+    """
+    Returns the middle 3 items of a list, and gets the middle 2 on an even number length list
+    :param cords:
+    :param pepsize:
+    :return:
+    """
     index = int((len(cords) - 1)/2)
     if pepsize / 3 == 1:
         return cords
