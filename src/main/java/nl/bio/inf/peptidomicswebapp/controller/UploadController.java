@@ -6,7 +6,9 @@ import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.config.SessionDestroyer;
 import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.apache.tomcat.util.http.parser.HttpParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,10 @@ import java.util.logging.Logger;
 public class UploadController {
 
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
+
+    @Value("${spring.servlet.multipart.max-request-size}")
+    private String maxMB;
+
     @GetMapping(value ="/upload")
     public String landingPage(){
         return "upload";
@@ -52,6 +58,11 @@ public class UploadController {
 
             if (!pdb.isValid()) {
                 return ("redirect:/pdb_error?code=" + pdb.getFileName());
+            }
+
+            if ((pdb.getBytes().length) / (1024 * 1024) > Integer.parseInt(maxMB.toLowerCase().replace("mb", ""))) {
+                LOGGER.severe("File too large!");
+                throw new SizeLimitExceededException("pdb code (" + pdb.getStructureId() + ") too large!", (pdb.getBytes().length) / (1024 * 1024), 10);
             }
 
             session.setAttribute("pepSize", oligoParam);
