@@ -8,12 +8,12 @@ import nl.bio.inf.peptidomicswebapp.models.PDB;
 import nl.bio.inf.peptidomicswebapp.models.Plot;
 import nl.bio.inf.peptidomicswebapp.service.PythonService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,6 +69,7 @@ public class ResultController {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             String tempLocation = pdb.createTempFile();
             session.setAttribute("tempLocation", tempLocation);
+            LOGGER.info("Created a temp file: " + tempLocation + " for session; " + request.getSession().getId());
         } catch (Exception ex) {
             LOGGER.severe("Error while creating a temp file, message=" + ex.getMessage());
             throw new RuntimeException(ex);
@@ -93,6 +94,7 @@ public class ResultController {
             if ((temp = br.readLine()) != null) {
                 Plot plot = new Plot(temp);
                 request.getSession().setAttribute("analysis", plot);
+                LOGGER.info("The analysis is done for session: " + request.getSession().getId());
                 return plot;
             }
             return new Plot("False");
@@ -105,15 +107,15 @@ public class ResultController {
      * This method will create a temp file of the compare pdb code and
      * call the script that will run the analysis and return to the site.
      * @param request
-     * @param session
      * @return
      * @throws IOException when the script can't be run correctly
      */
     @PostMapping(value = "/perform_pca_analysis")
-    public void performPCAAnalysis(HttpServletRequest request, HttpSession session) {
+    public void performPCAAnalysis(HttpServletRequest request) {
         if (request.getSession().getAttribute("analysis") != null) {
             return;
         }
+        LOGGER.info("Session: " + request.getSession().getId() + " is performing the analysis");
         try {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             Path filePath = Paths.get(pythonFolder, "scripts", "pdb_analysis.py");
@@ -144,6 +146,7 @@ public class ResultController {
         if (request.getSession().getAttribute("chains") != null) {
             return (Plot) request.getSession().getAttribute("chains");
         }
+        LOGGER.info("Session: " + request.getSession().getId() + " is retrieving the chains");
         Path filePath = Paths.get(pythonFolder, "scripts", "retrieve_chains_pdb.py");
         // Call the python script
         String chain = pythonService.getChainsPBD(
@@ -154,6 +157,10 @@ public class ResultController {
         return plot;
     }
 
+    /**
+     * This will return a file with a random name that does not exist
+     * @return path object of the file
+     */
     public Path getRandomFile() {
         Path path;
         while (true) {
