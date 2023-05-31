@@ -1,0 +1,221 @@
+<!--
+author: Wouter Zeevat
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>Peptidomics</title>
+  <link rel="stylesheet" th:href="@{css/bulma.css}" href="../static/css/bulma.css"/>
+  <link rel="stylesheet" th:href="@{css/help.css}" href="../static/css/help.css"/>
+  <link rel="stylesheet" th:href="@{css/general.css}" href="../static/css/general.css"/>
+  <link rel="icon" type="image/ico" th:href="@{../static/images/favicon.ico}">
+  <link href="https://cdn.jsdelivr.net/npm/bulma-extensions@4.0.1/bulma-timeline/dist/css/bulma-timeline.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+<div class="timeline is-left">
+  <div class="timeline-item">
+    <div class="timeline-marker is-icon">
+      <i class="fa fa-arrow-down"></i>
+    </div>
+    <div class="timeline-content">
+      <div class="columns is-shady" onclick="location.href = '/upload';">
+        <div class="column is-4">
+          <figure class="image">
+            <img th:src="@{images/upload_link.png}" src="../static/images/upload_link.png" alt="placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            <h3>Go to upload</h3>
+            <p th:text="#{help.upload}"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-marker is-icon">
+      <i class="fa fa-arrow-down"></i>
+    </div>
+    <div class="timeline-content">
+      <div class="columns is-shady">
+        <div class="column is-4">
+          <figure class="image">
+            <img th:src="@{images/oligolength.png}" src="../static/images/oligolength.png" alt="placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            <h3>Oligo length</h3>
+            <p th:text="#{help.oligo}"></p>
+
+            <div class="icon-text valid is-top">
+              <span class="icon has-text-success">
+                <i class="fas fa-check-square"></i>
+              </span>
+              <span th:text="'Using an oligo length of any number between 1 and ' + ${oligoLength}"></span>
+            </div>
+            <div class="icon-text invalid is-bottom">
+              <span class="icon has-text-danger">
+                <i class="fas fa-ban"></i>
+              </span>
+              <span th:text="'Using an oligo length lower than 1 or higher than ' + ${oligoLength}"></span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-marker is-icon">
+      <i class="fa fa-arrow-down"></i>
+    </div>
+    <div class="timeline-content">
+      <div class="columns is-shady">
+        <div class="column is-4 has-flex">
+          <figure class="image">
+            <img th:src="@{images/oligocodefile.png}" src="../static/images/oligocodefile.png" alt="placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            <h3>Protein Code or File</h3>
+            <p th:text="#{help.code}"></p>
+            <div class="icon-text valid is-top">
+              <span class="icon has-text-success">
+                <i class="fas fa-check-square"></i>
+              </span>
+              <span>Putting in a valid code such as 8ECF</span>
+            </div>
+
+            <div class="icon-text invalid">
+              <span class="icon has-text-danger">
+                <i class="fas fa-ban"></i>
+              </span>
+              <span th:text="'Using a file or code that has more than ' + ${maxMB}"></span>
+            </div>
+
+            <div class="icon-text invalid">
+              <span class="icon has-text-danger">
+                <i class="fas fa-ban"></i>
+              </span>
+              <span>Using a file that doesn't end with .PDB</span>
+            </div>
+
+            <div class="icon-text invalid">
+              <span class="icon has-text-danger">
+                <i class="fas fa-ban"></i>
+              </span>
+              <span>Using a code that doesn't exist</span>
+            </div>
+
+            <div class="icon-text invalid is-bottom">
+              <span class="icon has-text-danger">
+                <i class="fas fa-ban"></i>
+              </span>
+              <span>Using a code or file that has an invalid protein format</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-marker is-icon">
+      <i class="fa fa-arrow-down"></i>
+    </div>
+    <div class="timeline-content">
+      <div class="columns is-shady">
+        <div class="column is-4 has-flex">
+          <figure class="image">
+            <img th:src="@{images/selection.png}" src="../static/images/selection.png" alt="placeholder image">
+          </figure>
+          <figure class="image">
+            <img th:src="@{images/selection_result.png}" src="../static/images/selection_result.png" alt="placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            <h3>Select certain parts</h3>
+            <p th:text="#{help.filter}" style="white-space: pre-line; padding-top: 5px"></p>
+
+            <div class="icon-text extra is-only">
+              <span class="icon has-text-info">
+                <i class="fas fa-info-circle"></i>
+              </span>
+              <span>Combinations that do not have results will cancel the event</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-marker is-icon">
+      <i class="fa fa-arrow-down"></i>
+    </div>
+    <div class="timeline-content">
+      <div class="columns is-shady">
+        <div class="column is-4">
+          <figure class="image">
+            <img th:src="@{images/select_mouse.png}" src="../static/images/select_mouse.png" alt="placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            <h3>Interact with the plots</h3>
+            <p th:text="#{help.select.mouse}"></p>
+          </div>
+        </div>
+      </div>
+      <div class="columns is-shady">
+        <div class="column is-4">
+          <figure class="image">
+            <img th:src="@{images/select_lasso.png}" src="../static/images/select_lasso.png" alt="placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            <h3>Interact with the plots</h3>
+            <p th:text="#{help.select.multiple}"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-marker is-icon">
+      <i class="fa fa-arrow-down"></i>
+    </div>
+    <div class="timeline-content">
+      <div class="columns is-shady">
+        <div class="column is-4">
+          <figure class="image">
+            <img th:src="@{images/3dviewer.png}" src="../static/images/3dviewer.png" alt="placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            <h3>3D Viewer</h3>
+            <p th:text="#{help.select.jsmol}"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.config.SessionDestroyer;
 import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
+import nl.bio.inf.peptidomicswebapp.exceptions.TooLargeNumberException;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.apache.tomcat.util.http.parser.HttpParser;
@@ -34,8 +35,13 @@ public class UploadController {
     @Value("${spring.servlet.multipart.max-request-size}")
     private String maxMB;
 
+    @Value("${max.oligo.length}")
+    private int maxOligo;
+
+
     @GetMapping(value ="/upload")
-    public String landingPage(){
+    public String landingPage(Model model){
+        model.addAttribute("maxOligo", maxOligo);
         return "upload";
     }
 
@@ -60,6 +66,8 @@ public class UploadController {
                 return ("redirect:/pdb_error?code=" + pdb.getFileName());
             }
 
+            if (Integer.parseInt(oligoParam) > maxOligo) throw new TooLargeNumberException();
+
             // If pdb file size is higher than the max amount
             if ((pdb.getBytes().length) / (1024 * 1024) > Integer.parseInt(maxMB.toLowerCase().replace("mb", ""))) {
                 LOGGER.severe("File too large!");
@@ -72,6 +80,8 @@ public class UploadController {
         } catch (IOException | InvalidPDBCodeException ex) {
             LOGGER.warning("Error while reading creating PDB class with pdb code, message=" + ex.getMessage());
             throw new RuntimeException(ex);
+        } catch (TooLargeNumberException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -95,6 +105,8 @@ public class UploadController {
                 return ("redirect:/pdb_error?code=1f6e");
             }
 
+            if (Integer.parseInt(oligoParam) > maxOligo) throw new TooLargeNumberException();
+
             session.setAttribute("pepSize", oligoParam);
             session.setAttribute("PDBFiles", pdb);
             return "redirect:/result";
@@ -102,6 +114,8 @@ public class UploadController {
             LOGGER.warning("Error while reading PDB file, message=" + ex.getMessage());
             throw new RuntimeException(ex);
 
+        } catch (TooLargeNumberException e) {
+            throw new RuntimeException(e);
         }
     }
 

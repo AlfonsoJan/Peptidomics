@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById("pdb-input-form").lastElementChild.classList.add("is-loading");
 
         // Oligo length check > 1
-        if (document.getElementById("oligoParam").value < 1 || document.getElementById("oligoParam").value > 30) {
+        let maxEle = document.getElementById("oligoParam").max;
+        if (document.getElementById("oligoParam").value < 1 || document.getElementById("oligoParam").value > parseInt(maxEle)) {
             toastr.error(`Please type in a length higher than 0 and lower than 31!`);
             document.getElementById("pdb-input-form").lastElementChild.classList.remove("is-loading");
             return;
