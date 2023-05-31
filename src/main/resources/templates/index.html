@@ -27,7 +27,7 @@ author: Wouter Zeevat
 <section class="section" style="padding-top: 0">
     <div class="container">
         <div class="columns features">
-            <div class="column is-4">
+            <div class="column is-3">
                 <div class="card is-shady" id="information-card">
                     <div class="card-image has-text-centered">
                         <i class="fa fa-info-circle"></i>
@@ -40,7 +40,7 @@ author: Wouter Zeevat
                     </div>
                 </div>
             </div>
-            <div class="column is-4">
+            <div class="column is-3">
                 <div class="card is-shady" onclick="location.href = '/upload';" style="cursor: pointer;">
                     <div class="card-image has-text-centered">
                         <i class="fa fa-upload"></i>
@@ -53,7 +53,7 @@ author: Wouter Zeevat
                     </div>
                 </div>
             </div>
-            <div class="column is-4">
+            <div class="column is-3">
                 <div class="card is-shady">
                     <div class="card-image has-text-centered">
                         <i class="fa fa-code"></i>
@@ -62,6 +62,19 @@ author: Wouter Zeevat
                         <div class="content">
                             <h3>Code and Papers</h3>
                             <p>The code for this project is on <a href="https://github.com/AlfonsoJan/Peptidomics">github</a>. Want to know more about this project topic? Structural Alphabet: <a href="http://3d-blast.life.nctu.edu.tw/sa.php">paper 1</a> and <a href="https://bioserv.rpbs.univ-paris-diderot.fr/help/SAHelp.html"> paper2</a>!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-3">
+                <div class="card is-shady" onclick="location.href = '/help';">
+                    <div class="card-image has-text-centered">
+                        <i class="fa fa-question"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="content">
+                            <h3>Help & Tutorial</h3>
+                            <p>To get more help about how to use the application, you can check the tutorial in the help page!</p>
                         </div>
                     </div>
                 </div>
@@ -111,6 +124,7 @@ author: Wouter Zeevat
         <div class="card-content">
             <div class="content">
                 <h3>Eigenvectoren of standardization</h3>
+                <p>The eigenvectoren consist of the following PDB files:</p>
                 <div class="tags">
                     <th:block th:each="vector: ${eigenVectors}">
                         <span class="tag is-medium" th:text="${vector}">One</span>

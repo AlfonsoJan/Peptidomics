@@ -2,6 +2,7 @@ package nl.bio.inf.peptidomicswebapp.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
+import nl.bio.inf.peptidomicswebapp.exceptions.TooLargeNumberException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
@@ -30,6 +31,13 @@ public class SizeLimitExceptionController {
         LOGGER.severe(request.getSession().getId()+ " session id tried to upload a file that is too large");
         model.addAttribute("code", "500");
         model.addAttribute("message", "This file is too large for the program to handle!");
+        return "pdb_error";
+    }
+
+    @ExceptionHandler(TooLargeNumberException.class)
+    public String handleMaxOligo(Model model) {
+        model.addAttribute("code", "500");
+        model.addAttribute("message", "This oligo number is too large!");
         return "pdb_error";
     }
 

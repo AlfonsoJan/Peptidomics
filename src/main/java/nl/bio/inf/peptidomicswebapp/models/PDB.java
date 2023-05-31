@@ -2,6 +2,7 @@ package nl.bio.inf.peptidomicswebapp.models;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -21,6 +22,7 @@ public class PDB {
     private final String structureId;
     private final byte[] bytes;
     private final String fileName;
+
 
     /**
      * Constructor if a PDB code is given
