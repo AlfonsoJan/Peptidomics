@@ -14,6 +14,7 @@ Welcome to the Peptidomics repository! This project focuses on the analysis and 
 * Features
 * Contributing
 * License
+* Credits
 
 ## Introduction
 
@@ -46,7 +47,6 @@ JavaScript
     Bulma Tooltip (version 1.2.0)
     Plotly (version 2.20.0)
     FileSaver (version 2.0.0)
-    JSmolMin2
 ````
 ## Installation
 Clone this repository to your local machine:
@@ -62,10 +62,10 @@ pip install -r requirements.txt
 Extract the folders scores, scripts and vectors and it content from the data directory. Copy these directories on the server.
 Change the attribute python.executable.folder in application.properties to the location of these directories.
 ```
-python.executable.folder=parent directory/
+python.executable.folder=/<parent directory>/
 ```
 
-They need to be in the same parent directory.
+They need to be in the same parent directory. Like this:
 
 ```
 parent directory/
@@ -73,6 +73,15 @@ parent directory/
 ├── scripts
 ├── vectors
 ```
+
+Set the directory for the log file of the python script. And your the python command of the server this runs on. Like py, python or python3.
+
+```
+python.logging.folder=/<logging folder>/
+python.path-name=<python command>
+```
+
+#### **ALL THE DIRECTORIES IN APPLICATION>PROPERTIES SHOULD START AND END WITH '/'**
 
 Create the .jar file with the following command:
 ```
@@ -95,3 +104,6 @@ java -jar PeptidomicsWebApp.jar
 John Busker (j.a.busker@st.hanze.nl)
 Wouter Zeevat (w.h.zeevat@st.hanze.nl)
 ```
+
+## Credits
+WebGL interface written by Takanori Nakane. Java2Script written by Zhou Renjian, et al. Jzlib written by Atsuhiko Yamanaka. 
