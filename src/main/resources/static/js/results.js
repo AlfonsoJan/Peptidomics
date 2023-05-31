@@ -597,6 +597,7 @@ let PlotContainer = {
                 font: {
                     size: 10,
                 },
+                itemsizing: 'constant',
             }
         }
     },
