@@ -4,7 +4,7 @@
 
 Welcome to the Peptidomics repository! This project focuses on the analysis and exploration of peptide data using advanced computational techniques.
 
-![image](src/main/resources/static/images/web_example.png)
+![image](src/main/resources/static/images/tutorial.gif)
 
 ## Table of Contents
 
