@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import nl.bio.inf.peptidomicswebapp.config.HtmlLogFormatter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 
 /**
  * The main to run the spring boot project
@@ -15,7 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Jan Alfonso Busker
  */
 
-@SpringBootApplication
+@SpringBootApplication(exclude= {UserDetailsServiceAutoConfiguration.class})
 public class PeptidomicsWebAppApplication {
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
