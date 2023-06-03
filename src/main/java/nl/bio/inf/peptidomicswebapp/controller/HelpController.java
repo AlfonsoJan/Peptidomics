@@ -24,4 +24,5 @@ public class HelpController {
         model.addAttribute("oligoLength", maxOligo);
         model.addAttribute("maxMB", maxMB);
         return "help";
-    }}
+    }
+}
