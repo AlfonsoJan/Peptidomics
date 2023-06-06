@@ -28,7 +28,7 @@ author: Jan Alfonso Busker
                         <div class="field pt-1">
 
                             <div class="field">
-                                <label class="label">Oligo Length</label>
+                                <label class="label has-tooltip-bottom" data-tooltip="This is the length of each part in the result">Oligo Length</label>
                                 <div class="control">
                                     <input id="oligoParam" class="input" type="number" name="oligoParam" min="1" th:max="${maxOligo}">
                                 </div>
@@ -37,7 +37,7 @@ author: Jan Alfonso Busker
                             <div class="field is-centered">
                                 <label class="label" id="file-text">File from your system</label>
                                 <div class="field-body flex-class">
-                                    <div class="file has-name">
+                                    <div class="file has-name" data-tooltip="Pick a valid pdb file from your system, or use a code">
                                         <label class="file-label">
                                             <input class="file-input" type="file" name="pdb-file" id="selected" accept=".pdb">
                                             <span class="file-cta">
@@ -55,12 +55,12 @@ author: Jan Alfonso Busker
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">or use PDB code</label>
+                            <label class="label" data-tooltip="Type in a valid 4-digit pdb code from the database">or use PDB code</label>
                             <div class="control">
                                 <input id="input-pdb" class="input" type="text" name="pdb_code" placeholder="Type your PDB code" maxlength="4" minlength="4">
                             </div>
                         </div>
-                        <button type="submit" class="button is-info is-large" id="pdb_code_button">Proceed</button>
+                        <button type="submit" class="button is-info is-large" id="pdb_code_button" data-tooltip="Proceeds and loads the result page">Proceed</button>
                     </form>
                 </div>
             </div>

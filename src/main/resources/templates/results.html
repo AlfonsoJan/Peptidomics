@@ -13,6 +13,8 @@ author: Wouter Zeevat
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{js/toastr.min.js}" src="../static/js/toastr.min.js"></script>
   <link rel="stylesheet" th:href="@{css/toastr.min.css}" href="../static/css/toastr.min.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.min.css " rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-steps@2.2.1/dist/css/bulma-steps.min.css">
   <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
   <script src = "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin = "anonymous" referrerpolicy = "no-referrer"> </script>
   <link rel="icon" type="image/ico" th:href="@{../static/images/favicon.ico}">
@@ -27,9 +29,12 @@ author: Wouter Zeevat
     <div id="skeleton-loader" style="padding-bottom: 2rem">
       <p id="pdb-title" class="is-size-4 has-text-weight-bold">Title</p>
       <p id="pdb-subtitle" class="is-size-4 ">Subtitle</p>
-      <p id="pdb-link" class="is-size-5 is-underlined">PDB Website</p>
-      <p id="paper-link" class="is-size-5">Paper Link</p>
-      <p id="download-link" style="cursor: pointer;">Download result</p>
+      <div class="bttns">
+        <p id="pdb-link" class="bttn">PDB Website</p>
+        <p id="paper-link" class="bttn">Paper Link</p>
+        <p id="download-link" class="bttn">Download result</p>
+        <p id="download-eigenvectors" class="bttn" style th:text="'Show Eigenvectors length ' + ${pepSize}">Show Eigenvectors length 1</p>
+      </div>
     </div>
 
     <div class="columns is-centered"  id="pdb-stats">
@@ -50,7 +55,7 @@ author: Wouter Zeevat
     <div class="columns is-centered">
       <div class="column is-one-third" id="left-selector">
         <div class="field">
-          <label for="left" id="left-label" class="label">Select for left:</label>
+          <label for="left" id="left-label" class="label has-tooltip-multiline" data-tooltip="Select only specific types for the amino acid in the middle left of the oligo part">Select for left:</label>
           <div class="select" id="left-select-box">
             <select name="left" id="left">
               <option value="_">All</option>
@@ -61,7 +66,7 @@ author: Wouter Zeevat
 
       <div class="column is-one-third" id="middle-selector">
         <div class="field">
-          <label for="middle" id="middle-label" class="label">Select for middle</label>
+          <label for="middle" id="middle-label" class="label has-tooltip-multiline" data-tooltip="Select only specific types for the amino acid in the middle of the oligo part">Select for middle</label>
           <div class="select" id="middle-select-box">
             <select name="middle" id="middle">
               <option value="_">All</option>
@@ -72,7 +77,7 @@ author: Wouter Zeevat
 
       <div class="column is-one-third" id="right-selector">
         <div class="field">
-          <label for="right" id="right-label" class="label">Select for right:</label>
+          <label for="right" id="right-label" class="label has-tooltip-multiline" data-tooltip="Select only specific types for the amino acid in the middle right of the oligo part">Select for right:</label>
           <div class="select" id="right-select-box">
             <select name="right" id="right">
               <option value="_">All</option>
@@ -80,6 +85,23 @@ author: Wouter Zeevat
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p class="is-size-4">Each oligo part</p>
+    <div class="steps is-small" id="steps">
+
+      <th:block th:each="i: ${#numbers.sequence(1, #numbers.formatInteger(pepSize, 100))}">
+
+        <div class="step-item">
+          <div class="step-marker"></div>
+        </div>
+
+      </th:block>
+
     </div>
   </div>
 </section>
@@ -93,7 +115,7 @@ author: Wouter Zeevat
             <p class="is-size-5" style="text-align: left">3D viewer
               <strong id="3d-text">0 selected</strong>
               <i class="option-icon fa fa-undo is-medium is-pulled-right" id="reset"></i>
-              <i class="option-icon fa fa-search is-medium is-pulled-right is-hidden" id="zoom-btn"></i>
+              <i class="option-icon fa fa-search is-medium is-pulled-right is-hidden" id="zoom-btn" ></i>
             </p>
 
           </div>
