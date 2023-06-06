@@ -29,9 +29,12 @@ author: Wouter Zeevat
     <div id="skeleton-loader" style="padding-bottom: 2rem">
       <p id="pdb-title" class="is-size-4 has-text-weight-bold">Title</p>
       <p id="pdb-subtitle" class="is-size-4 ">Subtitle</p>
-      <p id="pdb-link" class="is-size-5 is-underlined">PDB Website</p>
-      <p id="paper-link" class="is-size-5">Paper Link</p>
-      <p id="download-link" style="cursor: pointer;">Download result</p>
+      <div class="bttns">
+        <p id="pdb-link" class="bttn">PDB Website</p>
+        <p id="paper-link" class="bttn">Paper Link</p>
+        <p id="download-link" class="bttn">Download result</p>
+        <p id="download-eigenvectors" class="bttn" style th:text="'Show Eigenvectors length ' + ${pepSize}">Show Eigenvectors length 1</p>
+      </div>
     </div>
 
     <div class="columns is-centered"  id="pdb-stats">

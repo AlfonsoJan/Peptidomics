@@ -30,19 +30,10 @@ Author: Wouter Zeevat
     padding: 0;
 }
 
-#pdb-link:hover {
-    cursor: pointer;
-    color: darkblue;
-}
 #protein {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-#paper-link:hover {
-    cursor: pointer;
-    color: darkblue;
 }
 
 
@@ -87,4 +78,26 @@ Author: Wouter Zeevat
 
 #3d-text {
     font-weight: normal;
+}
+
+.bttns {
+    display: flex;
+    position: center;
+    justify-content: center;
+}
+
+.bttn {
+    background-color: #dfdfdf;
+    color: #7a7a7a;
+    margin: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    font-weight: bold;
+    transition: ease 0.3s;
+}
+
+.bttn:hover {
+    cursor: pointer;
+    background-color: #4d83db;
+    color: white
 }
