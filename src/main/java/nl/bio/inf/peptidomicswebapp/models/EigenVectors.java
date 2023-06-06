@@ -19,6 +19,7 @@ public class EigenVectors {
     }
 
     public EigenVectors(Integer length) {
+        if (length == null) throw new NullPointerException();
         this.length = length;
         this.x = new ArrayList<>();
         this.y = new ArrayList<>();
@@ -45,5 +46,9 @@ public class EigenVectors {
 
     public List<String> getZ() {
         return z;
+    }
+
+    public int getLength() {
+        return length;
     }
 }
