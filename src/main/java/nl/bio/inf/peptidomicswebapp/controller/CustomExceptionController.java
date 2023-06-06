@@ -2,12 +2,15 @@ package nl.bio.inf.peptidomicswebapp.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
+import nl.bio.inf.peptidomicswebapp.exceptions.EigenVectorsNotFoundException;
 import nl.bio.inf.peptidomicswebapp.exceptions.TooLargeNumberException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.logging.Logger;
 
@@ -16,7 +19,7 @@ import java.util.logging.Logger;
  */
 
 @ControllerAdvice
-public class SizeLimitExceptionController {
+public class CustomExceptionController {
 
     private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
@@ -41,4 +44,12 @@ public class SizeLimitExceptionController {
         return "pdb_error";
     }
 
+    @ResponseBody
+    @ExceptionHandler(EigenVectorsNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErrorResponse employeeNotFoundHandler(EigenVectorsNotFoundException ex) {
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+    }
+
+    public record ErrorResponse(int status, String text) {}
 }
