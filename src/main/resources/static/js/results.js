@@ -143,6 +143,7 @@ let helperFunctions = {
             chunk.forEach(function (c) {
                 const column = document.createElement("div");
                 column.className = "column";
+                column.setAttribute("data-tooltip", `View chain ${c[0]} in the 3D viewer!`)
                 columns.appendChild(column);
 
                 const card = document.createElement("div");
@@ -158,6 +159,7 @@ let helperFunctions = {
                 let rgb = colors.filter(word => word.x === c[0])[0]["y"];
                 const chainId = document.createElement("p");
                 chainId.className = "is-size-5 has-text-weight-bold";
+                chainId.id = `chain-${c[0]}`
                 chainId.textContent = `Chain: ${c[0]}`;
                 chainId.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
                 cardContent.appendChild(chainId);
@@ -205,6 +207,26 @@ let helperFunctions = {
     },
 }
 
+// Object with functions that have something to do with the Steps in html
+let stepsContainer = {
+    changeSteps(view, value) {
+        let step = document.getElementById(`step-${view}`);
+        if (step === undefined || step === null) return;
+        if (value === "_") {
+            step.style.backgroundColor = "";
+        } else if (value.length < 2) {
+            let color = document.getElementById(`chain-${value}`).style.backgroundColor;
+            step.style.backgroundColor = color;
+        } else if (value.length === 3) {
+            let color = PlotContainer.colorsPeptides.filter(c => c.x === value)[0].y
+            step.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+        } else {
+            step.style.backgroundColor = "black";
+        }
+
+    }
+}
+
 // Object with functions that have something to do with the JMOL viewer
 let jMOLHelpers = {
     // Selects a certain part of the JSMOL
@@ -222,6 +244,10 @@ let jMOLHelpers = {
 
         // Select each amino acid for all positions
         resultJS.points = datapoints;
+        if (resultJS.points < 1) {
+            jMOLHelpers.resetScript();
+            return;
+        }
         resultJS.points.forEach(point => {
             script += `select atomno>${parseInt(point[0]) - 1} and atomno<${parseInt(point[1]) + 1}; cartoons; color [10,0,255]; `;
         })
@@ -327,6 +353,7 @@ document.getElementById('right').addEventListener('change', function() {
     let right = this.value;
     let middle = document.getElementById('middle').value;
     let left = document.getElementById('left').value;
+    stepsContainer.changeSteps("right", this.value);
     PlotContainer.updatePlots(left, middle, right);
 })
 
@@ -334,6 +361,7 @@ document.getElementById('middle').addEventListener('change', function() {
     let right = document.getElementById('right').value;
     let middle = this.value;
     let left = document.getElementById('left').value;
+    stepsContainer.changeSteps("middle", this.value);
     PlotContainer.updatePlots(left, middle, right);
 })
 
@@ -341,6 +369,7 @@ document.getElementById('left').addEventListener('change', function() {
     let right = document.getElementById('right').value;
     let middle = document.getElementById('middle').value;
     let left = this.value;
+    stepsContainer.changeSteps("left", this.value);
     PlotContainer.updatePlots(left, middle, right);
 })
 
@@ -370,6 +399,10 @@ let PlotContainer = {
             right.value = '_';
         }
         jMOLHelpers.resetScript();
+        stepsContainer.changeSteps("right", "_");
+        stepsContainer.changeSteps("middle", "_");
+        stepsContainer.changeSteps("left", "_");
+
     },
     // Initializes the plotly buttons
     initializePlotlyButtons(initialView, secondaryView, thirdView) {
@@ -768,6 +801,27 @@ let PlotContainer = {
 helperFunctions.setPage();
 
 document.addEventListener('DOMContentLoaded', (event) => {
+    // This function handles the steps viewer
+    (function() {
+        let stepsElement = document.getElementById("steps");
+        let size = stepsElement.children.length;
+
+        if (size === 1) {
+            stepsElement.children[0].children[0].setAttribute("id", "step-middle");
+            return;
+        }
+        let middle = Math.floor(size / 2);
+        if (size % 2 === 0) {
+            stepsElement.children[middle - 1].children[0].setAttribute("id", "step-left");
+            stepsElement.children[middle].children[0].setAttribute("id", "step-right");
+        } else {
+            stepsElement.children[middle - 1].children[0].setAttribute("id", "step-left");
+            stepsElement.children[middle].children[0].setAttribute("id", "step-middle");
+            stepsElement.children[middle + 1].children[0].setAttribute("id", "step-right");
+        }
+
+    })();
+
     // This function will call the function to create a temporary file and handles the response
     (async function getData() {
         const tokenResponse = await fetch("/csrf-token", {method: "GET"});
