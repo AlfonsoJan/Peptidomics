@@ -214,7 +214,8 @@ let stepsContainer = {
         if (step === undefined || step === null) return;
         if (value === "_") {
             step.style.backgroundColor = "";
-            step.setAttribute("data-tooltip", "None");
+            step.setAttribute("data-tooltip", "All");
+            return;
         } else if (value.length < 2) {
             let color = document.getElementById(`chain-${value}`).style.backgroundColor;
             step.style.backgroundColor = color;
