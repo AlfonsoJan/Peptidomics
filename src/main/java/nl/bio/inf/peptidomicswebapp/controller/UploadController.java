@@ -3,17 +3,17 @@ package nl.bio.inf.peptidomicswebapp.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
-import nl.bio.inf.peptidomicswebapp.config.SessionDestroyer;
 import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
 import nl.bio.inf.peptidomicswebapp.exceptions.TooLargeNumberException;
 import nl.bio.inf.peptidomicswebapp.models.PDB;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -48,9 +48,9 @@ public class UploadController {
     /**
      * This method creates a session and sets the codes in the session and redirect to the result page.
      *
-     * @param pdbCode
-     * @param oligoParam
-     * @param session
+     * @param pdbCode pdb code
+     * @param oligoParam oligo length
+     * @param session session
      * @throws RuntimeException when the PDB is invalid
      */
     @PostMapping(value = "/result_from_code")
@@ -87,9 +87,9 @@ public class UploadController {
 
     /**
      * This method creates a session and sets the file and codes in the session and redirect to the result page.
-     * @param file
-     * @param oligoParam
-     * @param session
+     * @param file uploaded file
+     * @param oligoParam oligo length
+     * @param session session
      * @throws RuntimeException when PDB file can not be read correctly
      */
     @PostMapping(value = "/result_from_files")
@@ -122,8 +122,8 @@ public class UploadController {
     /**
      * This method will return the result page if it's a correct pdb file/code.
      * And if there is nothing in the session then go to the upload page
-     * @param model
-     * @param request
+     * @param model model
+     * @param request request
      * @throws ClassCastException when PDB can't turn into a PDB class instance
      */
     @RequestMapping(value = "/result")
@@ -147,7 +147,7 @@ public class UploadController {
     /**
      * This method checks if there is an existing session and deletes it if there is one.
      *
-     * @param session
+     * @param session session
      * @throws RuntimeException when the PDB is invalid
      */
     public void deletePreviousSession(HttpSession session) {

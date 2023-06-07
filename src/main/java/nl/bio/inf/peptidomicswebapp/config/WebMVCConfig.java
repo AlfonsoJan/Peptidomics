@@ -16,6 +16,11 @@ import java.util.Locale;
  */
 @Configuration
 public class WebMVCConfig {
+
+    /**
+     * Set the properties for the name messages
+     * @return Resource bundle name
+     */
     @Bean
     @Description("Spring Message Resolver")
     public ResourceBundleMessageSource messageSource() {
@@ -24,6 +29,10 @@ public class WebMVCConfig {
         return messageSource;
     }
 
+    /**
+     * Set the locale for english as always
+     * @return locale resolver
+     */
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();

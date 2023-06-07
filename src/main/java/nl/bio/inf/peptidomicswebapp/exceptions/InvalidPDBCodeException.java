@@ -1,7 +1,8 @@
 package nl.bio.inf.peptidomicswebapp.exceptions;
 
 /**
- * @Author: Seabarrel
+ * Custom exception for when the given pdb code is not a valid one
+ * @author Wouter Zeevat
  */
 public class InvalidPDBCodeException extends Exception {
 
