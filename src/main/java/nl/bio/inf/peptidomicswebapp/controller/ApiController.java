@@ -1,5 +1,6 @@
 package nl.bio.inf.peptidomicswebapp.controller;
 
+import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.exceptions.EigenVectorsNotFoundException;
 import nl.bio.inf.peptidomicswebapp.models.EigenVectors;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *  This rest controller controls the api for the eigenvectors
@@ -17,6 +19,8 @@ import java.util.Map;
 
 @RestController
 public class ApiController {
+
+    private static final Logger LOGGER  = Logger.getLogger(PeptidomicsWebAppApplication.class.getName());
 
     private final Map<Integer, EigenVectors> EigenVectorsMap;
 
@@ -30,6 +34,7 @@ public class ApiController {
      */
     @GetMapping("/api/v1/eigenvectors")
     List<EigenVectors> allEigenVectors() {
+        LOGGER.info("Called the api to get all the eigen vectors");
         return new ArrayList<>(EigenVectorsMap.values());
     }
 
@@ -40,7 +45,10 @@ public class ApiController {
     @GetMapping("/api/v1/eigenvectors/{length}")
     EigenVectors getEigenVector(@PathVariable Integer length) {
         if ( EigenVectorsMap.containsKey(length) ) {
+            LOGGER.info("Retrieved the eigen vectors with length " + length);
             return EigenVectorsMap.get(length);
-        } throw new EigenVectorsNotFoundException(length);
+        }
+        LOGGER.severe("ERROR! Tried to get the eigen vectors with length: " + length);
+        throw new EigenVectorsNotFoundException(length);
     }
 }
