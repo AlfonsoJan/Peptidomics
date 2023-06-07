@@ -9,8 +9,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,7 +59,7 @@ class PDBTest {
         byte[] content = null;
         try {
             content = Files.readAllBytes(p);
-        } catch (final IOException e) {
+        } catch (final IOException ignored) {
         }
         MultipartFile result = new MockMultipartFile(name,
                 originalFileName, contentType, content);
@@ -171,7 +169,7 @@ class PDBTest {
         byte[] content = null;
         try {
             content = Files.readAllBytes(p);
-        } catch (final IOException e) {
+        } catch (final IOException ignored) {
         }
         MultipartFile result = new MockMultipartFile(name,
                 originalFileName, contentType, content);
@@ -190,7 +188,7 @@ class PDBTest {
         byte[] content = null;
         try {
             content = Files.readAllBytes(p);
-        } catch (final IOException e) {
+        } catch (final IOException ignored) {
         }
         MultipartFile result = new MockMultipartFile(name,
                 originalFileName, contentType, content);
