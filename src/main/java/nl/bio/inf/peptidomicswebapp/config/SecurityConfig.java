@@ -17,6 +17,12 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Bean that configure the security chain
+     * @param http
+     * @return
+     * @throws Exception
+     */
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http

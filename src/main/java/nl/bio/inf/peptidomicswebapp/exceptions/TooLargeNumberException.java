@@ -1,7 +1,8 @@
 package nl.bio.inf.peptidomicswebapp.exceptions;
 
 /**
- * @Author: Seabarrel
+ * Custom exception for when the oligo length is larger than set in the application properties
+ * @author Wouter Zeevat
  */
 public class TooLargeNumberException extends Exception {
 

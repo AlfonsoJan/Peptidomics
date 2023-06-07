@@ -13,14 +13,24 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *  This class read the eigen vectors once on startup and set it in a map
+ * @author Jan Alfonso
+ */
+
 @Configuration
 public class EigenVectorsConfig {
 
     @Value("${python.executable.folder}")
     private String pythonFolder;
+
+    /**
+     * This bean reads the files and set the eigenvectors in a map
+     * @return Map with eigen vectors
+     */
     @Bean
     public Map<Integer, EigenVectors> EigenVectorsMap() {
-        Map<Integer, EigenVectors> map = new HashMap<>();
+        Map<Integer, EigenVectors> eigenVectorsMap = new HashMap<>();
         Path filePath = Paths.get(pythonFolder, "vectors");
         try {
             for (int i = 1; i <= 30; i++) {
@@ -33,11 +43,11 @@ public class EigenVectorsConfig {
                         eigenVectors.addLine(line);
                     }
                 }
-                map.put(i, eigenVectors);
+                eigenVectorsMap.put(i, eigenVectors);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return map;
+        return eigenVectorsMap;
     }
 }

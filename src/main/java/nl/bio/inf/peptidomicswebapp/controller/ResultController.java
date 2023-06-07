@@ -45,7 +45,7 @@ public class ResultController {
 
     /**
      * This will return the csrf token for the stateless fetch calls
-     * @param request
+     * @param request request
      * @return csrf token
      */
     @RequestMapping(value="/csrf-token", method= RequestMethod.GET)
@@ -56,9 +56,9 @@ public class ResultController {
 
     /**
      * This method will create a temp file. And set the file in the session.
-     * @param request
-     * @param session
-     * @throws Exception when file cant be created
+     * @param request request
+     * @param session session
+     * @throws RuntimeException when file cant be created
      */
     @PostMapping(value = "/create_temp_file")
     public void createTemporaryFile(HttpServletRequest request, HttpSession session) {
@@ -78,9 +78,9 @@ public class ResultController {
 
     /**
      * Checks if analysis is done by looking whether the JSON file is not empty
-     * @param request
-     * @param session
-     * @return
+     * @param request request
+     * @param session session
+     * @return a plot class with a bool if the analysis is done
      */
     @PostMapping(value = "/check_if_done")
     public @ResponseBody Plot checkJsonFiles(HttpServletRequest request, HttpSession session) {
@@ -106,9 +106,8 @@ public class ResultController {
     /**
      * This method will create a temp file of the compare pdb code and
      * call the script that will run the analysis and return to the site.
-     * @param request
-     * @return
-     * @throws IOException when the script can't be run correctly
+     * @param request request
+     * @throws RuntimeException when the script can't be run correctly
      */
     @PostMapping(value = "/perform_pca_analysis")
     public void performPCAAnalysis(HttpServletRequest request) {
@@ -137,9 +136,8 @@ public class ResultController {
 
     /**
      * This method will call a python script that will retrieve the chains of the pdb file and return to the site.
-     * @param request
-     * @return
-     * @throws RuntimeException when the file can't be read
+     * @param request request
+     * @return plot class with the result of the chains analysis
      */
     @PostMapping(value = "/get_chains")
     public @ResponseBody Plot getChains(HttpServletRequest request){

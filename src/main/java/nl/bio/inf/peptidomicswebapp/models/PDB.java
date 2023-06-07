@@ -1,11 +1,8 @@
 package nl.bio.inf.peptidomicswebapp.models;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import nl.bio.inf.peptidomicswebapp.exceptions.InvalidPDBCodeException;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -26,8 +23,7 @@ public class PDB {
 
     /**
      * Constructor if a PDB code is given
-     * @param structureId
-     * @throws IOException
+     * @param structureId pdb code
      */
     public PDB(String structureId) throws IOException, InvalidPDBCodeException {
         if (structureId == null) throw new NullPointerException();
@@ -39,9 +35,8 @@ public class PDB {
 
     /**
      * Constructor if a file is uploaded
-     * @param fileBytes
-     * @param fileName
-     * @throws IOException
+     * @param fileBytes bytes of the uploaded file
+     * @param fileName file name
      */
     public PDB(byte[] fileBytes, String fileName) throws IOException {
         this.structureId = getStructureFromInputStream(fileBytes);
@@ -51,8 +46,7 @@ public class PDB {
 
     /**
      * Return the input stream of the pdb file
-     * @return
-     * @throws IOException
+     * @return InputStream of the pdb
      */
     private InputStream getInputStream() throws InvalidPDBCodeException {
         URL url;
@@ -69,8 +63,7 @@ public class PDB {
 
     /**
      * Returns the bytes of the input stream
-     * @return
-     * @throws IOException
+     * @return bytes of the input stream
      */
     private byte[] getBytesConnection() throws IOException, InvalidPDBCodeException {
         return getInputStream().readAllBytes();
@@ -79,7 +72,7 @@ public class PDB {
 
     /**
      * This method will create a temporary file, with a random prefix
-     * @return
+     * @return String of the temporary file
      * @throws RuntimeException when temp file can't be created
      */
     public String createTempFile() {
@@ -104,7 +97,7 @@ public class PDB {
 
     /**
      * Checks if PDB file is valid by searching for an ATOM line!
-     * @return
+     * @return bool if the file is valid
      */
     public boolean isValid() {
         String fileContent = new String(this.getBytes(), StandardCharsets.UTF_8);
@@ -119,9 +112,8 @@ public class PDB {
 
     /**
      * Get the structure id of the pdb file that is uploaded
-     * @param fileBytes
-     * @return
-     * @throws IOException
+     * @param fileBytes bytes of the file
+     * @return string of the pdb code
      */
     public static String getStructureFromInputStream(byte[] fileBytes) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileBytes)));

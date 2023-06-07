@@ -16,6 +16,10 @@ import java.util.Collections;
 @Configuration
 public class FaviconConfiguration {
 
+    /**
+     * Bean that sets the map for the favicon
+     * @return URL map handler
+     */
     @Bean
     public SimpleUrlHandlerMapping customFaviconHandlerMapping() {
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
@@ -25,6 +29,10 @@ public class FaviconConfiguration {
         return mapping;
     }
 
+    /**
+     * Bean for the resource handler
+     * @return Resource handler
+     */
     @Bean
     protected ResourceHttpRequestHandler faviconRequestHandler() {
         ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();

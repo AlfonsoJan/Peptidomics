@@ -3,6 +3,10 @@ package nl.bio.inf.peptidomicswebapp.models;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Eigen vectors class that hold the data for the eigenvectors for the api
+ * @author Jan Alfonso Busker
+ */
 
 public class EigenVectors {
 
@@ -11,6 +15,10 @@ public class EigenVectors {
     public List<String> y;
     public List<String> z;
 
+    /**
+     * Add per line to the array
+     * @param csvLine line from the csv file
+     */
     public void addLine(String csvLine) {
         String[] elements = csvLine.split(",");
         x.add(elements[0]);
@@ -18,6 +26,10 @@ public class EigenVectors {
         z.add(elements[2]);
     }
 
+    /**
+     * Initiate the class
+     * @param length the length of the oligo
+     */
     public EigenVectors(Integer length) {
         if (length == null) throw new NullPointerException();
         this.length = length;

@@ -8,10 +8,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.*;
-import java.net.http.HttpRequest;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -32,9 +28,9 @@ public class PythonService implements PythonConstructor{
 
     /**
      * Calls the python script to get the chains of the pdb file
-     * @param pythonPath
-     * @param pdbPath
-     * @return
+     * @param pythonPath path of the python file
+     * @param pdbPath path of the pdb file
+     * @return String of the result
      */
     @Override
     public String getChainsPBD(String pythonPath, String pdbPath) {
@@ -50,7 +46,7 @@ public class PythonService implements PythonConstructor{
             String line;
             StringBuilder buffer = new StringBuilder();
             while ((line = in.readLine()) != null){
-                buffer.append(line);;
+                buffer.append(line);
             }
             if (p.waitFor() != EXIT_CODE) {
                 LOGGER.warning("There was an error while retrieving the chains");
@@ -65,9 +61,8 @@ public class PythonService implements PythonConstructor{
 
     /**
      * Calls the python script to perform PCA analysis and retrieve the result
-     * @param pythonPath
-     * @param pdbPath
-     * @return
+     * @param pythonPath path of the python file
+     * @param pdbPath path of the pdb file
      */
     @Override
     public void PDBAnalyse(String pythonPath, String pdbPath, String pepSize, String pdbCode) throws InvalidPDBCodeException {
@@ -88,14 +83,7 @@ public class PythonService implements PythonConstructor{
             pb.redirectOutput(new File(jsonFilePath));
             pb.redirectError(new File(jsonFilePath.replace("check", "error")));
 
-            Process p = pb.start();
-            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
-            StringBuilder buffer = new StringBuilder();
-            while ((line = in.readLine()) != null){
-                buffer.append(line);;
-            }
-            in.close();
+            pb.start();
         } catch (IOException | InvalidPDBCodeException e){
             throw new InvalidPDBCodeException();
         }

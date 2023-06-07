@@ -34,7 +34,7 @@ public class ApiController {
     }
 
     /**
-     * Get the eigenvectors of a specific length or throws an error if its not found
+     * Get the eigenvectors of a specific length or throws an error if it's not found
      * @return EigenVector
      */
     @GetMapping("/api/v1/eigenvectors/{length}")

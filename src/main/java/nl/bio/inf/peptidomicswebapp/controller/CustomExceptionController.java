@@ -16,6 +16,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.logging.Logger;
 
 /**
+ * This class gives advice for the custom exceptions
  * @author Wouter Zeevat
  */
 
@@ -27,8 +28,8 @@ public class CustomExceptionController {
     /**
      * This method redirects the user to the pdb error page when a sizeLimitExceedException occurs
      *
-     * @param model
-     * @return
+     * @param model model
+     * @return String for the html page
      */
     @ExceptionHandler(SizeLimitExceededException.class)
     public String handleMaxFile(Model model, HttpServletRequest request) {
@@ -38,6 +39,11 @@ public class CustomExceptionController {
         return "pdb_error";
     }
 
+    /**
+     * This class handles too large files
+     * @param model model
+     * @return String for the html page
+     */
     @ExceptionHandler(TooLargeNumberException.class)
     public String handleMaxOligo(Model model) {
         model.addAttribute("code", "500");
@@ -45,6 +51,11 @@ public class CustomExceptionController {
         return "pdb_error";
     }
 
+    /**
+     * Handles eigenvectors not found errors for the api
+     * @param ex exception
+     * @return ErrorResponse
+     */
     @ResponseBody
     @ExceptionHandler(EigenVectorsNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -52,6 +63,10 @@ public class CustomExceptionController {
         return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
     }
 
+    /**
+     * Handles when the user give a string and not a integer for the api
+     * @return ErrorResponse
+     */
     @ResponseBody
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -59,5 +74,10 @@ public class CustomExceptionController {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "The length needs to be an integer!");
     }
 
+    /**
+     * Class for the error response
+     * @param status
+     * @param text
+     */
     public record ErrorResponse(int status, String text) {}
 }

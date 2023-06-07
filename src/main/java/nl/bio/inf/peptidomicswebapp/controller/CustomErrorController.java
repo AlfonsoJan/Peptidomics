@@ -4,13 +4,10 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import nl.bio.inf.peptidomicswebapp.PeptidomicsWebAppApplication;
 import nl.bio.inf.peptidomicswebapp.service.ErrorService;
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.logging.Logger;
 
@@ -31,9 +28,9 @@ public class CustomErrorController implements ErrorController {
 
     /**
      * Renders the error page with the errorCode and message according to the errorService
-     * @param model
-     * @param request
-     * @return
+     * @param model model
+     * @param request request
+     * @return String name for the html page
      */
     @RequestMapping(value = "/error")
     public String renderErrorPage(Model model, final HttpServletRequest request) {
@@ -52,9 +49,9 @@ public class CustomErrorController implements ErrorController {
 
     /**
      * Renders the custom PDB error page with the errorCode and message according to the errorService
-     * @param model
-     * @param request
-     * @return
+     * @param model model
+     * @param request request
+     * @return String for the html page
      */
     @RequestMapping(value = "/pdb_error")
     public String renderPDBErrorPage(Model model, final HttpServletRequest request) {
@@ -68,7 +65,7 @@ public class CustomErrorController implements ErrorController {
 
     /**
      * Returns the error status code
-     * @param request
+     * @param request request
      * @return integer
      */
     private int getHttpStatusCode(final HttpServletRequest request) {
