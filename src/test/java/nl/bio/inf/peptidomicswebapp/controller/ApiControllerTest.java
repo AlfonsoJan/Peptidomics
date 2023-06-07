@@ -2,7 +2,6 @@ package nl.bio.inf.peptidomicswebapp.controller;
 
 import nl.bio.inf.peptidomicswebapp.exceptions.EigenVectorsNotFoundException;
 import nl.bio.inf.peptidomicswebapp.models.EigenVectors;
-import nl.bio.inf.peptidomicswebapp.models.EigenVectorsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
