@@ -9,7 +9,7 @@ import pandas as pd
 
 __author__ = "Jan Alfonso Busker"
 
-NUM_CLUSTERS = 1000
+NUM_CLUSTERS = 2000
 
 def main():
     """

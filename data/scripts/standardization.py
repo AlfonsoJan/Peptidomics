@@ -55,7 +55,7 @@ def dist_function(coordinates):
     distances = ((coordinates[:, :, None] - coordinates[:, None, :]) ** 2).sum(axis=3)
     rows, columns = np.triu_indices_from(distances[0], 1)
     distances = distances[:, rows, columns].reshape((len(distances), -1))
-    distances -= distances.mean(axis=0)
+    #distances -= distances.mean(axis=0)
     return distances
 
 def peptidize(pdbfile, pepsize):
