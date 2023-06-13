@@ -21,6 +21,9 @@ import java.util.Map;
 @Configuration
 public class EigenVectorsConfig {
 
+    @Value("${max.oligo.length}")
+    private int maxOligo;
+
     @Value("${python.executable.folder}")
     private String pythonFolder;
 
@@ -33,7 +36,7 @@ public class EigenVectorsConfig {
         Map<Integer, EigenVectors> eigenVectorsMap = new HashMap<>();
         Path filePath = Paths.get(pythonFolder, "vectors");
         try {
-            for (int i = 1; i <= 30; i++) {
+            for (int i = 1; i <= maxOligo; i++) {
                 Path vectorPath = Paths.get(filePath.toString(), "vectors_" + i + ".csv");
                 EigenVectors eigenVectors = new EigenVectors(i);
                 BufferedReader br = new BufferedReader(new FileReader(vectorPath.toString()));

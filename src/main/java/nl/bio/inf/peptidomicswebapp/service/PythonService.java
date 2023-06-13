@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author Jan Alfonso Busker
  */
 @Service
-public class PythonService implements PythonConstructor{
+public class PythonService implements PythonConstructor {
 
     @Value("${python.path-name}")
     private String program;

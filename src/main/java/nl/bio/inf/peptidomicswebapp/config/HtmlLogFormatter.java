@@ -16,6 +16,7 @@ public class HtmlLogFormatter extends Formatter {
      * @param record the log record to be formatted.
      * @return a table row with the information
      */
+    @Override
     public String format(LogRecord record) {
         return ("<tr><td>"
                 + (new Date(record.getMillis()))
@@ -33,6 +34,7 @@ public class HtmlLogFormatter extends Formatter {
      * @param h  The target handler (can be null)
      * @return String containing the header for the table
      */
+    @Override
     public String getHead(Handler h) {
         return ("""
                 <html>
@@ -47,6 +49,7 @@ public class HtmlLogFormatter extends Formatter {
      * @param h  The target handler (can be null)
      * @return String containing the tail/end for the table
      */
+    @Override
     public String getTail(Handler h) {
         return ("</table>\n</body>\n</html>");
     }

@@ -10,10 +10,10 @@ import java.util.List;
 
 public class EigenVectors {
 
-    public int length;
-    public List<String> x;
-    public List<String> y;
-    public List<String> z;
+    private final int length;
+    private final List<String> x;
+    private final List<String> y;
+    private final List<String> z;
 
     /**
      * Add per line to the array
@@ -49,15 +49,15 @@ public class EigenVectors {
     }
 
     public List<String> getX() {
-        return x;
+        return new ArrayList<>(x);
     }
 
     public List<String> getY() {
-        return y;
+        return new ArrayList<>(y);
     }
 
     public List<String> getZ() {
-        return z;
+        return new ArrayList<>(z);
     }
 
     public int getLength() {

@@ -25,7 +25,7 @@ public class ApiControllerTest {
     @DisplayName("Tests a normal usage of the api controller function")
     void testApiController() {
         EigenVectors vector = controller.getEigenVector(1);
-        assert(vector.length == 1);
+        assert(vector.getLength() == 1);
     }
 
     @ParameterizedTest

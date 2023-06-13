@@ -17,16 +17,16 @@ toastr.options = {
     "hideMethod": "fadeOut"
 }
 
-// Function that checks if it is valid pdb code
-async function checkPDBCode(value) {
-    const response = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, { method: 'GET' })
-    return response;
-}
-// Function that checks if it is valid pdb code because some pdb files are
-// big that they don't have a pdb format
-async function checkPDBSize(value) {
-    const response = fetch(`https://files.rcsb.org/download/${value}.pdb`)
-    return response;
+let validateFunctions = {
+    // Function that checks if it is valid pdb code
+    checkPDBCode: async function (value) {
+        return await fetch(`https://data.rcsb.org/rest/v1/core/entry/${value}`, {method: 'GET'});
+    },
+    // Function that checks if it is valid pdb code because some pdb files are
+    // big that they don't have a pdb format
+    checkPDBSize: async function (value) {
+        return fetch(`https://files.rcsb.org/download/${value}.pdb`);
+    }
 }
 
 document.getElementById("selected").addEventListener('change', (element) => {
@@ -58,8 +58,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
             document.getElementById("pdb-input-form").action = "result_from_files";
         } else {
-            const pdbStatus = await checkPDBCode(pdbCode)
-            const pdbSize = await checkPDBSize(pdbCode)
+            const pdbStatus = await validateFunctions.checkPDBCode(pdbCode)
+            const pdbSize = await validateFunctions.checkPDBSize(pdbCode)
 
             if (!pdbStatus.ok) {
                 toastr.error(`${pdbCode} is not a valid PDB code!`);
