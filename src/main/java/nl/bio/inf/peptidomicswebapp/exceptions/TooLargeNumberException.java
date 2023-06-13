@@ -9,5 +9,4 @@ public class TooLargeNumberException extends Exception {
     public TooLargeNumberException() {
         super("This number is too large!");
     }
-
 }

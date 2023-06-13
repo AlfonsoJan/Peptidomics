@@ -42,7 +42,7 @@ public class SessionDestroyer extends HttpSessionEventPublisher {
 
     /**
      * Deletes the temporary files from the system!
-     * @param event
+     * @param event session event
      * @throws RuntimeException when files can not be accessed
      */
     public void deleteTempFiles(HttpSessionEvent event) {
@@ -51,7 +51,7 @@ public class SessionDestroyer extends HttpSessionEventPublisher {
             Files.delete(Path.of(tempLocation));
             LOGGER.info("Deleted session files of: " + event.getSession().getId());
         } catch (IOException e) {
-            LOGGER.warning("Could not delete the files!!");
+            LOGGER.warning("Could not delete " + tempLocation);
             throw new RuntimeException(e);
         }
     }

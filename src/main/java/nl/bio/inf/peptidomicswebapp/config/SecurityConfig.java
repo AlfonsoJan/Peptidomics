@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 /**
  *  This class builds the security filter chain for the application.
@@ -19,9 +18,9 @@ public class SecurityConfig {
 
     /**
      * Bean that configure the security chain
-     * @param http
-     * @return
-     * @throws Exception
+     * @param http HttpSecurity
+     * @return HttpSecurity config
+     * @throws Exception exception
      */
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,6 +32,4 @@ public class SecurityConfig {
                 .cors();
         return http.build();
     }
-
-
 }

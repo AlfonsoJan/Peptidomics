@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test for eigenVectors
  *
- * @Author Wouter Zeevat
+ * @author Wouter Zeevat
  */
 public class EigenVectorsTest {
 
@@ -36,7 +36,7 @@ public class EigenVectorsTest {
     @ValueSource(ints = {1,2,3,41,5,2,52})
     void testAddlineMultiple(int integer) {
         EigenVectors vector = new EigenVectors(1);
-        vector.addLine(String.valueOf(integer) + ",0,0");
+        vector.addLine(integer + ",0,0");
         assertEquals(vector.getX().get(0), String.valueOf(integer));
     }
 

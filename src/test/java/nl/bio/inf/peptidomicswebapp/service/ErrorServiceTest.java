@@ -19,8 +19,8 @@ class ErrorServiceTest {
 
     @ParameterizedTest
     @CsvSource({"302,There was a code 302 error: \"Found\"", "304,There was a code 304 error: Moved Permanently", "404,There was a code 404 error: \"Not Found\". The resource you requested could not be found. Did you type its location correctly?"})
-    void messagetest(String parms, String expected){
-        String result = errorService.generateErrorMessage(Integer.parseInt(parms));
+    void messageTest(String params, String expected){
+        String result = errorService.generateErrorMessage(Integer.parseInt(params));
         assertEquals(result, expected);
     }
 }
