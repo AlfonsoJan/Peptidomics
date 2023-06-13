@@ -39,14 +39,6 @@ Python (min. version 3.9)
     MDAnalysis (version 2.4.2)
     Pandas (version 2.0.1)
     Scikit-Learn (version 0.23.2)
-
-JavaScript
-    Toastr (version 2.1.4)
-    JSmol (version 14.32)
-    JQuery (version 3.6.3)
-    Bulma Tooltip (version 1.2.0)
-    Plotly (version 2.20.0)
-    FileSaver (version 2.0.0)
 ````
 ## Installation
 Clone this repository to your local machine:
@@ -59,7 +51,7 @@ Install the required Python dependencies:
 pip install -r requirements.txt
 ````
 
-Extract the folders scores, scripts and vectors and it content from the data directory. Copy these directories on the server.
+Move/Copy the `data` folder with the folders `scores`, `scripts` and `vectors` and their content to a directory of your choice outside the project.
 Change the attribute python.executable.folder in application.properties to the location of these directories.
 ```
 python.executable.folder=/<parent directory>/
