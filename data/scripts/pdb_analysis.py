@@ -11,7 +11,7 @@ import numpy as np
 import requests
 import pandas as pd
 
-__author__ = "Wouter Zeevat"
+__author__ = "John Busker, Tsjerk Wassenaar & Wouter Zeevat"
 
 AA1 = 'A C D E F G H I K L M N P Q R S T V W Y'.split()
 AA3 = 'ALA CYS ASP GLU PHE GLY HIS ILE LYS LEU MET ASN ' \
