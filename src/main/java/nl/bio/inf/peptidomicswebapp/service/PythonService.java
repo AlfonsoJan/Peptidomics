@@ -67,13 +67,10 @@ public class PythonService implements PythonConstructor {
     @Override
     public void PDBAnalyse(String pythonPath, String pdbPath, String pepSize, String pdbCode) throws InvalidPDBCodeException {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        System.out.println(attr);
         String jsonFilePath = attr.getRequest().getSession().getAttribute("jsonFile").toString();
-        System.out.println(jsonFilePath + "AAAAA");
         try {
             if (program == null) program = "python3";
             if (options == null) options = "-u";
-            System.out.println(program + options + pythonPath + pdbPath + pepSize + pdbCode);
 
             if (pythonPath == null | pdbPath == null | pepSize == null | pdbCode == null) throw new NullPointerException();
 

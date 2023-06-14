@@ -69,7 +69,7 @@ public class ResultController {
             PDB pdb = (PDB) request.getSession().getAttribute("PDBFiles");
             String tempLocation = pdb.createTempFile();
             session.setAttribute("tempLocation", tempLocation);
-            LOGGER.info("Created a temp file: " + tempLocation + " for session: " + request.getSession().getId());
+            LOGGER.info("Created a temp file: " + tempLocation + ". For session: " + request.getSession().getId());
         } catch (Exception ex) {
             LOGGER.severe("Error while creating a temp file, message=" + ex.getMessage());
             throw new RuntimeException(ex);

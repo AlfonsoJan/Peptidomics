@@ -295,7 +295,6 @@ let jMOLHelpers = {
 
         let script;
         if (!resultJS.hidden) {
-            console.log("Hidden the global protein!")
             script = `"hide all; display `
 
             // Adds selected part each time because JSMOL does not allow you to do it once
@@ -309,7 +308,6 @@ let jMOLHelpers = {
             a.click()
 
         } else {
-            console.log("Unhidden the global protein!")
             resultJS.hidden = false;
             script = '"hide none"'
             a.href = `javascript:Jmol.script(jmol1, ${script})`
@@ -857,7 +855,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 window.location.href = `/pdb_error?code=${value}`
             }
         } else {
-            console.log(response)
+            toastr.error("Something went wrong!");
         }
     })();
     // This function sets the metadata of the pdb on top of the site. Like the paper link and stuff
@@ -887,6 +885,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 document.getElementById("download-eigenvectors").onclick = function (item){window.open(`/api/v1/eigenvectors/${item.target.textContent.split("")[item.target.textContent.length - 1]}`, '_blank').focus();};
                 document.getElementById('skeleton-loader').removeAttribute('id');
             })
-            .catch((error) => console.log(error));
+            .catch(() => toastr.error("Something went wrong!"));
     })();
 });
