@@ -54,7 +54,6 @@ public class SessionDestroyer extends HttpSessionEventPublisher {
             LOGGER.info("Deleted session files of: " + event.getSession().getId());
         } catch (IOException e) {
             LOGGER.warning("Could not delete the files of session: " + event.getSession().getId());
-            throw new RuntimeException(e);
         }
     }
 }

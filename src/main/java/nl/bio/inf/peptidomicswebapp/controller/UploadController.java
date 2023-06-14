@@ -160,7 +160,6 @@ public class UploadController {
                 LOGGER.info("Deleted session files of: " + session.getId());
             } catch (IOException e) {
                 LOGGER.warning("Could not delete the files of session: " + session.getId());
-                throw new RuntimeException(e);
             }
             session.removeAttribute("chains");
             session.removeAttribute("tempLocation");
