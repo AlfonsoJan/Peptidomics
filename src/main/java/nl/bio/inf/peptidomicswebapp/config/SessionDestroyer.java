@@ -47,11 +47,13 @@ public class SessionDestroyer extends HttpSessionEventPublisher {
      */
     public void deleteTempFiles(HttpSessionEvent event) {
         String tempLocation = String.valueOf(event.getSession().getAttribute("tempLocation"));
+        String jsonFileLocation = String.valueOf(event.getSession().getAttribute("jsonFile"));
         try {
             Files.delete(Path.of(tempLocation));
+            Files.delete(Path.of(jsonFileLocation));
             LOGGER.info("Deleted session files of: " + event.getSession().getId());
         } catch (IOException e) {
-            LOGGER.warning("Could not delete " + tempLocation);
+            LOGGER.warning("Could not delete the files of session: " + event.getSession().getId());
             throw new RuntimeException(e);
         }
     }

@@ -153,8 +153,10 @@ public class UploadController {
     public void deletePreviousSession(HttpSession session) {
         if (session.getAttribute("tempLocation") != null) {
             String tempLocation = String.valueOf(session.getAttribute("tempLocation"));
+            String jsonFileLocation = String.valueOf(session.getAttribute("jsonFile"));
             try {
                 Files.delete(Path.of(tempLocation));
+                Files.delete(Path.of(jsonFileLocation));
                 LOGGER.info("Deleted session files of: " + session.getId());
             } catch (IOException e) {
                 LOGGER.warning("Could not delete the files of session: " + session.getId());
