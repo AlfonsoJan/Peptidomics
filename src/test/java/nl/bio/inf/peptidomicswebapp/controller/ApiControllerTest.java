@@ -41,5 +41,4 @@ public class ApiControllerTest {
     void testApiNormal(String expected, String params) {
         assert(Double.parseDouble(expected)== Double.parseDouble(controller.getEigenVector(Integer.valueOf(params)).getX().get(0)));
     }
-
 }
