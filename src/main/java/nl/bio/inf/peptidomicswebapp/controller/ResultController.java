@@ -163,7 +163,7 @@ public class ResultController {
         Path path;
         while (true) {
             UUID randomID = UUID.randomUUID();
-            path = Path.of(pythonLoggingFolder, randomID + "_normal.json");
+            path = Path.of(pythonLoggingFolder, randomID + "_result.json");
             if (Files.notExists(path)) {
                 break;
             }

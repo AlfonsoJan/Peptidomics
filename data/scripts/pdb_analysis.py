@@ -21,6 +21,7 @@ LETTERS = 'H B E G I T S P None'.split()
 MEANING = 'ALPHA-HELIX BETA-BRIDGE BETA-LADDER 3-HELIX 5-HELIX HYDROGEN-BONDED-TURN ' \
           'BEND POLY-PROLINE-HELICES LOOP/IRREGULAR'.split()
 LETTERS_DICT = dict(zip(LETTERS, MEANING))
+API_CALL_COUNTER_MAX = 1
 
 class NumpyEncoder(json.JSONEncoder):
     """
@@ -50,6 +51,7 @@ def get_secondary_structure(pdb_code):
     :param pdb_code:
     :return:
     """
+    api_call_counter = 0
     job_id = start_job(pdb_code)
     ready = False
     error = False
@@ -60,10 +62,11 @@ def get_secondary_structure(pdb_code):
         status = json.loads(request.text)['status']
         if status == 'SUCCESS':
             ready = True
-        elif status in ['FAILURE', 'REVOKED']:
+        elif status in ['FAILURE', 'REVOKED'] or api_call_counter == API_CALL_COUNTER_MAX:
             error = True
             ready = True
         else:
+            api_call_counter += 1
             time.sleep(5)
     if error:
         return []
