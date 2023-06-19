@@ -81,7 +81,7 @@ public class PythonService implements PythonConstructor {
             ProcessBuilder pb = new ProcessBuilder().command(program, options, pythonPath, pdbPath, pepSize, pdbCode);
 
             pb.redirectOutput(new File(jsonFilePath));
-            pb.redirectError(new File(jsonFilePath.replace("check", "error")));
+            pb.redirectError(new File(jsonFilePath.replace("result", "error")));
 
             pb.start();
         } catch (IOException | InvalidPDBCodeException e){

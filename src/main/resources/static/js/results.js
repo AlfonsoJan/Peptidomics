@@ -82,17 +82,17 @@ let helperFunctions = {
         return keys.map((x, i) => ({x, y: colorArray[i]}));
     },
     // Function that will shuffle an array
-    shuffle(array, seed) {                // <-- ADDED ARGUMENT
+    shuffle(array, seed) {
         let m = array.length, t, i;
         // While there remain elements to shuffle…
         while (m) {
             // Pick a remaining element…
-            i = Math.floor(this.random(seed) * m--);        // <-- MODIFIED LINE
+            i = Math.floor(this.random(seed) * m--);
             // And swap it with the current element.
             t = array[m];
             array[m] = array[i];
             array[i] = t;
-            ++seed                                     // <-- ADDED LINE
+            ++seed
         }
         return array;
     },
@@ -500,6 +500,14 @@ let PlotContainer = {
         let uniqueStructure= [].concat.apply([], Object.keys(this.data).map(key => {
             return this.data[key].structure
         })).filter(helperFunctions.onlyUnique);
+        if (uniqueStructure.length === 1 && uniqueStructure[0] === "undefined") {
+            toastr.error("The XSSP api is down! So all secondary structures are not displayed!", {
+                "showDuration": "10000",
+                "hideDuration": "1000",
+                "timeOut": "50000",
+                "extendedTimeOut": "10000",
+            })
+        }
         let uniqueDataList = uniqueChains.concat(uniquePeptides, uniqueStructure);
         let amount = this.data[0].chain.length;
         if (amount === 1) {
