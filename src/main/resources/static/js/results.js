@@ -846,12 +846,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             if (chainResult["bytes"].length > 2) {
                 let colors = helperFunctions.createColors(Object.keys(JSON.parse(chainResult["bytes"])));
                 helperFunctions.setChain(chainResult, colors);
-              
-                // Functionality for the 3D protein plot
-                if (value != null) {
-                    let info = jMOLHelpers.getInfoProtein3d(value);
-                    //$("#protein").html(Jmol.getAppletHtml("jmol1", info))
-                }
+
                 await fetch("/perform_pca_analysis", fetchParameters);
                 window.setInterval(function (){
                     if (helperFunctions.sillRunning) {

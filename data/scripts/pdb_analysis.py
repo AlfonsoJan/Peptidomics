@@ -2,27 +2,22 @@
 
 """Performs the analysis creating the JSON coordinates together with the metadata"""
 
-from collections import Counter
 import json
 import time
 from pathlib import Path
 import sys
 import numpy as np
 import requests
-import pandas as pd
 
 __author__ = "John Busker, Tsjerk Wassenaar & Wouter Zeevat"
 
-AA1 = 'A C D E F G H I K L M N P Q R S T V W Y'.split()
-AA3 = 'ALA CYS ASP GLU PHE GLY HIS ILE LYS LEU MET ASN ' \
-      'PRO GLN ARG SER THR VAL TRP TYR'.split()
-AA321 = dict(zip(AA3, AA1))
 LETTERS = 'H B E G I T S P None'.split()
 MEANING = 'ALPHA-HELIX BETA-BRIDGE BETA-LADDER 3-HELIX 5-HELIX HYDROGEN-BONDED-TURN ' \
           'BEND POLY-PROLINE-HELICES LOOP/IRREGULAR'.split()
 LETTERS_DICT = dict(zip(LETTERS, MEANING))
-API_CALL_COUNTER_MAX = 1
+API_CALL_COUNTER_MAX = 2
 
+# https://stackoverflow.com/questions/26646362/numpy-array-is-not-json-serializable
 class NumpyEncoder(json.JSONEncoder):
     """
     Encoder for JSON data
@@ -101,10 +96,9 @@ def get_middle_peptide(cords, pepsize):
     index = int((len(cords) - 1)/2)
     if pepsize / 3 == 1:
         return cords
-    elif ((pepsize / 3) % 2) == 0:
+    if ((pepsize / 3) % 2) == 0:
         return cords[index: index+2]
-    else:
-        return cords[index-1:index+2]
+    return cords[index-1:index+2]
 
 def structure_parser(chainsnos, res_number, result_dssp):
     """
@@ -139,7 +133,6 @@ def read_pdb_backbone(pdbfile, pdb_code):
 
     chainsnos = [ atom[20:22].strip() for atom in backbone ]
     residues = [ atom[17:20] for atom in backbone ]
-    atomnames = [ atom[12:16].strip() for atom in backbone ]
     coordinates = np.loadtxt([ atom[30:54] for atom in backbone ])
     atomnos = [ atom[4:12].strip() for atom in backbone ]
     residues_number = [ atom[22:27].strip() for atom in backbone ]
@@ -263,12 +256,14 @@ def main(args):
 
     try:
         peptide_information, pepcoords = peptidize(filename, oligo_length, pdb_code)
-
-        vectors = pd.read_csv(f'{Path(__file__).parent.parent}/vectors/vectors_{oligo_length}.csv',
-                              sep=",", header=0, comment='#').to_numpy()
-        scores = pd.read_csv(f'{Path(__file__).parent.parent}'
-                             f'/scores/scores_downsampled_{oligo_length}.csv',
-                             sep=",", header=0, comment='#').to_numpy()
+        vectors = np.genfromtxt(
+            f'{Path(__file__).parent.parent}/vectors/vectors_{oligo_length}.csv',
+            delimiter=',', comments='#'
+        )[1:]
+        scores = np.genfromtxt(
+            f'{Path(__file__).parent.parent}/scores/scores_downsampled_{oligo_length}.csv',
+            delimiter=',', comments='#'
+        )[1:]
         projected_data = princana(pepcoords, vectors)
         parse_to_json(projected_data, peptide_information, scores)
     except Exception as exception:
