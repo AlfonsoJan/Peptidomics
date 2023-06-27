@@ -37,7 +37,6 @@ Java (min. version 8)
 Python (min. version 3.9)
     Numpy (version 1.23.1)
     MDAnalysis (version 2.4.2)
-    Pandas (version 2.0.1)
     Scikit-Learn (version 0.23.2)
 ````
 ## Installation
